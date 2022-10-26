@@ -1,0 +1,33 @@
+.book-container {
+  padding: 1.5rem 0;
+}
+.book-wrapper {
+  padding: 0 1.5rem 0;
+  word-break: break-word;
+  direction: rtl;
+}
+.book {
+  height: calc(100vh - 3rem);
+  width: 100%;
+  overflow: hidden;
+  outline: none;
+  column-width: 500rem;
+  column-count: auto;
+  column-gap: 1.5rem;
+  column-fill: balance;
+  scrollbar-width: 0;
+  appearance: none;
+  padding-bottom: 5rem;
+}
+
+.book-pagination {
+  position: fixed;
+  background-color: white;
+  bottom: 0;
+  width: 100%;
+  left: 0;
+  height: 5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
