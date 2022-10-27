@@ -30,6 +30,15 @@ const nagwaReaders = (function () {
       get percent() {
         return document.querySelector(".pagination-percent");
       },
+      get currentPageOfAllPages() {
+        return document.querySelector(".pagination-current-page");
+      },
+      get allPages() {
+        return document.querySelector(".pagination-pages");
+      },
+      get darkModeChk() {
+        return document.querySelector(".change-color-mode input");
+      },
       get book() {
         return document.querySelector(".book");
       },
@@ -103,7 +112,8 @@ const nagwaReaders = (function () {
   }
 
   class BookChapter {
-    constructor(chapterEl) {
+    constructor(chapterEl, bookId) {
+      this.bookId = bookId;
       this.chapterEl = chapterEl;
       this.page = 0;
       this.storyContainerPadding = 0;
@@ -119,21 +129,118 @@ const nagwaReaders = (function () {
       section.innerHTML = this.chapterEl?.innerHTML;
       UTILS.DOM_ELS.book.innerHTML = "";
       UTILS.DOM_ELS.book.append(section);
+      this.updateImagesPaths();
+    }
+
+    updateImagesPaths() {
+      const images = UTILS.DOM_ELS.book.querySelectorAll("img");
+      images.forEach((img) => {
+        const currentSrc = img.attributes.src.value;
+        img.src = currentSrc.replace(
+          "../Images/",
+          `../packages/${this.bookId}/Images/`
+        );
+      });
     }
   }
 
+  class UserPreferences {
+    constructor(bookId) {
+      this.bookId = bookId;
+      this.page = 0;
+      this.chapter = 0;
+      this.fontSize = 0;
+      this.isDarkMode = false;
+
+      this.localStorageKeys = {
+        fontSize: `${this.bookId}_fontSize`,
+        isDarkMode: "isDarkMode",
+        lastPosition: `${this.bookId}_lastPosition`, //its value in Localstorage will be a JSON containing chapter and page,
+        page: "page",
+        chapter: "chapter",
+      };
+    }
+
+    save(
+      currentPage,
+      currentChapter,
+      fontSize,
+      isDarkMode,
+      saveToLocalStorage = true
+    ) {
+      this.page = currentPage;
+      this.chapter = currentChapter;
+      this.fontSize = fontSize;
+      this.isDarkMode = isDarkMode;
+      if (saveToLocalStorage) {
+        localStorage.setItem(
+          this.localStorageKeys.lastPosition,
+          JSON.stringify({
+            [this.localStorageKeys.chapter]: this.chapter,
+            [this.localStorageKeys.page]: this.page,
+          })
+        );
+        localStorage.setItem(this.localStorageKeys.fontSize, this.fontSize);
+        localStorage.setItem(this.localStorageKeys.isDarkMode, this.isDarkMode);
+      }
+    }
+
+    load() {
+      this.fontSize = +localStorage.getItem(this.localStorageKeys.fontSize);
+      this.isDarkMode = JSON.parse(
+        localStorage.getItem(this.localStorageKeys.isDarkMode)
+      );
+      const lastPosition = JSON.parse(
+        localStorage.getItem(this.localStorageKeys.lastPosition)
+      );
+      this.chapter = lastPosition?.chapter;
+      this.page = lastPosition?.page;
+      return {
+        fontSize: this.fontSize,
+        isDarkMode: this.isDarkMode,
+        chapter: this.chapter,
+        page: this.page,
+      };
+    }
+  }
   class Controller {
     constructor() {}
 
     async initWithBookId(bookId) {
       this.htmlExtractor = new HTMLExtractor(bookId);
       await this.htmlExtractor.extractChapters();
+      this.detectUserPreferences(bookId);
       this.setupHandlers();
       this.setupEventListeners();
     }
 
     setupHandlers() {
-      this.book = new Book(this.htmlExtractor.chapters);
+      this.book = new Book(
+        this.htmlExtractor.bookId,
+        this.htmlExtractor.chapters,
+        this?.userPreferences?.fontSize,
+        this?.userPreferences?.chapter,
+        this?.userPreferences?.page,
+        this?.userPreferences?.isDarkMode
+      );
+    }
+
+    detectUserPreferences(bookId) {
+      this.userPreferences = new UserPreferences(bookId);
+      this.userPreferences.load();
+    }
+
+    /**
+     * Stores the current state of the app
+     * @memberof Controller
+     */
+    storeUserPreferences() {
+      this?.userPreferences?.save(
+        this.book.currentPage,
+        this.book.currentChapterIndex,
+        this.book.fontSize,
+        this.book.isDarkMode
+      );
     }
 
     setupEventListeners() {
@@ -174,10 +281,15 @@ const nagwaReaders = (function () {
         "click",
         this.resetFontSize.bind(this)
       );
+      UTILS.DOM_ELS.darkModeChk?.addEventListener(
+        "input",
+        this.darkModeCheckInputEventHandler.bind(this)
+      );
     }
 
     resizeEventHandler = () => {
       this.changePageToCurrentPercentage();
+      this.storeUserPreferences();
     };
     changePageToCurrentPercentage() {
       this.book.currentPage = Math.round(
@@ -186,67 +298,124 @@ const nagwaReaders = (function () {
       this.book.changePage();
     }
 
+    postNavigationHandler() {
+      this.storeUserPreferences();
+      this.book.updatePageNumber();
+    }
+
+    postFontResizeHandler() {
+      this.changePageToCurrentPercentage();
+      this.storeUserPreferences();
+    }
+
     goToNextPage() {
       this.book.changePage("next");
+      this.postNavigationHandler();
     }
 
     goToPrevPage() {
       this.book.changePage("prev");
+      this.postNavigationHandler();
     }
 
     goToFirstPage() {
       this.book.changePage("first");
+      this.postNavigationHandler();
     }
 
     goToLastPage() {
       this.book.changePage("last");
+      this.postNavigationHandler();
     }
 
     goToNextChapter() {
       this.book.changeChapter("next");
+      this.postNavigationHandler();
     }
 
     goToPrevChapter() {
       this.book.changeChapter("prev");
+      this.postNavigationHandler();
     }
 
     goToFirstChapter() {
       this.book.changeChapter("first");
+      this.postNavigationHandler();
     }
 
     goToLastChapter() {
       this.book.changeChapter("last");
+      this.postNavigationHandler();
+    }
+
+    increaseFontSize() {
+      this.book.changeFontSize("bigger");
+      this.postFontResizeHandler();
+    }
+
+    decreaseFontSize() {
+      this.book.changeFontSize("smaller");
+      this.postFontResizeHandler();
+    }
+
+    resetFontSize() {
+      this.book.changeFontSize("reset");
+      this.postFontResizeHandler();
+    }
+    setDarkMode(isDarkMode) {
+      this.book.changeDarkMode(isDarkMode);
+      this.storeUserPreferences();
+    }
+
+    darkModeCheckInputEventHandler() {
+      this.setDarkMode(/* Don't pass anything so it can fallback to the checkbox value */);
     }
   }
 
   class Book {
     constructor(
+      bookId,
       chapters,
       fontSize = 18,
       currentChapterIndex = 0,
-      currentPage = 0
+      currentPage = 0,
+      isDarkMode = null
     ) {
+      this.bookId = bookId;
       this.chapters = chapters;
       this.currentChapterIndex = Math.min(
         currentChapterIndex || 0,
         this.chapters.length - 1
       );
       this.currentChapter = new BookChapter(
-        this.chapters[this.currentChapterIndex]
+        this.chapters[this.currentChapterIndex],
+        this.bookId
       );
       this.currentPage = Math.min(currentPage || 0, UTILS.calcPageCount() - 1);
       this.currentScrollPercentage = 0;
       this.currentProgressPercent = 0;
       this.rootFontSize = 18;
+      this.isDarkMode = isDarkMode;
       this.fontSizeStep = 0.15;
       this.fontSize = fontSize || this.rootFontSize;
+      this.changeFontSize();
       this.changePage();
+      this.changeDarkMode(this.isDarkMode);
+      this.updatePageNumber();
     }
     updateChapterPageState() {
       this.isLastPage = this.currentPage >= UTILS.calcPageCount() - 1;
       this.isFirstPage = this.currentPage === 0;
       this.isLastChapter = this.currentChapterIndex >= this.chapters.length - 1;
       this.isFirstChapter = this.currentChapterIndex === 0;
+    }
+    updateFontIncreaseDecreaseState() {
+      this.canIncreaseFont =
+        this.fontSize <=
+        this.rootFontSize + this.rootFontSize * this.fontSizeStep;
+      this.canDecreaseFont =
+        this.fontSize >=
+        this.rootFontSize - this.rootFontSize * this.fontSizeStep;
     }
     scrollToCurrentPage() {
       const columnWidth = UTILS.extractComputedStyleNumber(
@@ -270,6 +439,12 @@ const nagwaReaders = (function () {
     //   if (UTILS.DOM_ELS.percent)
     //     UTILS.DOM_ELS.percent.innerText = this.currentProgressPercent + "%";
     // }
+
+    setAllPagesNumber() {}
+
+    updatePageNumber() {
+      UTILS.DOM_ELS.currentPageOfAllPages.innerText = this.currentPage;
+    }
 
     changeChapter(mode) {
       const oldChapterIndex = this.currentChapterIndex;
@@ -302,7 +477,8 @@ const nagwaReaders = (function () {
         this.currentChapter = new BookChapter(
           this.chapters[
             Math.min(this.currentChapterIndex, this.chapters.length - 1)
-          ]
+          ],
+          this.bookId
         );
       this.changePage();
     }
@@ -345,7 +521,53 @@ const nagwaReaders = (function () {
       //update the ID of first and last word in the current page
       // this.updateStartEndWordID();
     }
+
+    changeFontSize = (mode) => {
+      const fontStepPx = this.fontSizeStep * this.rootFontSize;
+      switch (mode) {
+        case "bigger":
+          if (this.canIncreaseFont) {
+            this.fontSize = this.fontSize + fontStepPx;
+            document.body.style.fontSize = this.fontSize + "px";
+          }
+          break;
+        case "smaller":
+          if (this.canDecreaseFont) {
+            this.fontSize = this.fontSize - fontStepPx;
+            document.body.style.fontSize = this.fontSize + "px";
+          }
+          break;
+        case "reset":
+          this.fontSize = this.rootFontSize;
+          document.body.style.fontSize = "";
+        default:
+          document.body.style.fontSize = this.fontSize + "px";
+          break;
+      }
+      this.updateFontIncreaseDecreaseState();
+    };
+
+    changeDarkMode(isDarkMode) {
+      if (UTILS.DOM_ELS.darkModeChk) {
+        //if there was a checkbox for dark mode, fallback to its value if nothing was inputted to the function
+        this.isDarkMode = isDarkMode ?? UTILS.DOM_ELS.darkModeChk?.checked;
+        UTILS.DOM_ELS.darkModeChk.checked = this.isDarkMode;
+      } else {
+        //if there is no checkbox and nothing was inputted fallback to the old dark mode state
+        this.isDarkMode = isDarkMode ?? this.isDarkMode;
+      }
+
+      if (this.isDarkMode) {
+        document.body.classList.remove("darkmode");
+        document.body.classList.add("darkmode");
+      } else {
+        document.body.classList.remove("darkmode");
+      }
+    }
   }
   const controller = new Controller();
-  controller.initWithBookId("1708ecc3-7192-427b-8292-35c38bafbfae");
+
+  // 1708ecc3-7192-427b-8292-35c38bafbfae
+  // 26dd5f00-0c75-4367-adea-537ece731385
+  controller.initWithBookId("26dd5f00-0c75-4367-adea-537ece731385");
 })();

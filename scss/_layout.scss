@@ -18,6 +18,11 @@
   scrollbar-width: 0;
   appearance: none;
   padding-bottom: 5rem;
+
+  @media screen and (min-width: 1023px) {
+    column-count: 2;
+    column-width: inherit;
+  }
 }
 
 .book-pagination {

@@ -15,6 +15,16 @@ body {
   height: 100%;
 }
 
+body.darkmode {
+  -webkit-filter: invert(1);
+          filter: invert(1);
+  background-color: #000;
+}
+
+body.darkmode h1 {
+  color: #000;
+}
+
 .book-container {
   padding: 1.5rem 0;
 }
@@ -43,6 +53,15 @@ body {
      -moz-appearance: none;
           appearance: none;
   padding-bottom: 5rem;
+}
+
+@media screen and (min-width: 1023px) {
+  .book {
+    -webkit-column-count: 2;
+            column-count: 2;
+    -webkit-column-width: inherit;
+            column-width: inherit;
+  }
 }
 
 .book-pagination {

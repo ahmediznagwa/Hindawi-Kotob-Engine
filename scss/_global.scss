@@ -11,4 +11,13 @@ html {
 body {
   padding: 0;
   height: 100%;
+
+  &.darkmode {
+    filter: invert(1);
+    background-color: #000;
+
+    h1 {
+       color: #000;
+    }
+  }
 }
