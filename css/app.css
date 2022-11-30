@@ -25,6 +25,11 @@ body.darkmode h1 {
   color: #000;
 }
 
+h1 {
+  -webkit-column-break-before: column;
+          break-before: column;
+}
+
 .book-container {
   padding: 1.5rem 0;
 }
@@ -53,6 +58,16 @@ body.darkmode h1 {
      -moz-appearance: none;
           appearance: none;
   padding-bottom: 5rem;
+}
+
+.book.demo {
+  position: absolute;
+  left: 1.5rem;
+  top: 1.5rem;
+  right: 1.5rem;
+  width: auto;
+  visibility: hidden;
+  opacity: 0;
 }
 
 @media screen and (min-width: 1023px) {

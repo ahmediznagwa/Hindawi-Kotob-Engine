@@ -42,6 +42,9 @@ const nagwaReaders = (function () {
       get book() {
         return document.querySelector(".book");
       },
+      get demoBook() {
+        return document.querySelector(".book.demo");
+      },
       get bookChapter() {
         return document.querySelector(".book-chapter");
       },
@@ -122,7 +125,6 @@ const nagwaReaders = (function () {
       this.columnWidth = 0;
       this.renderChapter();
     }
-
     renderChapter() {
       const section = document.createElement("section");
       section.classList.add("book-chapter");
@@ -402,6 +404,7 @@ const nagwaReaders = (function () {
       this.changePage();
       this.changeDarkMode(this.isDarkMode);
       this.updatePageNumber();
+      // this.updateAllPagesNumber();
     }
     updateChapterPageState() {
       this.isLastPage = this.currentPage >= UTILS.calcPageCount() - 1;
@@ -428,6 +431,20 @@ const nagwaReaders = (function () {
       );
       const x = (columnWidth + columnsGap) * this.currentPage;
       UTILS.DOM_ELS.book.scrollTo(-x, 0);
+      const titles = UTILS.DOM_ELS.demoBook?.querySelectorAll("h1");
+      if (titles) {
+        const currentChapter = titles[this.currentChapterIndex];
+        const currentChapterPos =
+          UTILS.DOM_ELS.demoBook?.scrollWidth -
+          currentChapter.offsetLeft +
+          (columnWidth + columnsGap) * this.currentPage;
+        // console.log("page", this.currentPage);
+        // console.log("Column Width", columnWidth);
+        // console.log("title", titles[this.currentChapterIndex]);
+        console.log("pos", currentChapterPos);
+        UTILS.DOM_ELS.demoBook?.scrollTo(-currentChapterPos, 0);
+      }
+      // console.log(-x);
     }
 
     // updateProgressPercentage() {
@@ -440,7 +457,43 @@ const nagwaReaders = (function () {
     //     UTILS.DOM_ELS.percent.innerText = this.currentProgressPercent + "%";
     // }
 
-    setAllPagesNumber() {}
+    updateCurrentPageOfAllPages() {
+      // this.userPreferences = new UserPreferences(bookId);
+      // const wholeBook = UTILS.DOM_ELS.demoBook;
+      // const columnWidth = UTILS.extractComputedStyleNumber(
+      //   UTILS.DOM_ELS.book,
+      //   "width"
+      // );
+      // const columnsGap = UTILS.extractComputedStyleNumber(
+      //   UTILS.DOM_ELS.book,
+      //   "column-gap"
+      // );
+      // // const currentChapterTitle = this.currentChapter.querySelector(".title");
+      // //   UTILS.DOM_ELS.demoBook.
+      // console.log(x);
+      // console.log(x / wholeBook.scrollWidth);
+    }
+    updateAllPagesNumber() {
+      const section = document.createElement("section");
+      section.classList = "book demo";
+      section.innerHTML = "";
+      this.chapters.forEach((chapter) => {
+        section.innerHTML = section.innerHTML += chapter?.innerHTML;
+      });
+      UTILS.DOM_ELS.bookWrapper.append(section);
+
+      const columnWidth = UTILS.extractComputedStyleNumber(
+        UTILS.DOM_ELS.book,
+        "width"
+      );
+      const columnsGap = UTILS.extractComputedStyleNumber(
+        UTILS.DOM_ELS.book,
+        "column-gap"
+      );
+      const pagesNo = section.scrollWidth / (columnWidth + columnsGap);
+      UTILS.DOM_ELS.allPages.textContent = Math.round(pagesNo);
+      this.updateCurrentPageOfAllPages();
+    }
 
     updatePageNumber() {
       UTILS.DOM_ELS.currentPageOfAllPages.innerText = this.currentPage;
