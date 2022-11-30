@@ -624,3 +624,42 @@ const nagwaReaders = (function () {
   // 26dd5f00-0c75-4367-adea-537ece731385
   controller.initWithBookId("26dd5f00-0c75-4367-adea-537ece731385");
 })();
+
+// Dropdown Menu
+initDropdowns();
+function initDropdowns() {
+  $(".dropdown-toggle").each(function () {
+    const dropdownToggle = $(this);
+    const dropdownContainer = dropdownToggle.closest(".dropdown");
+    dropdownToggle.on("click", function () {
+      _showDropdownMenu(dropdownContainer);
+    });
+  });
+}
+
+function _showDropdownMenu(dropdownContainer) {
+  if (dropdownContainer.hasClass("show")) {
+    dropdownContainer.removeClass("show");
+    return;
+  }
+  $(".dropdown").removeClass("show");
+  dropdownContainer.addClass("show");
+}
+
+$(document).keydown(function (e) {
+  if (e.keyCode == 27) {
+    $(".dropdown").removeClass("show");
+
+    $(".bottom-bar").slideToggle();
+  }
+});
+$("body").click(function () {
+  $(".dropdown").removeClass("show");
+
+  $(".bottom-bar").slideToggle();
+});
+$(
+  ".dropdown,  .bottom-bar"
+).click(function (e) {
+  e.stopPropagation();
+});
