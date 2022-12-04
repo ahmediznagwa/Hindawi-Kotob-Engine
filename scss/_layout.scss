@@ -21,8 +21,8 @@ h1 {
   scrollbar-width: 0;
   appearance: none;
   padding-bottom: 5rem;
-  // visibility: hidden;
-  // opacity: 0;
+  visibility: hidden;
+  opacity: 0;
 
   &.demo {
     position: absolute;
@@ -30,10 +30,10 @@ h1 {
     top: 1.5rem;
     right: 1.5rem;
     width: auto;
-    // visibility: visible;
-    // opacity: 1;
-    visibility: hidden;
-    opacity: 0;
+    visibility: visible;
+    opacity: 1;
+    // visibility: hidden;
+    // opacity: 0;
   }
 
   @media screen and (min-width: 1023px) {

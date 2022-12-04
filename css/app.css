@@ -90,6 +90,8 @@ h1 {
      -moz-appearance: none;
           appearance: none;
   padding-bottom: 5rem;
+  visibility: hidden;
+  opacity: 0;
 }
 
 .book.demo {
@@ -98,8 +100,8 @@ h1 {
   top: 1.5rem;
   right: 1.5rem;
   width: auto;
-  visibility: hidden;
-  opacity: 0;
+  visibility: visible;
+  opacity: 1;
 }
 
 @media screen and (min-width: 1023px) {
