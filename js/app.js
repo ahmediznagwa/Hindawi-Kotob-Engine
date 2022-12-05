@@ -81,7 +81,7 @@ const nagwaReaders = (function () {
 
     async setNav() {
       const res = await fetch(
-        `../packages/${this.bookId}/Navigation/nav.xhtml`
+        `./../packages/${this.bookId}/Navigation/nav.xhtml`
       );
       const htmlTxt = await res.text();
       const parser = new DOMParser();
