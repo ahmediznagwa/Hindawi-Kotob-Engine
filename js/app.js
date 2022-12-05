@@ -302,6 +302,30 @@ const nagwaReaders = (function () {
 
     postNavigationHandler() {
       this.storeUserPreferences();
+      if (this.book.isLastChapter && !this.book.isLastPage) {
+        UTILS.DOM_ELS.nextChapterBtn.setAttribute("disabled", "disabled");
+        UTILS.DOM_ELS.nextPageBtn.removeAttribute("disabled");
+        return;
+      }
+      if (this.book.isLastChapter && this.book.isLastPage) {
+        UTILS.DOM_ELS.nextChapterBtn.setAttribute("disabled", "disabled");
+        UTILS.DOM_ELS.nextPageBtn.setAttribute("disabled", "disabled");
+        return;
+      }
+      if (this.book.isFirstChapter && !this.book.isFirstPage) {
+        UTILS.DOM_ELS.prevChapterBtn.setAttribute("disabled", "disabled");
+        UTILS.DOM_ELS.prevPageBtn.removeAttribute("disabled");
+        return;
+      }
+      if (this.book.isFirstChapter && this.book.isFirstPage) {
+        UTILS.DOM_ELS.prevChapterBtn.setAttribute("disabled", "disabled");
+        UTILS.DOM_ELS.prevPageBtn.setAttribute("disabled", "disabled");
+        return;
+      }
+      UTILS.DOM_ELS.nextChapterBtn.removeAttribute("disabled");
+      UTILS.DOM_ELS.nextPageBtn.removeAttribute("disabled");
+      UTILS.DOM_ELS.prevChapterBtn.removeAttribute("disabled");
+      UTILS.DOM_ELS.prevPageBtn.removeAttribute("disabled");
     }
 
     postFontResizeHandler() {
@@ -402,7 +426,7 @@ const nagwaReaders = (function () {
       this.changeFontSize();
       this.changePage();
       this.changeDarkMode(this.isDarkMode);
-      this.updateAllPagesNumber();
+      this.addWholeBook();
     }
     updateChapterPageState() {
       this.isLastPage = this.currentPage >= UTILS.calcPageCount() - 1;
@@ -435,24 +459,13 @@ const nagwaReaders = (function () {
         const currentChapter = titles[this.currentChapterIndex];
         const currentChapterPos = currentChapter.offsetLeft - x;
         UTILS.DOM_ELS.demoBook?.scrollTo(currentChapterPos, 0);
-        this.updateCurrentPageOfAllPages();
+        this.updatePagesCount();
       }
     }
 
-    // updateProgressPercentage() {
-    //   const pageLastWordIndex =
-    //     this.currentChapter.pagesContentRanges[this.currentPage][1];
-    //   this.currentProgressPercent = Math.floor(
-    //     (pageLastWordIndex / this.storyWordsCount) * 100
-    //   );
-    //   if (UTILS.DOM_ELS.percent)
-    //     UTILS.DOM_ELS.percent.innerText = this.currentProgressPercent + "%";
-    // }
-
-    updateCurrentPageOfAllPages() {
+    updatePagesCount() {
       this.userPreferences = new UserPreferences(this.bookId);
       const wholeBook = UTILS.DOM_ELS.demoBook;
-      const currentChapter = UTILS.DOM_ELS.book;
       const columnWidth = UTILS.extractComputedStyleNumber(
         UTILS.DOM_ELS.book,
         "width"
@@ -461,28 +474,22 @@ const nagwaReaders = (function () {
         UTILS.DOM_ELS.book,
         "column-gap"
       );
-      const titles = UTILS.DOM_ELS.demoBook?.querySelectorAll("h1");
-      if (titles) {
-        const scrollValue = (columnWidth - columnsGap) * this.currentPage;
-        const currentChapter = titles[this.currentChapterIndex];
-        console.log("total scroll value", wholeBook.scrollLeft);
-        console.log("CurrentChapterPosition", currentChapter.offsetLeft);
-        // console.log(
-        //   "Progress Value",
-        //   Math.abs(
-        //     (currentChapter.offsetLeft -
-        //       (columnWidth - columnsGap) * this.currentPage ) /
-        //       wholeBook.scrollWidth
-        //   ) * 100
-        // );
-        console.log(
-          "Current Page Number",
-          wholeBook.scrollWidth / currentChapter.offsetLeft
-        );
-      }
-      UTILS.DOM_ELS.currentPageOfAllPages.innerText = this.currentPage;
+      const currentPage = Math.abs(
+        wholeBook.scrollLeft / (columnWidth + columnsGap)
+      );
+      const pagesNo = wholeBook.scrollWidth / (columnWidth + columnsGap);
+      UTILS.DOM_ELS.currentPageOfAllPages.innerText = (currentPage + 1).toFixed(
+        0
+      );
+      // UTILS.DOM_ELS.percent.innerText = (
+      //   ((currentPage + 1) / pagesNo) *
+      //   100
+      // ).toFixed(0);
+      UTILS.DOM_ELS.percent.querySelector("span").style.width =
+        ((currentPage + 1) / pagesNo) * 100 + "%";
+      UTILS.DOM_ELS.allPages.textContent = Math.round(pagesNo);
     }
-    updateAllPagesNumber() {
+    addWholeBook() {
       const section = document.createElement("section");
       section.classList = "book demo";
       section.innerHTML = "";
@@ -490,23 +497,13 @@ const nagwaReaders = (function () {
         section.innerHTML = section.innerHTML += chapter?.innerHTML;
       });
       UTILS.DOM_ELS.bookWrapper.append(section);
-
-      const columnWidth = UTILS.extractComputedStyleNumber(
-        UTILS.DOM_ELS.book,
-        "width"
-      );
-      const columnsGap = UTILS.extractComputedStyleNumber(
-        UTILS.DOM_ELS.book,
-        "column-gap"
-      );
-      const pagesNo = section.scrollWidth / (columnWidth + columnsGap);
-      UTILS.DOM_ELS.allPages.textContent = Math.round(pagesNo);
-      this.scrollToCurrentPage();
+      setTimeout(() => {
+        this.scrollToCurrentPage();
+      }, 2000);
     }
 
     changeChapter(mode) {
       const oldChapterIndex = this.currentChapterIndex;
-      //increment or decrement the current page
       switch (mode) {
         case "next":
           if (!this.isLastChapter) {
@@ -663,8 +660,6 @@ $("body").click(function () {
 
   $(".bottom-bar").slideToggle();
 });
-$(
-  ".dropdown,  .bottom-bar"
-).click(function (e) {
+$(".dropdown,  .bottom-bar").click(function (e) {
   e.stopPropagation();
 });

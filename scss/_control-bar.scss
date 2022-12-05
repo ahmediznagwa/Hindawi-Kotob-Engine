@@ -4,12 +4,11 @@
   width: 100%;
   display: none;
   background-color: rgba(255, 255, 255, 0.75);
-  border-top: 1px solid #a6a5b2;
+  border-top: 1px solid #ddd;
   -webkit-backdrop-filter: blur(0.5rem);
   backdrop-filter: blur(0.5rem);
   padding: 1.5rem 2rem;
   bottom: 0;
-  min-width: 1024px;
   & > div {
     display: flex;
     align-items: center;
@@ -44,13 +43,13 @@
   #pagination-font-bigger {
     font-size: 25px;
   }
-  #pagination-font-reset{
+  #pagination-font-reset {
     font-size: 20 px;
-
   }
 }
 .pagination-info {
   margin: 0 2rem;
+  font-size: 1.8rem;
 }
 .bar-right {
   margin-left: auto;
@@ -70,5 +69,24 @@
   h5 {
     font-size: 1.8rem;
     margin-right: auto;
+  }
+}
+
+.pagination-percent {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: bold;  
+
+  > span {
+    position: absolute;
+    right: 0;
+    top: -1px;
+    height: 1px;
+    background-color: black;
+    transition: width .3s;
   }
 }
