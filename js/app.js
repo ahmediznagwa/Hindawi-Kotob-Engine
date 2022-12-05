@@ -1,6 +1,5 @@
-
-const prodRootUrl = 'https://ahmediznagwa.github.io/New-Hindawi-Reader'
-const devRootUrl = '..'
+const prodRootUrl = "https://ahmediznagwa.github.io/New-Hindawi-Reader";
+const devRootUrl = "..";
 const nagwaReaders = (function () {
   class UTILS {
     /**
@@ -112,7 +111,9 @@ const nagwaReaders = (function () {
     }
 
     async getHTMLDoc(name) {
-      const res = await fetch(`${prodRootUrl}/packages/${this.bookId}/Content/${name}`);
+      const res = await fetch(
+        `${prodRootUrl}/packages/${this.bookId}/Content/${name}`
+      );
       return await res.text();
     }
   }
@@ -305,30 +306,6 @@ const nagwaReaders = (function () {
 
     postNavigationHandler() {
       this.storeUserPreferences();
-      if (this.book.isLastChapter && !this.book.isLastPage) {
-        UTILS.DOM_ELS.nextChapterBtn.setAttribute("disabled", "disabled");
-        UTILS.DOM_ELS.nextPageBtn.removeAttribute("disabled");
-        return;
-      }
-      if (this.book.isLastChapter && this.book.isLastPage) {
-        UTILS.DOM_ELS.nextChapterBtn.setAttribute("disabled", "disabled");
-        UTILS.DOM_ELS.nextPageBtn.setAttribute("disabled", "disabled");
-        return;
-      }
-      if (this.book.isFirstChapter && !this.book.isFirstPage) {
-        UTILS.DOM_ELS.prevChapterBtn.setAttribute("disabled", "disabled");
-        UTILS.DOM_ELS.prevPageBtn.removeAttribute("disabled");
-        return;
-      }
-      if (this.book.isFirstChapter && this.book.isFirstPage) {
-        UTILS.DOM_ELS.prevChapterBtn.setAttribute("disabled", "disabled");
-        UTILS.DOM_ELS.prevPageBtn.setAttribute("disabled", "disabled");
-        return;
-      }
-      UTILS.DOM_ELS.nextChapterBtn.removeAttribute("disabled");
-      UTILS.DOM_ELS.nextPageBtn.removeAttribute("disabled");
-      UTILS.DOM_ELS.prevChapterBtn.removeAttribute("disabled");
-      UTILS.DOM_ELS.prevPageBtn.removeAttribute("disabled");
     }
 
     postFontResizeHandler() {
@@ -444,6 +421,19 @@ const nagwaReaders = (function () {
       this.canDecreaseFont =
         this.fontSize >=
         this.rootFontSize - this.rootFontSize * this.fontSizeStep;
+
+      UTILS.DOM_ELS.resetFontBtn.textContent =
+        Math.round((this.fontSize / this.rootFontSize) * 100) + '%';
+      if (!this.canIncreaseFont) {
+        UTILS.DOM_ELS.biggerFontBtn.classList.add("disabled");
+        return;
+      }
+      if (!this.canDecreaseFont) {
+        UTILS.DOM_ELS.smallerFontBtn.classList.add("disabled");
+        return;
+      }
+      UTILS.DOM_ELS.smallerFontBtn.classList.remove("disabled");
+      UTILS.DOM_ELS.biggerFontBtn.classList.remove("disabled");
     }
     scrollToCurrentPage() {
       const columnWidth = UTILS.extractComputedStyleNumber(
@@ -541,6 +531,41 @@ const nagwaReaders = (function () {
       this.changePage();
     }
 
+    matchPageControlsWithState() {
+      if (
+        UTILS.DOM_ELS.prevChapterBtn &&
+        UTILS.DOM_ELS.nextChapterBtn &&
+        UTILS.DOM_ELS.prevPageBtn &&
+        UTILS.DOM_ELS.nextPageBtn
+      ) {
+        //if it's only one or chapter less and one page or less
+        //if it's only one or chapter less and one page or less
+        //if it's only one or chapter less and one page or less
+        if (UTILS.calcPageCount() < 2 && this.chapters.length < 2) {
+          UTILS.DOM_ELS.prevChapterBtn.disabled = true;
+          UTILS.DOM_ELS.nextChapterBtn.disabled = true;
+          UTILS.DOM_ELS.prevPageBtn.disabled = true;
+          UTILS.DOM_ELS.nextPageBtn.disabled = true;
+        } else if (this.isFirstPage && this.isFirstChapter) {
+          UTILS.DOM_ELS.prevChapterBtn.disabled = true;
+          UTILS.DOM_ELS.nextChapterBtn.disabled = false;
+          UTILS.DOM_ELS.prevPageBtn.disabled = true;
+          UTILS.DOM_ELS.nextPageBtn.disabled = false;
+        } else if (this.isLastPage && this.isLastChapter) {
+          UTILS.DOM_ELS.prevChapterBtn.disabled = false;
+          UTILS.DOM_ELS.nextChapterBtn.disabled = true;
+          UTILS.DOM_ELS.prevPageBtn.disabled = false;
+          UTILS.DOM_ELS.nextPageBtn.disabled = true;
+        } else {
+          UTILS.DOM_ELS.prevChapterBtn.disabled = false;
+          UTILS.DOM_ELS.nextChapterBtn.disabled = false;
+          UTILS.DOM_ELS.prevPageBtn.disabled = false;
+          UTILS.DOM_ELS.nextPageBtn.disabled = false;
+        }
+        if (this.isLastChapter) UTILS.DOM_ELS.nextChapterBtn.disabled = true;
+      }
+    }
+
     changePage(mode) {
       //increment or decrement the current page
       switch (mode) {
@@ -572,12 +597,8 @@ const nagwaReaders = (function () {
       this.currentScrollPercentage = this.currentPage / UTILS.calcPageCount();
       //scroll to the current page
       this.scrollToCurrentPage();
-      //update DOM with page content percentage
-      // this.updateProgressPercentage();
       //disable or enable the pagination controls
-      // this.matchPageControlsWithState();
-      //update the ID of first and last word in the current page
-      // this.updateStartEndWordID();
+      this.matchPageControlsWithState();
     }
 
     changeFontSize = (mode) => {

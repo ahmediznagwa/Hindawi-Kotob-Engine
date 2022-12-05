@@ -1,3 +1,7 @@
+.disabled {
+  pointer-events: none;
+  opacity: .5;
+}
 .bottom-bar {
   position: fixed;
   left: 0;
@@ -35,6 +39,11 @@
     height: 60px;
     &:last-child {
       border-right: 0;
+    }
+
+    &.disabled {
+      opacity: 1;
+      color: #999;
     }
   }
   #pagination-font-smaller {
@@ -79,7 +88,7 @@
   left: 0;
   text-align: center;
   font-size: 1.4rem;
-  font-weight: bold;  
+  font-weight: bold;
 
   > span {
     position: absolute;
@@ -87,6 +96,6 @@
     top: -1px;
     height: 1px;
     background-color: black;
-    transition: width .3s;
+    transition: width 0.3s;
   }
 }
