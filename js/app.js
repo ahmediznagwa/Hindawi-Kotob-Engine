@@ -1,3 +1,6 @@
+
+const prodRootUrl = 'https://ahmediznagwa.github.io/New-Hindawi-Reader'
+const devRootUrl = '..'
 const nagwaReaders = (function () {
   class UTILS {
     /**
@@ -81,7 +84,7 @@ const nagwaReaders = (function () {
 
     async setNav() {
       const res = await fetch(
-        `./../packages/${this.bookId}/Navigation/nav.xhtml`
+        `${prodRootUrl}/packages/${this.bookId}/Navigation/nav.xhtml`
       );
       const htmlTxt = await res.text();
       const parser = new DOMParser();
@@ -109,7 +112,7 @@ const nagwaReaders = (function () {
     }
 
     async getHTMLDoc(name) {
-      const res = await fetch(`../packages/${this.bookId}/Content/${name}`);
+      const res = await fetch(`${prodRootUrl}/packages/${this.bookId}/Content/${name}`);
       return await res.text();
     }
   }
@@ -140,7 +143,7 @@ const nagwaReaders = (function () {
         const currentSrc = img.attributes.src.value;
         img.src = currentSrc.replace(
           "../Images/",
-          `../packages/${this.bookId}/Images/`
+          `${prodRootUrl}/packages/${this.bookId}/Images/`
         );
       });
     }
