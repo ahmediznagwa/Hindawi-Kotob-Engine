@@ -313,9 +313,6 @@ const nagwaReaders = (function () {
       this.storeUserPreferences();
     };
     changePageToCurrentPercentage() {
-      this.book.currentPage = Math.round(
-        this.book.currentScrollPercentage * UTILS.calcPageCount()
-      );
       this.book.changePage();
     }
 
@@ -428,7 +425,6 @@ const nagwaReaders = (function () {
         this.bookId
       );
       this.currentPage = Math.min(currentPage || 0, UTILS.calcPageCount() - 1);
-      this.currentScrollPercentage = 0;
       this.currentProgressPercent = 0;
       this.rootFontSize = 18;
       this.isDarkMode = isDarkMode;
@@ -631,8 +627,6 @@ const nagwaReaders = (function () {
       }
       //Update the state of chapter and page
       this.updateChapterPageState();
-      //update scroll percentage
-      this.currentScrollPercentage = this.currentPage / UTILS.calcPageCount();
       //scroll to the current page
       this.scrollToCurrentPage();
       //disable or enable the pagination controls

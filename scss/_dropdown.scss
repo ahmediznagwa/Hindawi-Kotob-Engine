@@ -17,6 +17,7 @@
   color: var(--textColor);
   border-radius: 1.4rem;
   box-shadow: 0 0 30px rgba($color: #000000, $alpha: 0.2);
+  z-index: 999;
   &:before {
     content: "\f0d7";
     position: absolute;
