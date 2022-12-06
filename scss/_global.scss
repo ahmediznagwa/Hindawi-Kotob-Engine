@@ -1,3 +1,10 @@
+:root {
+  --bgColor: white;
+  --textColor: black;
+  --darkBg: black;
+  --greyBg: #f5f5f5;
+}
+
 *,
 ::after,
 ::before {
@@ -12,13 +19,25 @@ body {
   padding: 0;
   height: 100%;
 
-  &.darkmode {
-    filter: invert(1);
-    background-color: #000;
+  .book-container {
+    background-color: var(--bgColor);
+    color: var(--textColor);
+  }
 
-    h1 {
-      color: #000;
-    }
+  .blockquote, .epigraph {
+    background-color: var(--greyBg);
+  }
+
+  &.dark {
+    --bgColor: black;
+    --textColor: white;
+    --darkBg: white;
+    --greyBg: #111;
+  }
+  &.warm {
+    --bgColor: #f6efdf;
+    --textColor: black;
+    --darkBg: #efc976;
+    --greyBg: #f2e4c5;
   }
 }
-

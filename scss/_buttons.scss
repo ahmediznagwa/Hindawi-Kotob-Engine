@@ -6,6 +6,7 @@
   appearance: none;
   cursor: pointer;
   transition: 0.3s;
+  color: inherit;
   padding: 0;
   &[disabled] {
     pointer-events: none;
@@ -43,6 +44,5 @@
 }
 .btn-link {
   border: 0;
-  color: #333;
   background-color: transparent;
 }

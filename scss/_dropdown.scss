@@ -13,16 +13,16 @@
   left: -10px;
   display: none;
   min-width: 34.9rem;
-  background-color: #f2f2f6;
-  // padding: 1rem;
+  background-color: var(--bgColor);
+  color: var(--textColor);
   border-radius: 1.4rem;
   box-shadow: 0 0 30px rgba($color: #000000, $alpha: 0.2);
   &:before {
     content: "\f0d7";
     position: absolute;
     font-family: $fAwsome;
-    color: #f2f2f6;
-    bottom: -25px;
+    color: var(--bgColor);
+    bottom: -22px;
     left: 2rem;
     z-index: 1;
     font-weight: bold;

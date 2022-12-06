@@ -1,6 +1,6 @@
 .disabled {
   pointer-events: none;
-  opacity: .5;
+  opacity: 0.5;
 }
 .bottom-bar {
   position: fixed;
@@ -53,7 +53,7 @@
     font-size: 25px;
   }
   #pagination-font-reset {
-    font-size: 20 px;
+    font-size: 20px;
   }
 }
 .pagination-info {
@@ -95,7 +95,46 @@
     right: 0;
     top: -1px;
     height: 1px;
-    background-color: black;
+    background-color: #ff7a4f;
     transition: width 0.3s;
+  }
+}
+
+.color-modes {
+  display: flex;
+  .change-color {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #ddd;
+    cursor: pointer;
+
+    &[data-value="white"] {
+      background-color: white;
+      border-color: white;
+      &.selected {
+        border-color: black;
+      }
+    }
+    &[data-value="dark"] {
+      background-color: black;
+      border-color: black;
+      &.selected {
+        border-color: white;
+      }
+    }
+    &[data-value="warm"] {
+      background-color: #f6efdf;
+      border-color: #f6efdf;
+      &.selected {
+        border-color: #efc976;
+      }
+    }
+
+    & + .change-color {
+      margin-inline-start: 10px;
+    }
+
+    
   }
 }

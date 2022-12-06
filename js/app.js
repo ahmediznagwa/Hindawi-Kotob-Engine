@@ -41,6 +41,9 @@ const nagwaReaders = (function () {
       get darkModeChk() {
         return document.querySelector(".change-color-mode input");
       },
+      get colorModeBtns() {
+        return document.querySelectorAll(".change-color");
+      },
       get book() {
         return document.querySelector(".book:not(.demo)");
       },
@@ -157,10 +160,12 @@ const nagwaReaders = (function () {
       this.chapter = 0;
       this.fontSize = 0;
       this.isDarkMode = false;
+      this.colorMode = "white";
 
       this.localStorageKeys = {
         fontSize: `${this.bookId}_fontSize`,
         isDarkMode: "isDarkMode",
+        colorMode: "colorMode",
         lastPosition: `${this.bookId}_lastPosition`, //its value in Localstorage will be a JSON containing chapter and page,
         page: "page",
         chapter: "chapter",
@@ -172,12 +177,14 @@ const nagwaReaders = (function () {
       currentChapter,
       fontSize,
       isDarkMode,
+      colorMode,
       saveToLocalStorage = true
     ) {
       this.page = currentPage;
       this.chapter = currentChapter;
       this.fontSize = fontSize;
       this.isDarkMode = isDarkMode;
+      this.colorMode = colorMode;
       if (saveToLocalStorage) {
         localStorage.setItem(
           this.localStorageKeys.lastPosition,
@@ -188,6 +195,7 @@ const nagwaReaders = (function () {
         );
         localStorage.setItem(this.localStorageKeys.fontSize, this.fontSize);
         localStorage.setItem(this.localStorageKeys.isDarkMode, this.isDarkMode);
+        localStorage.setItem(this.localStorageKeys.colorMode, this.colorMode);
       }
     }
 
@@ -196,6 +204,7 @@ const nagwaReaders = (function () {
       this.isDarkMode = JSON.parse(
         localStorage.getItem(this.localStorageKeys.isDarkMode)
       );
+      this.colorMode = localStorage.getItem(this.localStorageKeys.colorMode);
       const lastPosition = JSON.parse(
         localStorage.getItem(this.localStorageKeys.lastPosition)
       );
@@ -204,6 +213,7 @@ const nagwaReaders = (function () {
       return {
         fontSize: this.fontSize,
         isDarkMode: this.isDarkMode,
+        colorMode: this.colorMode,
         chapter: this.chapter,
         page: this.page,
       };
@@ -227,7 +237,8 @@ const nagwaReaders = (function () {
         this?.userPreferences?.fontSize,
         this?.userPreferences?.chapter,
         this?.userPreferences?.page,
-        this?.userPreferences?.isDarkMode
+        this?.userPreferences?.isDarkMode,
+        this?.userPreferences?.colorMode
       );
     }
 
@@ -245,7 +256,8 @@ const nagwaReaders = (function () {
         this.book.currentPage,
         this.book.currentChapterIndex,
         this.book.fontSize,
-        this.book.isDarkMode
+        this.book.isDarkMode,
+        this.book.colorMode
       );
     }
 
@@ -291,6 +303,9 @@ const nagwaReaders = (function () {
         "input",
         this.darkModeCheckInputEventHandler.bind(this)
       );
+      UTILS.DOM_ELS.colorModeBtns?.forEach((btn) => {
+        btn.addEventListener("click", this.colorModeEventHandler.bind(this));
+      });
     }
 
     resizeEventHandler = () => {
@@ -309,8 +324,12 @@ const nagwaReaders = (function () {
     }
 
     postFontResizeHandler() {
-      this.changePageToCurrentPercentage();
-      this.storeUserPreferences();
+      UTILS.DOM_ELS.allPages.textContent = "...";
+      UTILS.DOM_ELS.currentPageOfAllPages.textContent = "...";
+      setTimeout(() => {
+        this.changePageToCurrentPercentage();
+        this.storeUserPreferences();
+      }, 1000);
     }
 
     goToNextPage() {
@@ -371,9 +390,20 @@ const nagwaReaders = (function () {
       this.book.changeDarkMode(isDarkMode);
       this.storeUserPreferences();
     }
+    setColorMode(colorMode) {
+      this.book.changeColorMode(colorMode);
+      this.storeUserPreferences();
+    }
 
     darkModeCheckInputEventHandler() {
       this.setDarkMode(/* Don't pass anything so it can fallback to the checkbox value */);
+    }
+    colorModeEventHandler(e) {
+      UTILS.DOM_ELS.colorModeBtns?.forEach((btn) => {
+        btn.classList.remove("selected");
+      });
+      e.target.classList.add("selected");
+      this.setColorMode(e.target.dataset.value);
     }
   }
 
@@ -384,7 +414,8 @@ const nagwaReaders = (function () {
       fontSize = 18,
       currentChapterIndex = 0,
       currentPage = 0,
-      isDarkMode = null
+      isDarkMode = null,
+      colorMode = "white"
     ) {
       this.bookId = bookId;
       this.chapters = chapters;
@@ -401,11 +432,14 @@ const nagwaReaders = (function () {
       this.currentProgressPercent = 0;
       this.rootFontSize = 18;
       this.isDarkMode = isDarkMode;
+      this.colorMode = colorMode;
       this.fontSizeStep = 0.15;
       this.fontSize = fontSize || this.rootFontSize;
+      this.allBookTitles = [];
       this.changeFontSize();
       this.changePage();
       this.changeDarkMode(this.isDarkMode);
+      this.changeColorMode(this.colorMode);
       this.addWholeBook();
     }
     updateChapterPageState() {
@@ -423,7 +457,7 @@ const nagwaReaders = (function () {
         this.rootFontSize - this.rootFontSize * this.fontSizeStep;
 
       UTILS.DOM_ELS.resetFontBtn.textContent =
-        Math.round((this.fontSize / this.rootFontSize) * 100) + '%';
+        Math.round((this.fontSize / this.rootFontSize) * 100) + "%";
       if (!this.canIncreaseFont) {
         UTILS.DOM_ELS.biggerFontBtn.classList.add("disabled");
         return;
@@ -435,7 +469,23 @@ const nagwaReaders = (function () {
       UTILS.DOM_ELS.smallerFontBtn.classList.remove("disabled");
       UTILS.DOM_ELS.biggerFontBtn.classList.remove("disabled");
     }
+
+    addWholeBook() {
+      const section = document.createElement("section");
+      section.classList = "book demo";
+      section.innerHTML = "";
+      this.chapters.forEach((chapter) => {
+        section.innerHTML = section.innerHTML += chapter?.innerHTML;
+      });
+      UTILS.DOM_ELS.bookWrapper.append(section);
+      this.allBookTitles = UTILS.DOM_ELS.demoBook?.querySelectorAll("h1");
+      setTimeout(() => {
+        this.scrollToCurrentPage();
+      }, 2000);
+    }
+
     scrollToCurrentPage() {
+      "scrolled";
       const columnWidth = UTILS.extractComputedStyleNumber(
         UTILS.DOM_ELS.book,
         "width"
@@ -447,11 +497,15 @@ const nagwaReaders = (function () {
       const x = (columnWidth + columnsGap) * this.currentPage;
       UTILS.DOM_ELS.book.scrollTo(-x, 0);
 
-      const titles = UTILS.DOM_ELS.demoBook?.querySelectorAll("h1");
-      if (titles) {
-        const currentChapter = titles[this.currentChapterIndex];
-        const currentChapterPos = currentChapter.offsetLeft - x;
+      // Scrolling in the hidden book
+      if (this.allBookTitles) {
+        const currentChapter = this.allBookTitles[this.currentChapterIndex];
+        const currentChapterPos = currentChapter?.offsetLeft - x;
         UTILS.DOM_ELS.demoBook?.scrollTo(currentChapterPos, 0);
+
+        UTILS.DOM_ELS.biggerFontBtn.classList.remove("disabled");
+        UTILS.DOM_ELS.smallerFontBtn.classList.remove("disabled");
+        UTILS.DOM_ELS.resetFontBtn.classList.remove("disabled");
         this.updatePagesCount();
       }
     }
@@ -468,31 +522,15 @@ const nagwaReaders = (function () {
         "column-gap"
       );
       const currentPage = Math.abs(
-        wholeBook.scrollLeft / (columnWidth + columnsGap)
+        wholeBook?.scrollLeft / (columnWidth + columnsGap)
       );
-      const pagesNo = wholeBook.scrollWidth / (columnWidth + columnsGap);
-      UTILS.DOM_ELS.currentPageOfAllPages.innerText = (currentPage + 1).toFixed(
-        0
-      );
-      // UTILS.DOM_ELS.percent.innerText = (
-      //   ((currentPage + 1) / pagesNo) *
-      //   100
-      // ).toFixed(0);
+      const pagesNo = wholeBook?.scrollWidth / (columnWidth + columnsGap);
+      UTILS.DOM_ELS.currentPageOfAllPages.textContent = (
+        currentPage + 1
+      ).toFixed(0);
       UTILS.DOM_ELS.percent.querySelector("span").style.width =
         ((currentPage + 1) / pagesNo) * 100 + "%";
       UTILS.DOM_ELS.allPages.textContent = Math.round(pagesNo);
-    }
-    addWholeBook() {
-      const section = document.createElement("section");
-      section.classList = "book demo";
-      section.innerHTML = "";
-      this.chapters.forEach((chapter) => {
-        section.innerHTML = section.innerHTML += chapter?.innerHTML;
-      });
-      UTILS.DOM_ELS.bookWrapper.append(section);
-      setTimeout(() => {
-        this.scrollToCurrentPage();
-      }, 2000);
     }
 
     changeChapter(mode) {
@@ -642,6 +680,13 @@ const nagwaReaders = (function () {
       } else {
         document.body.classList.remove("darkmode");
       }
+    }
+    changeColorMode(colorMode) {
+      this.colorMode = colorMode;
+      document.body.classList = this.colorMode;
+      document
+        .querySelector(`[data-value=${colorMode}]`)
+        .classList.add("selected");
     }
   }
   const controller = new Controller();

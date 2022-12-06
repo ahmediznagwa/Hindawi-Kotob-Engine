@@ -1,4 +1,3 @@
-
 .checkbox-switch {
   display: flex;
   align-items: center;
@@ -19,20 +18,19 @@
     input[type="checkbox"] {
       display: none;
 
-   
-
       &:focus + .slider,
       &:focus + input[type="hidden"] + .slider {
         box-shadow: 0 0 1px green;
       }
 
-      &:checked + .slider:before,
-      &:checked + input[type="hidden"] + .slider:before {
-        transform: translateX(22px);
+      &:checked + .slider,
+      &:checked + input[type="hidden"] + .slider {
+        background-color: $primaryColor;
+        &:before {
+          transform: translateX(16px);
+        }
       }
-
     }
-
 
     .slider {
       position: absolute;
@@ -41,26 +39,23 @@
       left: 0;
       right: 0;
       bottom: 0;
-      // background-color: lighten($borderGrey, 5);
-      border: solid 1px gray;
       background-color: gray;
       transition: 0.2s;
       border-radius: 20px;
+      height: 24px;
 
       &:before {
         position: absolute;
         content: "";
         height: 20px;
         width: 20px;
-        top: -2px;
-        left: -1px;
+        top: 2px;
+        left: 2px;
         bottom: 0;
         background-color: white;
         transition: 0.2s;
         border-radius: 50%;
-        border: solid 1px gray;
       }
     }
   }
-
 }
