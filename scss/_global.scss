@@ -24,7 +24,8 @@ body {
     color: var(--textColor);
   }
 
-  .blockquote, .epigraph {
+  .blockquote,
+  .epigraph {
     background-color: var(--greyBg);
   }
 
@@ -40,4 +41,52 @@ body {
     --darkBg: #efc976;
     --greyBg: #f2e4c5;
   }
+}
+
+.actions-menu {
+  background-color: white;
+  box-shadow: 2px 4px 8px rgba($color: #000000, $alpha: 0.1);
+  border-radius: 8px;
+
+  ul {
+    display: flex;
+  }
+
+  li {
+    &:first-child a {
+      border-radius: 8px 0 0 8px;
+    }
+    &:last-child a {
+      border-radius: 0 8px 8px 0;
+    }
+
+    &.unhighlight {
+      display: none;
+    }
+  }
+  a {
+    color: #000;
+    font-size: 0.8em;
+    padding: 5px 10px;
+    display: flex;
+
+    &:hover {
+      background-color: rgba($color: var(--textColor), $alpha: 0.5);
+      text-decoration: none;
+    }
+  }
+
+  &.has-highlight {
+    .highlight {
+      display: none;
+    }
+    .unhighlight {
+      display: block;
+    }
+  }
+}
+
+.highlighted {
+  background-color: #f5aa00;
+  transition: background-color 0.3s;
 }

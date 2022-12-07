@@ -27,7 +27,8 @@ body .book-container {
   color: var(--textColor);
 }
 
-body .blockquote, body .epigraph {
+body .blockquote,
+body .epigraph {
   background-color: var(--greyBg);
 }
 
@@ -43,6 +44,59 @@ body.warm {
   --textColor: black;
   --darkBg: #efc976;
   --greyBg: #f2e4c5;
+}
+
+.actions-menu {
+  background-color: white;
+  -webkit-box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.1);
+          box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.actions-menu ul {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.actions-menu li:first-child a {
+  border-radius: 8px 0 0 8px;
+}
+
+.actions-menu li:last-child a {
+  border-radius: 0 8px 8px 0;
+}
+
+.actions-menu li.unhighlight {
+  display: none;
+}
+
+.actions-menu a {
+  color: #000;
+  font-size: 0.8em;
+  padding: 5px 10px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.actions-menu a:hover {
+  background-color: rgba(var(--textColor), 0.5);
+  text-decoration: none;
+}
+
+.actions-menu.has-highlight .highlight {
+  display: none;
+}
+
+.actions-menu.has-highlight .unhighlight {
+  display: block;
+}
+
+.highlighted {
+  background-color: #f5aa00;
+  -webkit-transition: background-color 0.3s;
+  transition: background-color 0.3s;
 }
 
 @font-face {

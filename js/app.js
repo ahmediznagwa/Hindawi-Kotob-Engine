@@ -59,6 +59,9 @@ const nagwaReaders = (function () {
       get bookWrapper() {
         return document.querySelector(".book-wrapper");
       },
+      get words() {
+        return document.querySelectorAll("p");
+      },
     };
 
     static extractComputedStyleNumber(el, style) {
@@ -139,6 +142,7 @@ const nagwaReaders = (function () {
       UTILS.DOM_ELS.book.innerHTML = "";
       UTILS.DOM_ELS.book.append(section);
       this.updateImagesPaths();
+      this.bindClickEventOnAllWordsInChapter();
     }
 
     updateImagesPaths() {
@@ -150,6 +154,66 @@ const nagwaReaders = (function () {
           `${prodRootUrl}/packages/${this.bookId}/Images/`
         );
       });
+    }
+
+    bindClickEventOnAllWordsInChapter() {
+      UTILS.DOM_ELS.words?.forEach((word) => {
+        word.addEventListener("click", this.wordEventHandler.bind(this));
+      });
+    }
+
+    wordEventHandler(e) {
+      e.stopPropagation();
+      $(".actions-menu").remove();
+      const top = $(e.target).offset().top;
+      const menu = document.createElement("div");
+      menu.classList.add("actions-menu");
+      const actionsMenu = `
+        <ul>
+          <li class="highlight"><a href="#">Highlight</a></li>
+          <li class="unhighlight"><a href="#">Unhighlight</a></li>
+          <li class="copy"><a href="#">Copy</a></li>
+        </ul>
+      `;
+
+      if ($(e.target).hasClass("highlighted")) {
+        $(menu).addClass("has-highlight");
+      }
+      menu.innerHTML = actionsMenu;
+      document.body.appendChild(menu);
+
+      // Positioning the appended menu according to word
+      $(menu).css({
+        position: "absolute",
+        left: window.innerWidth / 2,
+        transform: "translate(-50%,-100%)",
+        top,
+      });
+
+      //Binding click events on menu
+      $(menu).on("click", function (e) {
+        e.stopPropagation();
+      });
+      $(menu)
+        .find(".highlight")
+        .on("click", function () {
+          $(this).addClass("has-highlight");
+          $(e.target).addClass("highlighted");
+          $(".actions-menu").remove();
+        });
+      $(menu)
+        .find(".unhighlight")
+        .on("click", function () {
+          $(this).removeClass("has-highlight");
+          $(e.target).removeClass("highlighted");
+          $(".actions-menu").remove();
+        });
+      $(menu)
+        .find(".copy")
+        .on("click", function () {
+          navigator.clipboard.writeText(e.target.textContent);
+          $(".actions-menu").remove();
+        });
     }
   }
 
@@ -714,13 +778,13 @@ function _showDropdownMenu(dropdownContainer) {
 $(document).keydown(function (e) {
   if (e.keyCode == 27) {
     $(".dropdown").removeClass("show");
-
-    $(".bottom-bar").slideToggle();
+    $(".actions-menu").remove();
+    $(".bottom-bar").slideUp();
   }
 });
 $("body").click(function () {
+  $(".actions-menu").remove();
   $(".dropdown").removeClass("show");
-
   $(".bottom-bar").slideToggle();
 });
 $(".dropdown,  .bottom-bar").click(function (e) {
