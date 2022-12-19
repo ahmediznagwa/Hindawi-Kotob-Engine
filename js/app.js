@@ -165,6 +165,36 @@ const nagwaReaders = (function () {
       });
     }
 
+    highlightWord(target) {
+      $(target).closest(".actions-menu").addClass("has-highlight");
+      $(target).addClass("highlighted");
+      $(".actions-menu").remove();
+      this.saveHighlightedWords();
+    }
+    unhighlightWord(target) {
+      $(target).closest(".actions-menu").removeClass("has-highlight");
+      $(target).removeClass("highlighted");
+      $(".actions-menu").remove();
+    }
+
+    saveHighlightedWords() {
+      const highlightedWords = Array.from(
+        document.querySelectorAll(".highlighted")
+      );
+      console.log(highlightedWords);
+      localStorage.setItem(
+        "highlightedWords",
+        JSON.stringify({
+          chapter: this.currentChapterIndex,
+          words: highlightedWords,
+        })
+      );
+    }
+    copyText(target) {
+      navigator.clipboard.writeText(target.textContent);
+      $(".actions-menu").remove();
+    }
+
     bindClickEventOnAllWordsInChapter() {
       UTILS.DOM_ELS.words?.forEach((word) => {
         word.addEventListener("click", this.wordEventHandler.bind(this));
@@ -199,36 +229,19 @@ const nagwaReaders = (function () {
         top,
       });
 
-      //Binding click events on menu
+      // Binding click events on menu
       $(menu).on("click", function (e) {
         e.stopPropagation();
       });
-      $(menu)
-        .find(".highlight")
-        .addEventListener("click", this.highlightWord(menu, this.target));
-      $(menu)
-        .find(".unhighlight")
-        .on("click", function () {
-          $(this).removeClass("has-highlight");
-          $(e.target).removeClass("highlighted");
-          $(".actions-menu").remove();
-        });
-      $(menu)
-        .find(".copy")
-        .on("click", function () {
-          navigator.clipboard.writeText(e.target.textContent);
-          $(".actions-menu").remove();
-        });
-    }
-
-    highlightWord(menu, targetEl) {
-      $(menu)
-        .find(".highlight")
-        .on("click", function () {
-          $(this).addClass("has-highlight");
-          $(targetEl).addClass("highlighted");
-          $(".actions-menu").remove();
-        });
+      menu
+        .querySelector(".highlight")
+        .addEventListener("click", this.highlightWord.bind(this, e.target));
+      menu
+        .querySelector(".unhighlight")
+        .addEventListener("click", this.unhighlightWord.bind(this, e.target));
+      menu
+        .querySelector(".copy")
+        .addEventListener("click", this.copyText.bind(this, e.target));
     }
   }
 
@@ -283,7 +296,9 @@ const nagwaReaders = (function () {
       this.isDarkMode = JSON.parse(
         localStorage.getItem(this.localStorageKeys.isDarkMode)
       );
-      this.colorMode = localStorage.getItem(this.localStorageKeys.colorMode);
+      this.colorMode = localStorage.getItem(this.localStorageKeys.colorMode)
+        ? localStorage.getItem(this.localStorageKeys.colorMode)
+        : "white";
       const lastPosition = JSON.parse(
         localStorage.getItem(this.localStorageKeys.lastPosition)
       );
@@ -337,7 +352,6 @@ const nagwaReaders = (function () {
         this.book.fontSize,
         this.book.isDarkMode,
         this.book.colorMode
-        // this.book.hi
       );
     }
 
@@ -575,9 +589,6 @@ const nagwaReaders = (function () {
         const currentChapter = this.allBookTitles[this.currentChapterIndex];
         const currentChapterPos = currentChapter?.offsetLeft - x;
         UTILS.DOM_ELS.demoBook?.scrollTo(currentChapterPos, 0);
-        UTILS.DOM_ELS.biggerFontBtn.classList.remove("disabled");
-        UTILS.DOM_ELS.smallerFontBtn.classList.remove("disabled");
-        UTILS.DOM_ELS.resetFontBtn.classList.remove("disabled");
         this.updatePagesCount();
       }
     }
@@ -757,9 +768,6 @@ const nagwaReaders = (function () {
     }
   }
   const controller = new Controller();
-
-  // 1708ecc3-7192-427b-8292-35c38bafbfae
-  // 26dd5f00-0c75-4367-adea-537ece731385
   controller.initWithBookId("26dd5f00-0c75-4367-adea-537ece731385");
 })();
 

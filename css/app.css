@@ -273,9 +273,9 @@ h1,
       -ms-flex: 1;
           flex: 1;
   text-align: center;
-  border-right: 0.01rem solid #cacaca;
+  border-right: 0.01rem solid rgba(var(--textColor), 0.2);
   border-radius: 0;
-  border-bottom: 0.01rem solid #cacaca;
+  border-bottom: 0.01rem solid rgba(var(--textColor), 0.2);
   padding: 20px;
   height: 60px;
 }
