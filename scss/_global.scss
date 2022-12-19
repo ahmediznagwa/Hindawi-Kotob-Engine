@@ -1,8 +1,8 @@
 :root {
-  --bgColor: white;
-  --textColor: black;
-  --darkBg: black;
-  --greyBg: #f5f5f5;
+  --bgColor: 255, 255, 255;
+  --textColor: 0, 0, 0;
+  --darkBg: 0, 0, 0;
+  --greyBg: 245, 245, 245;
 }
 
 *,
@@ -16,37 +16,58 @@ html {
 }
 
 body {
+  --bgColorRgb: rgba(var(--bgColor), 1);
+  --textColorRgb: rgba(var(--textColor), 1);
+  --darkBgRgb: rgba(var(--darkBg), 1);
+  --greyBgRgb: rgba(var(--greyBg), 1);
+
   padding: 0;
   height: 100%;
 
   .book-container {
-    background-color: var(--bgColor);
-    color: var(--textColor);
+    background-color: var(--bgColorRgb);
+    color: var(--textColorRgb);
   }
 
   .blockquote,
   .epigraph {
-    background-color: var(--greyBg);
+    background-color: var(--greyBgRgb);
   }
 
   &.dark {
-    --bgColor: black;
-    --textColor: white;
-    --darkBg: white;
-    --greyBg: #111;
+    --bgColor: 0, 0, 0;
+    --textColor: 255, 255, 255;
+    --darkBg: 255, 255, 255;
+    --greyBg: 17, 17, 17;
   }
   &.warm {
-    --bgColor: #f6efdf;
-    --textColor: black;
-    --darkBg: #efc976;
-    --greyBg: #f2e4c5;
+    --bgColor: 246, 239, 223;
+    --textColor: 0, 0, 0;
+    --darkBg: 239, 201, 118;
+    --greyBg: 242, 228, 197;
   }
 }
 
 .actions-menu {
-  background-color: white;
+  background-color: var(--textColorRgb);
+  color: var(--bgColorRgb);
   box-shadow: 2px 4px 8px rgba($color: #000000, $alpha: 0.1);
   border-radius: 8px;
+
+  &::after {
+    top: 100%;
+    left: 50%;
+    border: solid transparent;
+    content: "";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+    border-color: rgba(136, 183, 213, 0);
+    border-top-color: var(--textColorRgb);
+    border-width: 6px;
+    margin-left: -6px;
+  }
 
   ul {
     display: flex;
@@ -63,15 +84,18 @@ body {
     &.unhighlight {
       display: none;
     }
+
+    & + li a {
+      border-left: 1px solid rgba(var(--bgColor), 0.2);
+    }
   }
   a {
-    color: #000;
+    color: inherit;
     font-size: 0.8em;
     padding: 5px 10px;
     display: flex;
-
     &:hover {
-      background-color: rgba($color: var(--textColor), $alpha: 0.5);
+      background-color: rgba(var(--textColor), 0.5);
       text-decoration: none;
     }
   }

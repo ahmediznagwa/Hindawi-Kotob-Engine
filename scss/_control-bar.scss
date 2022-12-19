@@ -7,8 +7,9 @@
   left: 0;
   width: 100%;
   display: none;
-  background-color: rgba(255, 255, 255, 0.75);
-  border-top: 1px solid #ddd;
+  background-color: var(--greyBgRgb);
+  color: var(--textColorRgb);
+  border-top: 1px solid rgba(var(--textColor), 0.2);
   -webkit-backdrop-filter: blur(0.5rem);
   backdrop-filter: blur(0.5rem);
   padding: 1.5rem 2rem;
@@ -17,13 +18,15 @@
     display: flex;
     align-items: center;
   }
+
+  .btn-icon {
+    font-size: 1.6rem;
+  }
 }
 
 .font-size {
   display: flex;
-
   align-items: center;
-
   justify-content: center;
 
   .btn {
@@ -127,14 +130,12 @@
       background-color: #f6efdf;
       border-color: #f6efdf;
       &.selected {
-        border-color: #efc976;
+        border-color: var(--darkBgRgb);
       }
     }
 
     & + .change-color {
       margin-inline-start: 10px;
     }
-
-    
   }
 }

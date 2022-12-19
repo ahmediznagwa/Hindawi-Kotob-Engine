@@ -1,8 +1,8 @@
 :root {
-  --bgColor: white;
-  --textColor: black;
-  --darkBg: black;
-  --greyBg: #f5f5f5;
+  --bgColor: 255, 255, 255;
+  --textColor: 0, 0, 0;
+  --darkBg: 0, 0, 0;
+  --greyBg: 245, 245, 245;
 }
 
 *,
@@ -18,39 +18,59 @@ html {
 }
 
 body {
+  --bgColorRgb: rgba(var(--bgColor), 1);
+  --textColorRgb: rgba(var(--textColor), 1);
+  --darkBgRgb: rgba(var(--darkBg), 1);
+  --greyBgRgb: rgba(var(--greyBg), 1);
   padding: 0;
   height: 100%;
 }
 
 body .book-container {
-  background-color: var(--bgColor);
-  color: var(--textColor);
+  background-color: var(--bgColorRgb);
+  color: var(--textColorRgb);
 }
 
 body .blockquote,
 body .epigraph {
-  background-color: var(--greyBg);
+  background-color: var(--greyBgRgb);
 }
 
 body.dark {
-  --bgColor: black;
-  --textColor: white;
-  --darkBg: white;
-  --greyBg: #111;
+  --bgColor: 0, 0, 0;
+  --textColor: 255, 255, 255;
+  --darkBg: 255, 255, 255;
+  --greyBg: 17, 17, 17;
 }
 
 body.warm {
-  --bgColor: #f6efdf;
-  --textColor: black;
-  --darkBg: #efc976;
-  --greyBg: #f2e4c5;
+  --bgColor: 246, 239, 223;
+  --textColor: 0, 0, 0;
+  --darkBg: 239, 201, 118;
+  --greyBg: 242, 228, 197;
 }
 
 .actions-menu {
-  background-color: white;
+  background-color: var(--textColorRgb);
+  color: var(--bgColorRgb);
   -webkit-box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.1);
           box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
+}
+
+.actions-menu::after {
+  top: 100%;
+  left: 50%;
+  border: solid transparent;
+  content: "";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+  border-color: rgba(136, 183, 213, 0);
+  border-top-color: var(--textColorRgb);
+  border-width: 6px;
+  margin-left: -6px;
 }
 
 .actions-menu ul {
@@ -71,8 +91,12 @@ body.warm {
   display: none;
 }
 
+.actions-menu li + li a {
+  border-left: 1px solid rgba(var(--bgColor), 0.2);
+}
+
 .actions-menu a {
-  color: #000;
+  color: inherit;
   font-size: 0.8em;
   padding: 5px 10px;
   display: -webkit-box;
@@ -131,18 +155,28 @@ body.warm {
   src: url("../fonts/fa-brands-400.woff2") format("woff2");
 }
 
+h1,
+.part_number {
+  -webkit-column-break-before: column;
+          break-before: column;
+}
+
+.part_number + h1 {
+  -webkit-column-break-before: initial;
+          break-before: initial;
+}
+
 .book-container {
-  padding: 1.5rem 0;
+  padding: 6rem 0;
 }
 
 .book-wrapper {
-  padding: 0 1.5rem 0;
   word-break: break-word;
   direction: rtl;
 }
 
 .book {
-  height: calc(100vh - 3rem);
+  height: calc(100vh - 12rem);
   width: 100%;
   overflow: hidden;
   outline: none;
@@ -150,22 +184,23 @@ body.warm {
           column-width: 500rem;
   -webkit-column-count: auto;
           column-count: auto;
-  -webkit-column-gap: 1.5rem;
-          column-gap: 1.5rem;
+  -webkit-column-gap: 6rem;
+          column-gap: 6rem;
+  padding: 0 6rem;
   -webkit-column-fill: balance;
           column-fill: balance;
   scrollbar-width: 0;
   -webkit-appearance: none;
      -moz-appearance: none;
           appearance: none;
-  padding-bottom: 5rem;
 }
 
 .book.demo {
   position: absolute;
-  left: 1.5rem;
-  top: 1.5rem;
-  right: 1.5rem;
+  left: 0;
+  top: 6rem;
+  right: 0;
+  bottom: 6rem;
   width: auto;
   visibility: hidden;
   opacity: 0;
@@ -190,8 +225,9 @@ body.warm {
   left: 0;
   width: 100%;
   display: none;
-  background-color: rgba(255, 255, 255, 0.75);
-  border-top: 1px solid #ddd;
+  background-color: var(--greyBgRgb);
+  color: var(--textColorRgb);
+  border-top: 1px solid rgba(var(--textColor), 0.2);
   -webkit-backdrop-filter: blur(0.5rem);
   backdrop-filter: blur(0.5rem);
   padding: 1.5rem 2rem;
@@ -205,6 +241,10 @@ body.warm {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
+}
+
+.bottom-bar .btn-icon {
+  font-size: 1.6rem;
 }
 
 .font-size {
@@ -356,7 +396,7 @@ body.warm {
 }
 
 .color-modes .change-color[data-value="warm"].selected {
-  border-color: #efc976;
+  border-color: var(--darkBgRgb);
 }
 
 .color-modes .change-color + .change-color {
@@ -373,8 +413,6 @@ body.warm {
      -moz-appearance: none;
           appearance: none;
   cursor: pointer;
-  -webkit-transition: 0.3s;
-  transition: 0.3s;
   color: inherit;
   padding: 0;
   /*rtl:raw:
@@ -505,8 +543,8 @@ body.warm {
   left: -10px;
   display: none;
   min-width: 34.9rem;
-  background-color: var(--bgColor);
-  color: var(--textColor);
+  background-color: var(--bgColorRgb);
+  color: var(--textColorRgb);
   border-radius: 1.4rem;
   -webkit-box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
           box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
@@ -517,7 +555,7 @@ body.warm {
   content: "\f0d7";
   position: absolute;
   font-family: "Font-Awesome";
-  color: var(--bgColor);
+  color: var(--bgColorRgb);
   bottom: -22px;
   left: 2rem;
   z-index: 1;

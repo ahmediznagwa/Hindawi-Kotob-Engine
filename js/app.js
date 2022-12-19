@@ -62,6 +62,15 @@ const nagwaReaders = (function () {
       get words() {
         return document.querySelectorAll("p");
       },
+      get highlight() {
+        return document.querySelectorAll(".highlight");
+      },
+      get unhighlight() {
+        return document.querySelectorAll(".unhighlight");
+      },
+      get copy() {
+        return document.querySelectorAll(".copy");
+      },
     };
 
     static extractComputedStyleNumber(el, style) {
@@ -170,9 +179,9 @@ const nagwaReaders = (function () {
       menu.classList.add("actions-menu");
       const actionsMenu = `
         <ul>
-          <li class="highlight"><a href="#">Highlight</a></li>
-          <li class="unhighlight"><a href="#">Unhighlight</a></li>
-          <li class="copy"><a href="#">Copy</a></li>
+          <li class="highlight"><a href="#">تلوين</a></li>
+          <li class="unhighlight"><a href="#">الغاء التلوين</a></li>
+          <li class="copy"><a href="#">نسخ</a></li>
         </ul>
       `;
 
@@ -186,7 +195,7 @@ const nagwaReaders = (function () {
       $(menu).css({
         position: "absolute",
         left: window.innerWidth / 2,
-        transform: "translate(-50%,-100%)",
+        transform: "translate(-50%,-120%)",
         top,
       });
 
@@ -196,11 +205,7 @@ const nagwaReaders = (function () {
       });
       $(menu)
         .find(".highlight")
-        .on("click", function () {
-          $(this).addClass("has-highlight");
-          $(e.target).addClass("highlighted");
-          $(".actions-menu").remove();
-        });
+        .addEventListener("click", this.highlightWord(menu, this.target));
       $(menu)
         .find(".unhighlight")
         .on("click", function () {
@@ -212,6 +217,16 @@ const nagwaReaders = (function () {
         .find(".copy")
         .on("click", function () {
           navigator.clipboard.writeText(e.target.textContent);
+          $(".actions-menu").remove();
+        });
+    }
+
+    highlightWord(menu, targetEl) {
+      $(menu)
+        .find(".highlight")
+        .on("click", function () {
+          $(this).addClass("has-highlight");
+          $(targetEl).addClass("highlighted");
           $(".actions-menu").remove();
         });
     }
@@ -322,6 +337,7 @@ const nagwaReaders = (function () {
         this.book.fontSize,
         this.book.isDarkMode,
         this.book.colorMode
+        // this.book.hi
       );
     }
 
@@ -546,10 +562,7 @@ const nagwaReaders = (function () {
 
     scrollToCurrentPage() {
       "scrolled";
-      const columnWidth = UTILS.extractComputedStyleNumber(
-        UTILS.DOM_ELS.book,
-        "width"
-      );
+      const columnWidth = $(UTILS.DOM_ELS.book).width();
       const columnsGap = UTILS.extractComputedStyleNumber(
         UTILS.DOM_ELS.book,
         "column-gap"
@@ -562,7 +575,6 @@ const nagwaReaders = (function () {
         const currentChapter = this.allBookTitles[this.currentChapterIndex];
         const currentChapterPos = currentChapter?.offsetLeft - x;
         UTILS.DOM_ELS.demoBook?.scrollTo(currentChapterPos, 0);
-
         UTILS.DOM_ELS.biggerFontBtn.classList.remove("disabled");
         UTILS.DOM_ELS.smallerFontBtn.classList.remove("disabled");
         UTILS.DOM_ELS.resetFontBtn.classList.remove("disabled");
@@ -573,10 +585,7 @@ const nagwaReaders = (function () {
     updatePagesCount() {
       this.userPreferences = new UserPreferences(this.bookId);
       const wholeBook = UTILS.DOM_ELS.demoBook;
-      const columnWidth = UTILS.extractComputedStyleNumber(
-        UTILS.DOM_ELS.book,
-        "width"
-      );
+      const columnWidth = $(UTILS.DOM_ELS.book).width();
       const columnsGap = UTILS.extractComputedStyleNumber(
         UTILS.DOM_ELS.book,
         "column-gap"
@@ -744,7 +753,7 @@ const nagwaReaders = (function () {
       document.body.classList = this.colorMode;
       document
         .querySelector(`[data-value=${colorMode}]`)
-        .classList.add("selected");
+        ?.classList.add("selected");
     }
   }
   const controller = new Controller();

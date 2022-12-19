@@ -13,8 +13,8 @@
   left: -10px;
   display: none;
   min-width: 34.9rem;
-  background-color: var(--bgColor);
-  color: var(--textColor);
+  background-color: var(--bgColorRgb);
+  color: var(--textColorRgb);
   border-radius: 1.4rem;
   box-shadow: 0 0 30px rgba($color: #000000, $alpha: 0.2);
   z-index: 999;
@@ -22,7 +22,7 @@
     content: "\f0d7";
     position: absolute;
     font-family: $fAwsome;
-    color: var(--bgColor);
+    color: var(--bgColorRgb);
     bottom: -22px;
     left: 2rem;
     z-index: 1;
