@@ -47,6 +47,15 @@ const nagwaReaders = (function () {
       get fontFamilyBtns() {
         return document.querySelectorAll(".change-font-family");
       },
+      get selectedFontFamily() {
+        return document.querySelector(".selected-font-family");
+      },
+      get showFonts() {
+        return document.querySelector(".show-fonts");
+      },
+      get hideFonts() {
+        return document.querySelector(".hide-fonts");
+      },
       get book() {
         return document.querySelector(".book:not(.demo)");
       },
@@ -407,6 +416,14 @@ const nagwaReaders = (function () {
         "input",
         this.darkModeCheckInputEventHandler.bind(this)
       );
+      UTILS.DOM_ELS.showFonts?.addEventListener(
+        "click",
+        this.showFontFamilies.bind(this)
+      );
+      UTILS.DOM_ELS.hideFonts?.addEventListener(
+        "click",
+        this.hideFontFamilies.bind(this)
+      );
       UTILS.DOM_ELS.colorModeBtns?.forEach((btn) => {
         btn.addEventListener("click", this.colorModeEventHandler.bind(this));
       });
@@ -501,6 +518,14 @@ const nagwaReaders = (function () {
     setFontFamily(fontFamily) {
       this.book.changeFontFamily(fontFamily);
       this.storeUserPreferences();
+    }
+    showFontFamilies() {
+      $(".view-config").slideUp(300);
+      $(".fonts").slideDown(300);
+    }
+    hideFontFamilies() {
+      $(".view-config").slideDown();
+      $(".fonts").slideUp(300);
     }
 
     darkModeCheckInputEventHandler() {
@@ -798,7 +823,10 @@ const nagwaReaders = (function () {
       UTILS.DOM_ELS.fontFamilyBtns.forEach((item) => {
         document.body.classList.remove(item.dataset.value);
       });
-      document.querySelector('.book-container').style.fontFamily = this.fontFamily;
+      document.querySelector(".book-container").style.fontFamily =
+        this.fontFamily;
+      UTILS.DOM_ELS.selectedFontFamily.textContent = `${this.fontFamily}`;
+      UTILS.DOM_ELS.selectedFontFamily.style.fontFamily = this.fontFamily;
       document
         .querySelector(`[data-value=${this.fontFamily}]`)
         ?.classList.add("selected");
