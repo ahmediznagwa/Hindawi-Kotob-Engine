@@ -141,8 +141,39 @@
 }
 
 .fonts {
+  padding: 1rem 1.5rem;
   button {
     font-size: 1.5rem;
     color: #a3a3a3;
+  }
+}
+
+.selected-font-family {
+  color: #a3a3a3;
+  text-transform: capitalize;
+  &::after {
+    content: "\f054";
+    font-family: $fAwsome;
+    margin-left: 5px;
+    font-size: 14px;
+  }
+}
+
+.change-font-family {
+  width: 100%;
+  padding: 1rem 0;
+  border-bottom: 1px solid #eee;
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+  &:last-child {
+    border-bottom: 0;
+  }
+  &.selected {
+    &::after {
+      content: "\f00c";
+      font-family: $fAwsome;
+      margin-left: auto;
+    }
   }
 }
