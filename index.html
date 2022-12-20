@@ -22,7 +22,7 @@
             <button class="btn-icon-outline-grey btn-icon btn dropdown-toggle">
               <i class="f-icon cog-icon"></i>
             </button>
-            <div class="dropdown-menu">
+            <div class="dropdown-menu dropdown-menu--controllers">
               <div class="font-size">
                 <button id="pagination-font-smaller" class="btn btn-link">
                   A
@@ -53,27 +53,40 @@
                   <div class="change-color" data-value="warm"></div>
                 </div>
               </div>
+
               <div class="control-row">
                 <h5>Font</h5>
 
                 <div class="fonts">
-                  <div
-                    class="change-font-family"
-                    style="font-family: 'NotoNaskhArabic'"
-                    data-value="NotoNaskhArabic"
-                  >Noto Naskh</div>
-                  <div
-                    class="change-font-family"
-                    style="font-family: 'tahoma'"
-                    data-value="tahoma"
-                  >Tahoma</div>
-                  <div
-                    class="change-font-family"
-                    style="font-family: 'arial'"
-                    data-value="arial"
-                  >Arial</div>
+                  <button class="btn-link open-all-fonts">
+                    Noto Naskh
+                    <i class="f-icon chevron-right-icon"></i>
+                  </button>
                 </div>
               </div>
+            </div>
+            <div class="dropdown-menu dropdown-menu--font-family">
+              <button
+                class="change-font-family btn btn-link open-all-fonts"
+                style="font-family: 'NotoNaskhArabic'"
+                data-value="NotoNaskhArabic"
+              >
+                Noto Naskh
+              </button>
+              <button
+                class="change-font-family btn btn-link"
+                style="font-family: 'tahoma'"
+                data-value="tahoma"
+              >
+                Tahoma
+              </button>
+              <button
+                class="change-font-family btn btn-link"
+                style="font-family: 'arial'"
+                data-value="arial"
+              >
+                Arial
+              </button>
             </div>
           </div>
         </div>
