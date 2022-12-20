@@ -44,6 +44,9 @@ const nagwaReaders = (function () {
       get colorModeBtns() {
         return document.querySelectorAll(".change-color");
       },
+      get fontFamilyBtns() {
+        return document.querySelectorAll(".change-font-family");
+      },
       get book() {
         return document.querySelector(".book:not(.demo)");
       },
@@ -252,12 +255,14 @@ const nagwaReaders = (function () {
       this.chapter = 0;
       this.fontSize = 0;
       this.isDarkMode = false;
-      this.colorMode = "white";
+      this.colorMode = null;
+      this.fontFamily = null;
 
       this.localStorageKeys = {
         fontSize: `${this.bookId}_fontSize`,
         isDarkMode: "isDarkMode",
         colorMode: "colorMode",
+        fontFamily: "fontFamily",
         lastPosition: `${this.bookId}_lastPosition`, //its value in Localstorage will be a JSON containing chapter and page,
         page: "page",
         chapter: "chapter",
@@ -270,6 +275,7 @@ const nagwaReaders = (function () {
       fontSize,
       isDarkMode,
       colorMode,
+      fontFamily,
       saveToLocalStorage = true
     ) {
       this.page = currentPage;
@@ -277,6 +283,7 @@ const nagwaReaders = (function () {
       this.fontSize = fontSize;
       this.isDarkMode = isDarkMode;
       this.colorMode = colorMode;
+      this.fontFamily = fontFamily;
       if (saveToLocalStorage) {
         localStorage.setItem(
           this.localStorageKeys.lastPosition,
@@ -288,6 +295,7 @@ const nagwaReaders = (function () {
         localStorage.setItem(this.localStorageKeys.fontSize, this.fontSize);
         localStorage.setItem(this.localStorageKeys.isDarkMode, this.isDarkMode);
         localStorage.setItem(this.localStorageKeys.colorMode, this.colorMode);
+        localStorage.setItem(this.localStorageKeys.fontFamily, this.fontFamily);
       }
     }
 
@@ -296,9 +304,8 @@ const nagwaReaders = (function () {
       this.isDarkMode = JSON.parse(
         localStorage.getItem(this.localStorageKeys.isDarkMode)
       );
-      this.colorMode = localStorage.getItem(this.localStorageKeys.colorMode)
-        ? localStorage.getItem(this.localStorageKeys.colorMode)
-        : "white";
+      this.colorMode = localStorage.getItem(this.localStorageKeys.colorMode);
+      this.fontFamily = localStorage.getItem(this.localStorageKeys.fontFamily);
       const lastPosition = JSON.parse(
         localStorage.getItem(this.localStorageKeys.lastPosition)
       );
@@ -308,6 +315,7 @@ const nagwaReaders = (function () {
         fontSize: this.fontSize,
         isDarkMode: this.isDarkMode,
         colorMode: this.colorMode,
+        fontFamily: this.fontFamily,
         chapter: this.chapter,
         page: this.page,
       };
@@ -332,7 +340,8 @@ const nagwaReaders = (function () {
         this?.userPreferences?.chapter,
         this?.userPreferences?.page,
         this?.userPreferences?.isDarkMode,
-        this?.userPreferences?.colorMode
+        this?.userPreferences?.colorMode,
+        this?.userPreferences?.fontFamily
       );
     }
 
@@ -351,7 +360,8 @@ const nagwaReaders = (function () {
         this.book.currentChapterIndex,
         this.book.fontSize,
         this.book.isDarkMode,
-        this.book.colorMode
+        this.book.colorMode,
+        this.book.fontFamily
       );
     }
 
@@ -399,6 +409,9 @@ const nagwaReaders = (function () {
       );
       UTILS.DOM_ELS.colorModeBtns?.forEach((btn) => {
         btn.addEventListener("click", this.colorModeEventHandler.bind(this));
+      });
+      UTILS.DOM_ELS.fontFamilyBtns?.forEach((btn) => {
+        btn.addEventListener("click", this.fontFamilyEventHandler.bind(this));
       });
     }
 
@@ -485,6 +498,10 @@ const nagwaReaders = (function () {
       this.book.changeColorMode(colorMode);
       this.storeUserPreferences();
     }
+    setFontFamily(fontFamily) {
+      this.book.changeFontFamily(fontFamily);
+      this.storeUserPreferences();
+    }
 
     darkModeCheckInputEventHandler() {
       this.setDarkMode(/* Don't pass anything so it can fallback to the checkbox value */);
@@ -496,6 +513,13 @@ const nagwaReaders = (function () {
       e.target.classList.add("selected");
       this.setColorMode(e.target.dataset.value);
     }
+    fontFamilyEventHandler(e) {
+      UTILS.DOM_ELS.fontFamilyBtns?.forEach((btn) => {
+        btn.classList.remove("selected");
+      });
+      e.target.classList.add("selected");
+      this.setFontFamily(e.target.dataset.value);
+    }
   }
 
   class Book {
@@ -506,7 +530,8 @@ const nagwaReaders = (function () {
       currentChapterIndex = 0,
       currentPage = 0,
       isDarkMode = null,
-      colorMode = "white"
+      colorMode = "white",
+      fontFamily = "NotoNaskhArabic"
     ) {
       this.bookId = bookId;
       this.chapters = chapters;
@@ -523,6 +548,7 @@ const nagwaReaders = (function () {
       this.rootFontSize = 18;
       this.isDarkMode = isDarkMode;
       this.colorMode = colorMode;
+      this.fontFamily = fontFamily;
       this.fontSizeStep = 0.15;
       this.fontSize = fontSize || this.rootFontSize;
       this.allBookTitles = [];
@@ -530,6 +556,7 @@ const nagwaReaders = (function () {
       this.changePage();
       this.changeDarkMode(this.isDarkMode);
       this.changeColorMode(this.colorMode);
+      this.changeFontFamily(this.fontFamily);
       this.addWholeBook();
     }
     updateChapterPageState() {
@@ -656,9 +683,6 @@ const nagwaReaders = (function () {
         UTILS.DOM_ELS.prevPageBtn &&
         UTILS.DOM_ELS.nextPageBtn
       ) {
-        //if it's only one or chapter less and one page or less
-        //if it's only one or chapter less and one page or less
-        //if it's only one or chapter less and one page or less
         if (UTILS.calcPageCount() < 2 && this.chapters.length < 2) {
           UTILS.DOM_ELS.prevChapterBtn.disabled = true;
           UTILS.DOM_ELS.nextChapterBtn.disabled = true;
@@ -760,10 +784,23 @@ const nagwaReaders = (function () {
       }
     }
     changeColorMode(colorMode) {
-      this.colorMode = colorMode;
-      document.body.classList = this.colorMode;
+      this.colorMode = colorMode || "white";
+      UTILS.DOM_ELS.colorModeBtns.forEach((item) => {
+        document.body.classList.remove(item.dataset.value);
+      });
+      document.body.classList.add(this.colorMode);
       document
-        .querySelector(`[data-value=${colorMode}]`)
+        .querySelector(`[data-value=${this.colorMode}]`)
+        ?.classList.add("selected");
+    }
+    changeFontFamily(fontFamily) {
+      this.fontFamily = fontFamily || "NotoNaskhArabic";
+      UTILS.DOM_ELS.fontFamilyBtns.forEach((item) => {
+        document.body.classList.remove(item.dataset.value);
+      });
+      document.querySelector('.book-container').style.fontFamily = this.fontFamily;
+      document
+        .querySelector(`[data-value=${this.fontFamily}]`)
         ?.classList.add("selected");
     }
   }
