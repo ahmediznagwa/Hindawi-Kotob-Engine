@@ -415,7 +415,7 @@ h1,
 }
 
 .selected-font-family {
-  color: var(--textColorRgb);
+  color: rgba(var(--textColor), 0.5);
   text-transform: capitalize;
   font-size: 1.6rem;
 }

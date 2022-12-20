@@ -150,7 +150,7 @@
 }
 
 .selected-font-family {
-  color: var(--textColorRgb);
+  color: rgba(var(--textColor), $alpha: .5);
   text-transform: capitalize;
   font-size: 1.6rem;
   &::after {
