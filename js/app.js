@@ -524,7 +524,7 @@ const nagwaReaders = (function () {
       $(".fonts").slideDown(300);
     }
     hideFontFamilies() {
-      $(".view-config").slideDown();
+      $(".view-config").slideDown(300);
       $(".fonts").slideUp(300);
     }
 
@@ -826,10 +826,10 @@ const nagwaReaders = (function () {
       document.querySelector(".book-container").style.fontFamily =
         this.fontFamily;
       UTILS.DOM_ELS.selectedFontFamily.textContent = `${this.fontFamily}`;
-      UTILS.DOM_ELS.selectedFontFamily.style.fontFamily = this.fontFamily;
       document
         .querySelector(`[data-value=${this.fontFamily}]`)
         ?.classList.add("selected");
+      this.updatePagesCount();
     }
   }
   const controller = new Controller();
@@ -862,12 +862,14 @@ $(document).keydown(function (e) {
     $(".dropdown").removeClass("show");
     $(".actions-menu").remove();
     $(".bottom-bar").slideUp();
+    $(".hide-fonts").trigger("click");
   }
 });
 $("body").click(function () {
   $(".actions-menu").remove();
   $(".dropdown").removeClass("show");
   $(".bottom-bar").slideToggle();
+  $(".hide-fonts").trigger("click");
 });
 $(".dropdown,  .bottom-bar").click(function (e) {
   e.stopPropagation();

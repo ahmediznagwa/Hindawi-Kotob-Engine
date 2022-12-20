@@ -142,27 +142,30 @@
 
 .fonts {
   padding: 1rem 1.5rem;
+  display: none;
   button {
-    font-size: 1.5rem;
-    color: #a3a3a3;
+    font-size: 1.8rem;
+    color: var(--textColorRgb);
   }
 }
 
 .selected-font-family {
-  color: #a3a3a3;
+  color: var(--textColorRgb);
   text-transform: capitalize;
+  font-size: 1.6rem;
   &::after {
     content: "\f054";
     font-family: $fAwsome;
     margin-left: 5px;
-    font-size: 14px;
   }
 }
 
 .change-font-family {
   width: 100%;
-  padding: 1rem 0;
-  border-bottom: 1px solid #eee;
+  padding: 1.5rem 0;
+  border: 0;
+  background: none;
+  border-bottom: 1px solid rgba(var(--textColor), 0.2);
   line-height: 1.4;
   display: flex;
   align-items: center;
