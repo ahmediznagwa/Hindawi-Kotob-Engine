@@ -3,6 +3,7 @@
   --textColor: 0, 0, 0;
   --darkBg: 0, 0, 0;
   --greyBg: 245, 245, 245;
+  --lightGreyBg: 255, 255, 255;
 }
 
 *,
@@ -22,6 +23,7 @@ body {
   --textColorRgb: rgba(var(--textColor), 1);
   --darkBgRgb: rgba(var(--darkBg), 1);
   --greyBgRgb: rgba(var(--greyBg), 1);
+  --lightGreyBgRgb: rgba(var(--lightGreyBg), 1);
   font-size: 18px;
   padding: 0;
   height: 100%;
@@ -42,6 +44,7 @@ body.dark {
   --textColor: 255, 255, 255;
   --darkBg: 255, 255, 255;
   --greyBg: 17, 17, 17;
+  --lightGreyBg: 51, 51, 51;
 }
 
 body.warm {
@@ -49,6 +52,7 @@ body.warm {
   --textColor: 0, 0, 0;
   --darkBg: 239, 201, 118;
   --greyBg: 242, 228, 197;
+  --lightGreyBg: 246, 239, 223;
 }
 
 .actions-menu {
@@ -121,7 +125,7 @@ body.warm {
 }
 
 .highlighted {
-  background-color: #f5aa00;
+  background-color: #fff200ad;
   -webkit-transition: background-color 0.3s;
   transition: background-color 0.3s;
 }
@@ -611,7 +615,7 @@ h1,
   left: -10px;
   display: none;
   min-width: 34.9rem;
-  background-color: var(--bgColorRgb);
+  background-color: var(--lightGreyBgRgb);
   color: var(--textColorRgb);
   border-radius: 1.4rem;
   -webkit-box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
@@ -623,7 +627,7 @@ h1,
   content: "\f0d7";
   position: absolute;
   font-family: "Font-Awesome";
-  color: var(--bgColorRgb);
+  color: var(--lightGreyBgRgb);
   bottom: -22px;
   left: 2rem;
   z-index: 1;
