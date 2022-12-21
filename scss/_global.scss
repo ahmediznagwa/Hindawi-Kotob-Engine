@@ -20,7 +20,7 @@ body {
   --textColorRgb: rgba(var(--textColor), 1);
   --darkBgRgb: rgba(var(--darkBg), 1);
   --greyBgRgb: rgba(var(--greyBg), 1);
-
+  font-size: 18px;
   padding: 0;
   height: 100%;
 
@@ -49,7 +49,6 @@ body {
 }
 
 .actions-menu {
-  background-color: var(--textColorRgb);
   color: var(--bgColorRgb);
   box-shadow: 2px 4px 8px rgba($color: #000000, $alpha: 0.1);
   border-radius: 8px;
@@ -94,8 +93,10 @@ body {
     font-size: 0.8em;
     padding: 5px 10px;
     display: flex;
+    background-color: var(--textColorRgb);
+    transition: background-color 0.3s;
     &:hover {
-      background-color: rgba(var(--textColor), 0.5);
+      background-color: rgba(var(--textColor), 0.7);
       text-decoration: none;
     }
   }

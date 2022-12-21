@@ -193,7 +193,7 @@ const nagwaReaders = (function () {
       const highlightedWords = Array.from(
         document.querySelectorAll(".highlighted")
       );
-      console.log(highlightedWords);
+
       localStorage.setItem(
         "highlightedWords",
         JSON.stringify({
@@ -217,6 +217,7 @@ const nagwaReaders = (function () {
       e.stopPropagation();
       $(".actions-menu").remove();
       const top = $(e.target).offset().top;
+      const left = $(e.target).offset().left;
       const menu = document.createElement("div");
       menu.classList.add("actions-menu");
       const actionsMenu = `
@@ -227,30 +228,41 @@ const nagwaReaders = (function () {
         </ul>
       `;
 
-      if ($(e.target).hasClass("highlighted")) {
-        $(menu).addClass("has-highlight");
-      }
       menu.innerHTML = actionsMenu;
       document.body.appendChild(menu);
+
+      if ($(e.target).hasClass("highlighted")) {
+        $(menu).addClass("has-highlight");
+        $(menu).find(".highlight").remove();
+      }
 
       // Positioning the appended menu according to word
       $(menu).css({
         position: "absolute",
-        left: window.innerWidth / 2,
+        left: left + e.target.clientWidth / 2,
         transform: "translate(-50%,-120%)",
         top,
+      });
+
+      $(window).on("resize", function () {
+        $(".actions-menu").remove();
       });
 
       // Binding click events on menu
       $(menu).on("click", function (e) {
         e.stopPropagation();
       });
-      menu
-        .querySelector(".highlight")
-        .addEventListener("click", this.highlightWord.bind(this, e.target));
-      menu
-        .querySelector(".unhighlight")
-        .addEventListener("click", this.unhighlightWord.bind(this, e.target));
+      if (menu.querySelector(".highlight")) {
+        menu
+          .querySelector(".highlight")
+          .addEventListener("click", this.highlightWord.bind(this, e.target));
+      }
+      if (menu.querySelector(".unhighlight")) {
+        menu
+          .querySelector(".unhighlight")
+          .addEventListener("click", this.unhighlightWord.bind(this, e.target));
+      }
+
       menu
         .querySelector(".copy")
         .addEventListener("click", this.copyText.bind(this, e.target));
@@ -445,6 +457,7 @@ const nagwaReaders = (function () {
     }
 
     postFontResizeHandler() {
+      $(".actions-menu").remove();
       UTILS.DOM_ELS.allPages.textContent = "...";
       UTILS.DOM_ELS.currentPageOfAllPages.textContent = "...";
       setTimeout(() => {
@@ -627,7 +640,6 @@ const nagwaReaders = (function () {
     }
 
     scrollToCurrentPage() {
-      "scrolled";
       const columnWidth = $(UTILS.DOM_ELS.book).width();
       const columnsGap = UTILS.extractComputedStyleNumber(
         UTILS.DOM_ELS.book,
@@ -640,7 +652,14 @@ const nagwaReaders = (function () {
       if (this.allBookTitles) {
         const currentChapter = this.allBookTitles[this.currentChapterIndex];
         const currentChapterPos = currentChapter?.offsetLeft - x;
-        UTILS.DOM_ELS.demoBook?.scrollTo(currentChapterPos, 0);
+        const isLandscape =
+          $(UTILS.DOM_ELS.book).width() > $(currentChapter).width();
+        UTILS.DOM_ELS.demoBook?.scrollTo(
+          isLandscape
+            ? currentChapterPos - $(currentChapter).width()
+            : currentChapterPos,
+          0
+        );
         this.updatePagesCount();
       }
     }
@@ -772,20 +791,23 @@ const nagwaReaders = (function () {
         case "bigger":
           if (this.canIncreaseFont) {
             this.fontSize = this.fontSize + fontStepPx;
-            document.body.style.fontSize = this.fontSize + "px";
+            document.querySelector(".book-container").style.fontSize =
+              this.fontSize + "px";
           }
           break;
         case "smaller":
           if (this.canDecreaseFont) {
             this.fontSize = this.fontSize - fontStepPx;
-            document.body.style.fontSize = this.fontSize + "px";
+            document.querySelector(".book-container").style.fontSize =
+              this.fontSize + "px";
           }
           break;
         case "reset":
           this.fontSize = this.rootFontSize;
-          document.body.style.fontSize = "";
+          document.querySelector(".book-container").style.fontSize = "";
         default:
-          document.body.style.fontSize = this.fontSize + "px";
+          document.querySelector(".book-container").style.fontSize =
+            this.fontSize + "px";
           break;
       }
       this.updateFontIncreaseDecreaseState();
@@ -825,7 +847,11 @@ const nagwaReaders = (function () {
       });
       document.querySelector(".book-container").style.fontFamily =
         this.fontFamily;
-      UTILS.DOM_ELS.selectedFontFamily.textContent = `${this.fontFamily}`;
+
+      const selectedFontFamily = document.querySelector(
+        `[data-value=${this.fontFamily}]`
+      ).textContent;
+      UTILS.DOM_ELS.selectedFontFamily.textContent = `${selectedFontFamily}`;
       document
         .querySelector(`[data-value=${this.fontFamily}]`)
         ?.classList.add("selected");

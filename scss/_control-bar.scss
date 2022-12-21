@@ -141,18 +141,33 @@
 }
 
 .fonts {
-  padding: 1rem 1.5rem;
+  padding: 1rem 0;
   display: none;
   button {
+    appearance: none;
     font-size: 1.8rem;
     color: var(--textColorRgb);
+    cursor: pointer;
+    padding: 1.5rem;
+    transition: 0.3s;
+
+    &:hover {
+      background-color: rgba(var(--textColor), $alpha: 0.1);
+    }
+
+    &.hide-fonts {
+      background: none !important;
+      padding: 0;
+      margin-inline-start: 1rem;
+    }
   }
 }
 
 .selected-font-family {
-  color: rgba(var(--textColor), $alpha: .5);
+  color: rgba(var(--textColor), $alpha: 0.5);
   text-transform: capitalize;
   font-size: 1.6rem;
+
   &::after {
     content: "\f054";
     font-family: $fAwsome;

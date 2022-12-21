@@ -22,6 +22,7 @@ body {
   --textColorRgb: rgba(var(--textColor), 1);
   --darkBgRgb: rgba(var(--darkBg), 1);
   --greyBgRgb: rgba(var(--greyBg), 1);
+  font-size: 18px;
   padding: 0;
   height: 100%;
 }
@@ -51,7 +52,6 @@ body.warm {
 }
 
 .actions-menu {
-  background-color: var(--textColorRgb);
   color: var(--bgColorRgb);
   -webkit-box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.1);
           box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.1);
@@ -102,10 +102,13 @@ body.warm {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  background-color: var(--textColorRgb);
+  -webkit-transition: background-color 0.3s;
+  transition: background-color 0.3s;
 }
 
 .actions-menu a:hover {
-  background-color: rgba(var(--textColor), 0.5);
+  background-color: rgba(var(--textColor), 0.7);
   text-decoration: none;
 }
 
@@ -405,13 +408,31 @@ h1,
 }
 
 .fonts {
-  padding: 1rem 1.5rem;
+  padding: 1rem 0;
   display: none;
 }
 
 .fonts button {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
   font-size: 1.8rem;
   color: var(--textColorRgb);
+  cursor: pointer;
+  padding: 1.5rem;
+  -webkit-transition: 0.3s;
+  transition: 0.3s;
+}
+
+.fonts button:hover {
+  background-color: rgba(var(--textColor), 0.1);
+}
+
+.fonts button.hide-fonts {
+  background: none !important;
+  padding: 0;
+  -webkit-margin-start: 1rem;
+          margin-inline-start: 1rem;
 }
 
 .selected-font-family {
