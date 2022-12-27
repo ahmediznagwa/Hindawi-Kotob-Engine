@@ -336,6 +336,7 @@ sup a {
 }
 .Ref-Section {
     margin-top: 60px;
+    padding: 0 3px;
 }
 .dialogue,
 .paragraph-block,

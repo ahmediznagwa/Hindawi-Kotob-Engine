@@ -178,6 +178,7 @@ h1,
 }
 
 .book-wrapper {
+  padding: 0 6rem 0;
   word-break: break-word;
   direction: rtl;
 }
@@ -193,7 +194,6 @@ h1,
           column-count: auto;
   -webkit-column-gap: 6rem;
           column-gap: 6rem;
-  padding: 0 6rem;
   -webkit-column-fill: balance;
           column-fill: balance;
   scrollbar-width: 0;

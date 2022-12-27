@@ -2,11 +2,6 @@ const prodRootUrl = "https://ahmediznagwa.github.io/New-Hindawi-Reader";
 const devRootUrl = "..";
 const nagwaReaders = (function () {
   class UTILS {
-    /**
-     * An object containing all the DOM elements required for the app to run
-     * @static
-     * @memberof UTILS
-     */
     static DOM_ELS = {
       get nextPageBtn() {
         return document.querySelector(".pagination-next-page");
@@ -93,7 +88,6 @@ const nagwaReaders = (function () {
     static calcPageCount() {
       const columnsGap =
         this.extractComputedStyleNumber(this.DOM_ELS.book, "column-gap") || 0;
-
       return Math.round(
         (this.DOM_ELS.book.scrollWidth + columnsGap) /
           (this.DOM_ELS.book.offsetWidth + columnsGap)
@@ -640,7 +634,10 @@ const nagwaReaders = (function () {
     }
 
     scrollToCurrentPage() {
-      const columnWidth = $(UTILS.DOM_ELS.book).width();
+      const columnWidth = UTILS.extractComputedStyleNumber(
+        UTILS.DOM_ELS.book,
+        "width"
+      );
       const columnsGap = UTILS.extractComputedStyleNumber(
         UTILS.DOM_ELS.book,
         "column-gap"
@@ -652,14 +649,13 @@ const nagwaReaders = (function () {
       if (this.allBookTitles) {
         const currentChapter = this.allBookTitles[this.currentChapterIndex];
         const currentChapterPos = currentChapter?.offsetLeft - x;
-        const isLandscape =
-          $(UTILS.DOM_ELS.book).width() > $(currentChapter).width();
-        UTILS.DOM_ELS.demoBook?.scrollTo(
-          isLandscape
-            ? currentChapterPos - $(currentChapter).width()
-            : currentChapterPos,
-          0
-        );
+        // console.log(isLandscape);
+        // console.log(currentChapter);
+        // console.log(currentChapter?.offsetLeft);
+        // console.log("wholeBook", UTILS.DOM_ELS.demoBook?.scrollWidth);
+        // console.log("currentChapterPos", currentChapterPos);
+        // console.log(this.currentPage);
+        UTILS.DOM_ELS.demoBook?.scrollTo(currentChapterPos, 0);
         this.updatePagesCount();
       }
     }
@@ -667,7 +663,10 @@ const nagwaReaders = (function () {
     updatePagesCount() {
       this.userPreferences = new UserPreferences(this.bookId);
       const wholeBook = UTILS.DOM_ELS.demoBook;
-      const columnWidth = $(UTILS.DOM_ELS.book).width();
+      const columnWidth = UTILS.extractComputedStyleNumber(
+        UTILS.DOM_ELS.book,
+        "width"
+      );
       const columnsGap = UTILS.extractComputedStyleNumber(
         UTILS.DOM_ELS.book,
         "column-gap"
@@ -676,12 +675,13 @@ const nagwaReaders = (function () {
         wholeBook?.scrollLeft / (columnWidth + columnsGap)
       );
       const pagesNo = wholeBook?.scrollWidth / (columnWidth + columnsGap);
-      UTILS.DOM_ELS.currentPageOfAllPages.textContent = (
-        currentPage + 1
-      ).toFixed(0);
+      console.log(currentPage);
+      UTILS.DOM_ELS.currentPageOfAllPages.textContent = (currentPage + 1)
+        .toFixed(1)
+        .split(".")[0];
       UTILS.DOM_ELS.percent.querySelector("span").style.width =
         ((currentPage + 1) / pagesNo) * 100 + "%";
-      UTILS.DOM_ELS.allPages.textContent = Math.round(pagesNo);
+      UTILS.DOM_ELS.allPages.textContent = pagesNo.toFixed(1).split(".")[0];
     }
 
     changeChapter(mode) {
