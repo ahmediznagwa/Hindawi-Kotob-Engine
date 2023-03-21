@@ -675,7 +675,6 @@ const nagwaReaders = (function () {
         wholeBook?.scrollLeft / (columnWidth + columnsGap)
       );
       const pagesNo = wholeBook?.scrollWidth / (columnWidth + columnsGap);
-      console.log(currentPage);
       UTILS.DOM_ELS.currentPageOfAllPages.textContent = (currentPage + 1)
         .toFixed(1)
         .split(".")[0];

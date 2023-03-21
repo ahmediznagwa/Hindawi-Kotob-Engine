@@ -169,12 +169,12 @@ h1,
 }
 
 .part_number + h1 {
-  -webkit-column-break-before: initial;
-          break-before: initial;
+  -webkit-column-break-before: avoid;
+          break-before: avoid;
 }
 
 .book-container {
-  padding: 6rem 0;
+  padding: 6rem 0 8rem;
 }
 
 .book-wrapper {
@@ -183,8 +183,13 @@ h1,
   direction: rtl;
 }
 
+.book-chapter h1:first-child {
+  -webkit-column-break-before: avoid;
+          break-before: avoid;
+}
+
 .book {
-  height: calc(100vh - 12rem);
+  height: calc(100vh - 14rem);
   width: 100%;
   overflow: hidden;
   outline: none;

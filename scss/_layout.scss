@@ -3,18 +3,21 @@ h1,
   break-before: column;
 }
 .part_number + h1 {
-  break-before: initial;
+  break-before: avoid;
 }
 .book-container {
-  padding: 6rem 0;
+  padding: 6rem 0 8rem;
 }
 .book-wrapper {
   padding: 0 6rem 0;
   word-break: break-word;
   direction: rtl;
 }
+.book-chapter h1:first-child {
+  break-before: avoid;
+}
 .book {
-  height: calc(100vh - 12rem);
+  height: calc(100vh - 14rem);
   width: 100%;
   overflow: hidden;
   outline: none;
