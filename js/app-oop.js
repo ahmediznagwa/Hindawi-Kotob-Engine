@@ -2,39 +2,39 @@ const prodRootUrl = "https://ahmediznagwa.github.io/New-Hindawi-Reader";
 const devRootUrl = "..";
 const nagwaReaders = (function () {
 
-   //**      TYPE DEFINITIONS      **//
+  //**      TYPE DEFINITIONS      **//
 
 
-    /**
-     * @typedef {object} XMLExtractedData
-     * @property {HTMLElement[]=} chapters The chapters elements  extracted from the book element
-     */
+  /**
+   * @typedef {object} XMLExtractedData
+   * @property {HTMLElement[]=} chapters The chapters elements  extracted from the book element
+   */
 
-    /**
-     * @typedef {object} UserPreferencesState
-     * @property {number} fontSize The previously used font size
-     * @property {number} chapter The previously rendered chapter index
-     * @property {number} page The previously rendered page 
-     * @property {boolean} isDarkMode The previous dark mode state
-     */
+  /**
+   * @typedef {object} UserPreferencesState
+   * @property {number} fontSize The previously used font size
+   * @property {number} chapter The previously rendered chapter index
+   * @property {number} page The previously rendered page 
+   * @property {boolean} isDarkMode The previous dark mode state
+   */
 
-    /**
-     * The message being posted to mobile environment when page updates
-     * @typedef {object} PageUpdatedMessage
-     * @property {boolean} isDarkMode Whether story is in dark mode or not
-     * @property {boolean} isFirstPage Whether it's the first page or not
-     * @property {boolean} isLastPage Whether it's the last page or not
-     * @property {boolean} isFirstChapter Whether it's the first chapter or not
-     * @property {boolean} isLastChapter Whether it's the first chapter or not
-     * @property {number} chapterMaxPages The max amount of pages in the rendered chapter
-     * @property {number} maxChapters Max amount of chapters in the current story
-     * @property {number} percentage The current progress percentage
-     * @property {number} currentPage The current page number
-     * @property {number} currentChapter The current chapter number
-     * @property {number} fontSize The current font size of the rendered story
-     * @property {boolean} canIncreaseFont Whether you can increase font size or not
-     * @property {boolean} canDecreaseFont Whether you can decrease font size or not
-     */
+  /**
+   * The message being posted to mobile environment when page updates
+   * @typedef {object} PageUpdatedMessage
+   * @property {boolean} isDarkMode Whether story is in dark mode or not
+   * @property {boolean} isFirstPage Whether it's the first page or not
+   * @property {boolean} isLastPage Whether it's the last page or not
+   * @property {boolean} isFirstChapter Whether it's the first chapter or not
+   * @property {boolean} isLastChapter Whether it's the first chapter or not
+   * @property {number} chapterMaxPages The max amount of pages in the rendered chapter
+   * @property {number} maxChapters Max amount of chapters in the current story
+   * @property {number} percentage The current progress percentage
+   * @property {number} currentPage The current page number
+   * @property {number} currentChapter The current chapter number
+   * @property {number} fontSize The current font size of the rendered story
+   * @property {boolean} canIncreaseFont Whether you can increase font size or not
+   * @property {boolean} canDecreaseFont Whether you can decrease font size or not
+   */
 
   class UTILS {
     static DOM_ELS = {
@@ -113,6 +113,7 @@ const nagwaReaders = (function () {
       get copy() {
         return document.querySelectorAll(".copy");
       },
+
     };
 
     static extractComputedStyleNumber(el, style) {
@@ -120,13 +121,32 @@ const nagwaReaders = (function () {
       return +str.substring(0, str.length - 2);
     }
 
+    /**
+           * Calculates the current amount of pages rendered
+           * @return {number} the current amount of pages rendered
+           * @static
+           * @memberof UTILS
+           */
     static calcPageCount() {
       const columnsGap =
         this.extractComputedStyleNumber(this.DOM_ELS.book, "column-gap") || 0;
       return Math.round(
         (this.DOM_ELS.book.scrollWidth + columnsGap) /
-          (this.DOM_ELS.book.offsetWidth + columnsGap)
+        (this.DOM_ELS.book.offsetWidth + columnsGap)
       );
+    }
+
+    /**
+     * Extracts the story ID from the URL query params and falls back to the `data-story-id` tag on the section element with `story` id
+     * @static
+     * @return {string=} The extracted story ID
+     * @memberof UTILS
+     */
+    static getBookId() {
+      const searchingURLResult = window.location.search.match(/book_id=(.*)&?/)
+      const bookFromURL = searchingURLResult && searchingURLResult[1] ? searchingURLResult[1] : undefined
+      const bookId = bookFromURL || UTILS.DOM_ELS.book.dataset.bookId
+      return bookId
     }
   }
 
@@ -143,7 +163,7 @@ const nagwaReaders = (function () {
     */
     async setNav() {
       const res = await fetch(
-        `${prodRootUrl}/packages/${this.bookId}/Navigation/nav.xhtml`
+        `${devRootUrl}/packages/${this.bookId}/Navigation/nav.xhtml`
       );
       const htmlTxt = await res.text();
       const parser = new DOMParser();
@@ -183,17 +203,17 @@ const nagwaReaders = (function () {
     */
     async getHTMLDoc(name) {
       const res = await fetch(
-        `${prodRootUrl}/packages/${this.bookId}/Content/${name}`
+        `${devRootUrl}/packages/${this.bookId}/Content/${name}`
       );
       return await res.text();
     }
   }
-   class UserPreferences {
-      /**
-      * Creates an instance of UserPreferences.
-      * @param {string} bookId The ID of the book that we will keep its state
-      * @memberof UserPreferences
-      */
+  class UserPreferences {
+    /**
+    * Creates an instance of UserPreferences.
+    * @param {string} bookId The ID of the book that we will keep its state
+    * @memberof UserPreferences
+    */
     constructor(bookId) {
       this.bookId = bookId;
       this.page = 0;
@@ -214,15 +234,15 @@ const nagwaReaders = (function () {
       };
     }
 
-   /**
-    * Saves the current app state in local storage or in memory
-    * @param {number} currentPage The current rendered page 
-    * @param {number} currentChapter The current rendered chapter index
-    * @param {number} fontSize The current used font size
-    * @param {boolean} isDarkMode The current dark mode state
-    * @param {boolean=} [saveToLocalStorage=true] Whether to save the data to local storage or not
-    * @memberof UserPreferences
-    */
+    /**
+     * Saves the current app state in local storage or in memory
+     * @param {number} currentPage The current rendered page 
+     * @param {number} currentChapter The current rendered chapter index
+     * @param {number} fontSize The current used font size
+     * @param {boolean} isDarkMode The current dark mode state
+     * @param {boolean=} [saveToLocalStorage=true] Whether to save the data to local storage or not
+     * @memberof UserPreferences
+     */
     save(
       currentPage,
       currentChapter,
@@ -304,10 +324,10 @@ const nagwaReaders = (function () {
       this.renderChapter();
     }
 
-     /**
-      * Render selected chapter
-      * @memberof BookChapter
-      */
+    /**
+     * Render selected chapter
+     * @memberof BookChapter
+     */
     renderChapter() {
       const section = document.createElement("section");
       section.classList.add("book-chapter");
@@ -316,6 +336,7 @@ const nagwaReaders = (function () {
       UTILS.DOM_ELS.book.append(section);
       this.updateImagesPaths();
       this.bindClickEventOnAllWordsInChapter();
+      this.imageInsertionHandler();
     }
 
     /**
@@ -328,16 +349,16 @@ const nagwaReaders = (function () {
         const currentSrc = img.attributes.src.value;
         img.src = currentSrc.replace(
           "../Images/",
-          `${prodRootUrl}/packages/${this.bookId}/Images/`
+          `${devRootUrl}/packages/${this.bookId}/Images/`
         );
       });
     }
 
-     /**
-    * Highlight selected word
-    * @param {target} target is the word that has been clicked on.
-    * @memberof BookChapter
-    */
+    /**
+   * Highlight selected word
+   * @param {target} target is the word that has been clicked on.
+   * @memberof BookChapter
+   */
     highlightWord(target) {
       $(target).closest(".actions-menu").addClass("has-highlight");
       $(target).addClass("highlighted");
@@ -345,11 +366,11 @@ const nagwaReaders = (function () {
       this.saveHighlightedWords();
     }
 
-     /**
-    * Unhighlight selected word
-    * @param {target} target is the word that has been clicked on.
-    * @memberof BookChapter
-    */
+    /**
+   * Unhighlight selected word
+   * @param {target} target is the word that has been clicked on.
+   * @memberof BookChapter
+   */
     unhighlightWord(target) {
       $(target).closest(".actions-menu").removeClass("has-highlight");
       $(target).removeClass("highlighted");
@@ -370,11 +391,11 @@ const nagwaReaders = (function () {
       );
     }
 
-     /**
-    * Update chapter images relative to selected book folder
-    * @param {target} target is the word that has been clicked on
-    * @memberof BookChapter
-    */
+    /**
+   * Update chapter images relative to selected book folder
+   * @param {target} target is the word that has been clicked on
+   * @memberof BookChapter
+   */
     copyText(target) {
       navigator.clipboard.writeText(target.textContent);
       $(".actions-menu").remove();
@@ -445,21 +466,33 @@ const nagwaReaders = (function () {
         .querySelector(".copy")
         .addEventListener("click", this.copyText.bind(this, e.target));
     }
+
+    imageInsertionHandler(e) {
+      const book = $(UTILS.DOM_ELS.book);
+      const el = book.find('#selected-word');
+      const parent = el.parent();
+      const bookHeight = book.outerHeight();
+      if (el.length) {
+        const image = `<div class="inserted-image" style="height: ${bookHeight}px"><img src="../image.jpg"></div>`;
+        parent.after(image)
+        $(image).css('height', )
+      }
+    }
   }
 
- 
-  
+
+
 
   class Book {
-     /**
-      * Creates an instance of Book.
-      * @param {string=} bookId selected book ID
-      * @param {string[]} chapters An list of the book chapters
-      * @param {number=} [fontSize=18] The font size of the story
-      * @param {number=} [currentChapterIndex=0] The initial chapter index for the story handler
-      * @param {number=} [currentPage=0] The initial page index for the story handler
-      * @memberof Book
-      */
+    /**
+     * Creates an instance of Book.
+     * @param {string=} bookId selected book ID
+     * @param {string[]} chapters An list of the book chapters
+     * @param {number=} [fontSize=18] The font size of the story
+     * @param {number=} [currentChapterIndex=0] The initial chapter index for the story handler
+     * @param {number=} [currentPage=0] The initial page index for the story handler
+     * @memberof Book
+     */
     constructor(
       bookId,
       chapters,
@@ -506,7 +539,7 @@ const nagwaReaders = (function () {
       this.isFirstPage = this.currentPage === 0;
       this.isLastChapter = this.currentChapterIndex >= this.chapters.length - 1;
       this.isFirstChapter = this.currentChapterIndex === 0;
-    
+    }
     /**
     * Updates the state corresponding to the current font size. The updated values are: `canIncreaseFont` and `canDecreaseFont`
     * @memberof Book
@@ -573,7 +606,6 @@ const nagwaReaders = (function () {
       if (this.allBookTitles) {
         const currentChapter = this.allBookTitles[this.currentChapterIndex];
         const currentChapterPos = currentChapter?.offsetLeft - x;
-        console.log(x);
         UTILS.DOM_ELS.demoBook?.scrollTo(currentChapterPos, 0);
         this.updatePagesCount();
       }
@@ -599,7 +631,7 @@ const nagwaReaders = (function () {
         wholeBook?.scrollLeft / (columnWidth + columnsGap)
       );
       const pagesNo = wholeBook?.scrollWidth / (columnWidth + columnsGap);
-      UTILS.DOM_ELS.currentPageOfAllPages.textContent = (currentPage + 1)
+      UTILS.DOM_ELS.currentPageOfAllPages.textContent = currentPage
         .toFixed(1)
         .split(".")[0];
       UTILS.DOM_ELS.percent.querySelector("span").style.width =
@@ -641,7 +673,7 @@ const nagwaReaders = (function () {
       if (oldChapterIndex !== this.currentChapterIndex)
         this.currentChapter = new BookChapter(
           this.chapters[
-            Math.min(this.currentChapterIndex, this.chapters.length - 1)
+          Math.min(this.currentChapterIndex, this.chapters.length - 1)
           ],
           this.bookId
         );
@@ -826,14 +858,14 @@ const nagwaReaders = (function () {
     * Creates an instance of Controller.
     * @memberof Controller
     */
-    constructor() {}
+    constructor() { }
 
 
-     /**
-      * Initiates the app asynchronously by tacking the book ID and fetching the HTML document
-      * @param {string} bookId The ID of the book we want to initiate
-      * @memberof Controller
-      */
+    /**
+     * Initiates the app asynchronously by tacking the book ID and fetching the HTML document
+     * @param {string} bookId The ID of the book we want to initiate
+     * @memberof Controller
+     */
     async initWithBookId(bookId) {
       this.htmlExtractor = new HTMLExtractor(bookId);
       await this.htmlExtractor.extractChapters();
@@ -988,111 +1020,111 @@ const nagwaReaders = (function () {
          * Navigates to next page
          * @memberof Controller
          */
-        goToNextPage() {
-            this.book.changePage("next")
-            this.postNavigationHandler()
-        }
+    goToNextPage() {
+      this.book.changePage("next")
+      this.postNavigationHandler()
+    }
 
-        /**
-         * Navigates to previous page
-         * @memberof Controller
-         */
-        goToPrevPage() {
-            this.book.changePage("prev")
-            this.postNavigationHandler()
-        }
+    /**
+     * Navigates to previous page
+     * @memberof Controller
+     */
+    goToPrevPage() {
+      this.book.changePage("prev")
+      this.postNavigationHandler()
+    }
 
-        /**
-         * Navigates to first page
-         * @memberof Controller
-         */
-        goToFirstPage() {
-            this.book.changePage("first")
-            this.postNavigationHandler()
-        }
+    /**
+     * Navigates to first page
+     * @memberof Controller
+     */
+    goToFirstPage() {
+      this.book.changePage("first")
+      this.postNavigationHandler()
+    }
 
-        /**
-         * Navigates to last page
-         * @memberof Controller
-         */
-        goToLastPage() {
-            this.book.changePage("last")
-            this.postNavigationHandler()
-        }
+    /**
+     * Navigates to last page
+     * @memberof Controller
+     */
+    goToLastPage() {
+      this.book.changePage("last")
+      this.postNavigationHandler()
+    }
 
-        /**
-         * Navigates to next chapter
-         * @memberof Controller
-         */
-        goToNextChapter() {
-            this.book.changeChapter("next")
-            this.postNavigationHandler()
-        }
+    /**
+     * Navigates to next chapter
+     * @memberof Controller
+     */
+    goToNextChapter() {
+      this.book.changeChapter("next")
+      this.postNavigationHandler()
+    }
 
-        /**
-         * Navigates to previous chapter
-         * @memberof Controller
-         */
-        goToPrevChapter() {
-            this.book.changeChapter("prev")
-            this.postNavigationHandler()
-        }
+    /**
+     * Navigates to previous chapter
+     * @memberof Controller
+     */
+    goToPrevChapter() {
+      this.book.changeChapter("prev")
+      this.postNavigationHandler()
+    }
 
-        /**
-         * Navigates to first chapter
-         * @memberof Controller
-         */
-        goToFirstChapter() {
-            this.book.changeChapter("first")
-            this.postNavigationHandler()
-        }
+    /**
+     * Navigates to first chapter
+     * @memberof Controller
+     */
+    goToFirstChapter() {
+      this.book.changeChapter("first")
+      this.postNavigationHandler()
+    }
 
-        /**
-         * Navigates to last chapter
-         * @memberof Controller
-         */
-        goToLastChapter() {
-            this.book.changeChapter("last")
-            this.postNavigationHandler()
-        }
+    /**
+     * Navigates to last chapter
+     * @memberof Controller
+     */
+    goToLastChapter() {
+      this.book.changeChapter("last")
+      this.postNavigationHandler()
+    }
 
-        /**
-         * Increments Font Size
-         * @memberof Controller
-         */
-        increaseFontSize() {
-            this.book.changeFontSize("bigger")
-            this.postFontResizeHandler();
-        }
+    /**
+     * Increments Font Size
+     * @memberof Controller
+     */
+    increaseFontSize() {
+      this.book.changeFontSize("bigger")
+      this.postFontResizeHandler();
+    }
 
-        /**
-         * Decrements font size
-         * @memberof Controller
-         */
-        decreaseFontSize() {
-            this.book.changeFontSize("smaller")
-            this.postFontResizeHandler()
-        }
+    /**
+     * Decrements font size
+     * @memberof Controller
+     */
+    decreaseFontSize() {
+      this.book.changeFontSize("smaller")
+      this.postFontResizeHandler()
+    }
 
-        /**
-         * Resets font size to default value
-         * @memberof Controller
-         */
-        resetFontSize() {
-            this.book.changeFontSize("reset")
-            this.postFontResizeHandler()
-        }
+    /**
+     * Resets font size to default value
+     * @memberof Controller
+     */
+    resetFontSize() {
+      this.book.changeFontSize("reset")
+      this.postFontResizeHandler()
+    }
 
-        /**
-         * Sets font size to a desired value
-         * @param {number} fontSize The required font size
-         * @memberof Controller
-         */
-        setFontSize(fontSize) {
-            this.book.fontSize = fontSize
-            this.book.changeFontSize()
-            this.postFontResizeHandler()
-        }
+    /**
+     * Sets font size to a desired value
+     * @param {number} fontSize The required font size
+     * @memberof Controller
+     */
+    setFontSize(fontSize) {
+      this.book.fontSize = fontSize
+      this.book.changeFontSize()
+      this.postFontResizeHandler()
+    }
 
     /**
       * Sets dark mode to a desired value
@@ -1113,11 +1145,11 @@ const nagwaReaders = (function () {
       this.book.changeColorMode(colorMode);
       this.storeUserPreferences();
     }
-     /**
-      * Sets font family to a desired value
-      * @param {boolean} fontFamily The required font family value
-      * @memberof Controller
-      */
+    /**
+     * Sets font family to a desired value
+     * @param {boolean} fontFamily The required font family value
+     * @memberof Controller
+     */
     setFontFamily(fontFamily) {
       this.book.changeFontFamily(fontFamily);
       this.storeUserPreferences();
@@ -1156,135 +1188,134 @@ const nagwaReaders = (function () {
      * @class MobileController
      * @extends {Controller}
      */
-    class MobileController extends Controller {
+  class MobileController extends Controller {
 
-        /**
-         * Overrides the {@link Controller.detectUserPreferences detectUserPreferences} method to do nothing
-         * @memberof MobileController
-         */
-        detectUserPreferences() { }
+    /**
+     * Overrides the {@link Controller.detectUserPreferences detectUserPreferences} method to do nothing
+     * @memberof MobileController
+     */
+    detectUserPreferences() { }
 
-        /**
-         * Overrides the {@link Controller.storeUserPreferences storeUserPreferences} method to do nothing
-         * @memberof MobileController
-         */
-        storeUserPreferences() { }
+    /**
+     * Overrides the {@link Controller.storeUserPreferences storeUserPreferences} method to do nothing
+     * @memberof MobileController
+     */
+    storeUserPreferences() { }
 
-        /**
-         * Overrides the {@link Controller.setupEventListeners setupEventListeners} method to only setup resize event listener
-         * @memberof MobileController
-         */
-        setupEventListeners() { window?.addEventListener("resize", () => setTimeout(this.resizeEventHandler.bind(this), 0)) }
+    /**
+     * Overrides the {@link Controller.setupEventListeners setupEventListeners} method to only setup resize event listener
+     * @memberof MobileController
+     */
+    setupEventListeners() { window?.addEventListener("resize", () => setTimeout(this.resizeEventHandler.bind(this), 0)) }
 
-        /**
-         * Overrides the {@link Controller.afterNavigationCallback afterNavigationCallback} method to post messages to mobile environment
-         * @memberof MobileController
-         */
-        afterNavigationCallback() { this.postPageUpdatedMessage() }
+    /**
+     * Overrides the {@link Controller.afterNavigationCallback afterNavigationCallback} method to post messages to mobile environment
+     * @memberof MobileController
+     */
+    afterNavigationCallback() { this.postPageUpdatedMessage() }
 
-        /**
-         * Overrides the {@link Controller.afterFontResizeCallback afterFontResizeCallback} method to post messages to mobile environment
-         * @memberof MobileController
-         */
-        afterFontResizeCallback() { this.postPageUpdatedMessage() }
+    /**
+     * Overrides the {@link Controller.afterFontResizeCallback afterFontResizeCallback} method to post messages to mobile environment
+     * @memberof MobileController
+     */
+    afterFontResizeCallback() { this.postPageUpdatedMessage() }
 
-        /**
-         * Overrides the {@link Controller.afterWindowResizeCallback afterWindowResizeCallback} method to post messages to mobile environment
-         * @memberof MobileController
-         */
-        afterWindowResizeCallback() { this.postPageUpdatedMessage() }
+    /**
+     * Overrides the {@link Controller.afterWindowResizeCallback afterWindowResizeCallback} method to post messages to mobile environment
+     * @memberof MobileController
+     */
+    afterWindowResizeCallback() { this.postPageUpdatedMessage() }
 
-        /**
-         * Overrides the {@link Controller.afterDarkModeChangeCallback afterDarkModeChangeCallback} method to post messages to mobile environment
-         * @memberof MobileController
-         */
-        afterDarkModeChangeCallback() { this.postPageUpdatedMessage() }
+    /**
+     * Overrides the {@link Controller.afterDarkModeChangeCallback afterDarkModeChangeCallback} method to post messages to mobile environment
+     * @memberof MobileController
+     */
+    afterDarkModeChangeCallback() { this.postPageUpdatedMessage() }
 
-        /**
-         * Initiates the mobile app with any state required. Falls back to default state: `currentPage=0`, `currentChapter=0`, `fontSize=18` and `isDarkMode=false`
-         * @param {string} bookId The ID of the book to be rendered
-         * @param {number=} currentPage The current rendered page 
-         * @param {number=} currentChapter The current rendered chapter index
-         * @param {number=} fontSize The current used font size
-         * @param {boolean=} isDarkMode The current dark mode state
-         * @memberof UserPreferences
-         */
-        init(bookId, currentPage, currentChapter, fontSize, isDarkMode) {
-            this.userPreferences = new UserPreferences()
-            this.userPreferences.save(currentPage, currentChapter, fontSize, isDarkMode, false)
-            this.initWithBookId(bookId)
-            this.postStoryCreatedMessage()
-        }
-
-        /**
-         * Posts a message object as JSON object to mobile environments
-         * @param {string} messageHandlerName The message handler name to post message to
-         * @param {object} message The message object to transform it to JSON and post it
-         * @memberof MobileController
-         */
-        postMessage(messageHandlerName, message) {
-            const json = JSON.stringify(message)
-            if (window.webkit && window.webkit.messageHandlers[messageHandlerName]) window.webkit.messageHandlers[messageHandlerName].postMessage(json)
-            if (window[messageHandlerName]) window[messageHandlerName].postMessage(json)
-        }
-
-        /**
-         * Posts a message for the pageUpdated message handler. The message object interface: {@link PageUpdatedMessage}
-         * @memberof MobileController
-         */
-        postPageUpdatedMessage() {
-            /** @type {PageUpdatedMessage} */
-            const messageObj = {
-                isDarkMode: this.imageHandler.currentImage.isDarkMode,
-                isFirstPage: this.book.isFirstPage,
-                isLastPage: this.book.isLastPage,
-                chapterMaxPages: UTILS.calcPageCount(),
-                maxChapters: this.book.chapters.length - 1,
-                percentage: this.book.currentProgressPercent,
-                currentPage: this.book.currentPage,
-                currentChapter: this.book.currentChapterIndex,
-                isFirstChapter: this.book.isFirstChapter,
-                isLastChapter: this.book.isLastChapter,
-                fontSize: this.book.fontSize,
-                canIncreaseFont: this.book.canIncreaseFont,
-                canDecreaseFont: this.book.canDecreaseFont
-            }
-            this.postMessage("pageUpdated", messageObj)
-        }
-
-        /**
-         * Posts a message for the storyCreated message handler. The message object interface: {@link StoryCreatedMessage}
-         * @memberof MobileController
-         */
-        postStoryCreatedMessage() {
-            this.postPageUpdatedMessage()
-        }
+    /**
+     * Initiates the mobile app with any state required. Falls back to default state: `currentPage=0`, `currentChapter=0`, `fontSize=18` and `isDarkMode=false`
+     * @param {string} bookId The ID of the book to be rendered
+     * @param {number=} currentPage The current rendered page 
+     * @param {number=} currentChapter The current rendered chapter index
+     * @param {number=} fontSize The current used font size
+     * @param {boolean=} isDarkMode The current dark mode state
+     * @memberof UserPreferences
+     */
+    init(bookId, currentPage, currentChapter, fontSize, isDarkMode) {
+      this.userPreferences = new UserPreferences()
+      this.userPreferences.save(currentPage, currentChapter, fontSize, isDarkMode, false)
+      this.initWithBookId(bookId)
+      this.postStoryCreatedMessage()
     }
 
-    const mobileController = new MobileController()
-    window.addEventListener("load", () => {
-        if (book) mobileController.init(book)
-        else {
-            const storyId = UTILS.getStoryId()
-            if (storyId) {
-                const controller = new Controller()
-                controller.initWithXMLId(storyId)
-            }
-
-        }
-    })
-    const mobileController = new MobileController()
-    return {
-        init: mobileController.init.bind(mobileController),
-        nextPage: mobileController.goToNextPage.bind(mobileController),
-        prevPage: mobileController.goToPrevPage.bind(mobileController),
-        nextChapter: mobileController.goToNextChapter.bind(mobileController),
-        prevChapter: mobileController.goToPrevChapter.bind(mobileController),
-        increaseFontSize: mobileController.increaseFontSize.bind(mobileController),
-        decreaseFontSize: mobileController.decreaseFontSize.bind(mobileController),
-        darkModeHandle: mobileController.setDarkMode.bind(mobileController),
-        resetFontSize: mobileController.resetFontSize.bind(mobileController),
+    /**
+     * Posts a message object as JSON object to mobile environments
+     * @param {string} messageHandlerName The message handler name to post message to
+     * @param {object} message The message object to transform it to JSON and post it
+     * @memberof MobileController
+     */
+    postMessage(messageHandlerName, message) {
+      const json = JSON.stringify(message)
+      if (window.webkit && window.webkit.messageHandlers[messageHandlerName]) window.webkit.messageHandlers[messageHandlerName].postMessage(json)
+      if (window[messageHandlerName]) window[messageHandlerName].postMessage(json)
     }
+
+    /**
+     * Posts a message for the pageUpdated message handler. The message object interface: {@link PageUpdatedMessage}
+     * @memberof MobileController
+     */
+    postPageUpdatedMessage() {
+      /** @type {PageUpdatedMessage} */
+      const messageObj = {
+        isDarkMode: this.imageHandler.currentImage.isDarkMode,
+        isFirstPage: this.book.isFirstPage,
+        isLastPage: this.book.isLastPage,
+        chapterMaxPages: UTILS.calcPageCount(),
+        maxChapters: this.book.chapters.length - 1,
+        percentage: this.book.currentProgressPercent,
+        currentPage: this.book.currentPage,
+        currentChapter: this.book.currentChapterIndex,
+        isFirstChapter: this.book.isFirstChapter,
+        isLastChapter: this.book.isLastChapter,
+        fontSize: this.book.fontSize,
+        canIncreaseFont: this.book.canIncreaseFont,
+        canDecreaseFont: this.book.canDecreaseFont
+      }
+      this.postMessage("pageUpdated", messageObj)
+    }
+
+    /**
+     * Posts a message for the storyCreated message handler. The message object interface: {@link StoryCreatedMessage}
+     * @memberof MobileController
+     */
+    postStoryCreatedMessage() {
+      this.postPageUpdatedMessage()
+    }
+  }
+
+  const mobileController = new MobileController()
+  window.addEventListener("load", () => {
+    if (book) mobileController.init(book)
+    else {
+      const bookId = UTILS.getBookId()
+      if (bookId) {
+        const controller = new Controller()
+        controller.initWithBookId(bookId)
+      }
+
+    }
+  })
+  return {
+    init: mobileController.init.bind(mobileController),
+    nextPage: mobileController.goToNextPage.bind(mobileController),
+    prevPage: mobileController.goToPrevPage.bind(mobileController),
+    nextChapter: mobileController.goToNextChapter.bind(mobileController),
+    prevChapter: mobileController.goToPrevChapter.bind(mobileController),
+    increaseFontSize: mobileController.increaseFontSize.bind(mobileController),
+    decreaseFontSize: mobileController.decreaseFontSize.bind(mobileController),
+    darkModeHandle: mobileController.setDarkMode.bind(mobileController),
+    resetFontSize: mobileController.resetFontSize.bind(mobileController),
+  }
 })();
 
 // Dropdown Menu

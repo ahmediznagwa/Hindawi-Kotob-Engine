@@ -32,13 +32,13 @@ h1,
 
   &.demo {
     position: absolute;
-    left: 0;
+    left: 6rem;
     top: 6rem;
-    right: 0;
+    right: 6rem;
     bottom: 6rem;
     width: auto;
-    // visibility: visible;
-    // opacity: 1;
+    visibility: visible;
+    opacity: 1;
     visibility: hidden;
     opacity: 0;
   }

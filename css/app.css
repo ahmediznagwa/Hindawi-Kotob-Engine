@@ -130,6 +130,18 @@ body.warm {
   transition: background-color 0.3s;
 }
 
+.inserted-image {
+  -webkit-column-break-before: avoid;
+          break-before: avoid;
+}
+
+.inserted-image img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+
 @font-face {
   font-family: "Font-Awesome";
   font-style: normal;
@@ -209,11 +221,13 @@ h1,
 
 .book.demo {
   position: absolute;
-  left: 0;
+  left: 6rem;
   top: 6rem;
-  right: 0;
+  right: 6rem;
   bottom: 6rem;
   width: auto;
+  visibility: visible;
+  opacity: 1;
   visibility: hidden;
   opacity: 0;
 }

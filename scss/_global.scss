@@ -119,3 +119,13 @@ body {
   background-color: #fff200ad;
   transition: background-color 0.3s;
 }
+
+
+.inserted-image {
+  break-before: avoid;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
