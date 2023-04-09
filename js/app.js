@@ -60,7 +60,7 @@ const nagwaReaders = (function () {
         return document.getElementById("pagination-font-reset");
       },
       get percent() {
-        return document.querySelector(".pagination-percent");
+        return document.querySelector(".bar-percent");
       },
       get currentPageOfAllPages() {
         return document.querySelector(".pagination-current-page");
