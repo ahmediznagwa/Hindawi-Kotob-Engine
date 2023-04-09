@@ -506,6 +506,7 @@ const nagwaReaders = (function () {
       this.isFirstPage = this.currentPage === 0;
       this.isLastChapter = this.currentChapterIndex >= this.chapters.length - 1;
       this.isFirstChapter = this.currentChapterIndex === 0;
+    }
     
     /**
     * Updates the state corresponding to the current font size. The updated values are: `canIncreaseFont` and `canDecreaseFont`
