@@ -364,7 +364,7 @@ h1,
   margin-right: auto;
 }
 
-.pagination-percent {
+.bar-percent {
   position: absolute;
   top: 0;
   right: 0;
@@ -374,7 +374,7 @@ h1,
   font-weight: bold;
 }
 
-.pagination-percent > span {
+.bar-percent > span {
   position: absolute;
   right: 0;
   top: -1px;

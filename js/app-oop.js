@@ -1,3 +1,4 @@
+// const prodRootUrl = "https://readersapp.nagwa.com/hindawi";
 const prodRootUrl = "https://ahmediznagwa.github.io/New-Hindawi-Reader";
 const devRootUrl = "..";
 const nagwaReaders = (function () {
@@ -59,15 +60,18 @@ const nagwaReaders = (function () {
       get resetFontBtn() {
         return document.getElementById("pagination-font-reset");
       },
+      get barPercent() {
+        return document.querySelector(".bar-percent");
+      },
       get percent() {
-        return document.querySelector(".pagination-percent");
+        return document.querySelector(".pagination-percentage");
       },
-      get currentPageOfAllPages() {
-        return document.querySelector(".pagination-current-page");
-      },
-      get allPages() {
-        return document.querySelector(".pagination-pages");
-      },
+      // get currentPageOfAllPages() {
+      //   return document.querySelector(".pagination-current-page");
+      // },
+      // get allPages() {
+      //   return document.querySelector(".pagination-pages");
+      // },
       get darkModeChk() {
         return document.querySelector(".change-color-mode input");
       },
@@ -163,7 +167,7 @@ const nagwaReaders = (function () {
     */
     async setNav() {
       const res = await fetch(
-        `${devRootUrl}/packages/${this.bookId}/Navigation/nav.xhtml`
+        `${prodRootUrl}/packages/${this.bookId}/Navigation/nav.xhtml`
       );
       const htmlTxt = await res.text();
       const parser = new DOMParser();
@@ -203,7 +207,7 @@ const nagwaReaders = (function () {
     */
     async getHTMLDoc(name) {
       const res = await fetch(
-        `${devRootUrl}/packages/${this.bookId}/Content/${name}`
+        `${prodRootUrl}/packages/${this.bookId}/Content/${name}`
       );
       return await res.text();
     }
@@ -349,7 +353,7 @@ const nagwaReaders = (function () {
         const currentSrc = img.attributes.src.value;
         img.src = currentSrc.replace(
           "../Images/",
-          `${devRootUrl}/packages/${this.bookId}/Images/`
+          `${prodRootUrl}/packages/${this.bookId}/Images/`
         );
       });
     }
@@ -473,6 +477,12 @@ const nagwaReaders = (function () {
       const parent = el.parent();
       const bookHeight = book.outerHeight();
       if (el.length) {
+        const allElementsOfChapter = document.querySelectorAll('*');
+        allElementsOfChapter.forEach(item => {
+          if($(item).is(':visible')) {
+            console.log(item);
+          }
+        });
         const image = `<div class="inserted-image" style="height: ${bookHeight}px"><img src="../image.jpg"></div>`;
         parent.after(image)
         $(image).css('height', )
@@ -631,12 +641,13 @@ const nagwaReaders = (function () {
         wholeBook?.scrollLeft / (columnWidth + columnsGap)
       );
       const pagesNo = wholeBook?.scrollWidth / (columnWidth + columnsGap);
-      UTILS.DOM_ELS.currentPageOfAllPages.textContent = currentPage
-        .toFixed(1)
-        .split(".")[0];
-      UTILS.DOM_ELS.percent.querySelector("span").style.width =
-        ((currentPage + 1) / pagesNo) * 100 + "%";
-      UTILS.DOM_ELS.allPages.textContent = pagesNo.toFixed(1).split(".")[0];
+      const percentage = Math.round((currentPage / pagesNo) * 100) + "%";
+      UTILS.DOM_ELS.barPercent.querySelector("span").style.width = percentage;
+      UTILS.DOM_ELS.percent.textContent = percentage;
+      // UTILS.DOM_ELS.currentPageOfAllPages.textContent = currentPage
+      //   .toFixed(1)
+      //   .split(".")[0];
+      // UTILS.DOM_ELS.allPages.textContent = pagesNo.toFixed(1).split(".")[0];
     }
 
     /**
@@ -1181,7 +1192,12 @@ const nagwaReaders = (function () {
     }
   }
   const controller = new Controller();
-  controller.initWithBookId("26dd5f00-0c75-4367-adea-537ece731385");
+  window.addEventListener("load", () => {
+    const bookId = UTILS.getBookId()
+    if (bookId) {
+      controller.initWithBookId(bookId)
+    }
+  })
 
   /**
      * A class extending the main {@link Controller} class with modifications for the mobile devices.
