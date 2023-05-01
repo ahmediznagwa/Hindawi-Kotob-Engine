@@ -739,7 +739,7 @@ const nagwaReaders = (function () {
 
     /**
       * Updates the DOM element representing the progress percentage value
-      * @memberof StoryHandler
+      * @memberof Book
       */
     updateProgressPercentage() {
       // const pageLastWordIndex = this.currentChapter.pagesContentRanges[this.currentPage][1];
@@ -1226,7 +1226,6 @@ const nagwaReaders = (function () {
       this.book.changeFontFamily(fontFamily);
       this.storeUserPreferences();
     }
-
 
     showFontFamilies() {
       $(".view-config").slideUp(300);
