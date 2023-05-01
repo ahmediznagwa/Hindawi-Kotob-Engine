@@ -1,14 +1,14 @@
 // const prodRootUrl = "https://readersapp.nagwa.com/hindawi";
-const prodRootUrl = "https://ahmediznagwa.github.io/New-Hindawi-Reader";
-const devRootUrl = "..";
+// const prodRootUrl = "https://ahmediznagwa.github.io/New-Hindawi-Reader";
+const prodRootUrl = "..";
 const nagwaReaders = (function () {
 
   //**      TYPE DEFINITIONS      **//
 
 
   /**
-   * @typedef {object} XMLExtractedData
    * @property {HTMLElement[]=} chapters The chapters elements  extracted from the book element
+   * @property {number=} bookWordsCount The amount of words in the book element
    */
 
   /**
@@ -16,13 +16,11 @@ const nagwaReaders = (function () {
    * @property {number} fontSize The previously used font size
    * @property {number} chapter The previously rendered chapter index
    * @property {number} page The previously rendered page 
-   * @property {boolean} isDarkMode The previous dark mode state
    */
 
   /**
    * The message being posted to mobile environment when page updates
    * @typedef {object} PageUpdatedMessage
-   * @property {boolean} isDarkMode Whether story is in dark mode or not
    * @property {boolean} isFirstPage Whether it's the first page or not
    * @property {boolean} isLastPage Whether it's the last page or not
    * @property {boolean} isFirstChapter Whether it's the first chapter or not
@@ -66,12 +64,6 @@ const nagwaReaders = (function () {
       get percent() {
         return document.querySelector(".pagination-percentage");
       },
-      // get currentPageOfAllPages() {
-      //   return document.querySelector(".pagination-current-page");
-      // },
-      // get allPages() {
-      //   return document.querySelector(".pagination-pages");
-      // },
       get darkModeChk() {
         return document.querySelector(".change-color-mode input");
       },
@@ -106,7 +98,7 @@ const nagwaReaders = (function () {
         return document.querySelector(".book-wrapper");
       },
       get words() {
-        return document.querySelectorAll("p");
+        return document.querySelectorAll("span[n]");
       },
       get highlight() {
         return document.querySelectorAll(".highlight");
@@ -223,13 +215,11 @@ const nagwaReaders = (function () {
       this.page = 0;
       this.chapter = 0;
       this.fontSize = 0;
-      this.isDarkMode = false;
       this.colorMode = null;
       this.fontFamily = null;
 
       this.localStorageKeys = {
         fontSize: `${this.bookId}_fontSize`,
-        isDarkMode: "isDarkMode",
         colorMode: "colorMode",
         fontFamily: "fontFamily",
         lastPosition: `${this.bookId}_lastPosition`, //its value in Localstorage will be a JSON containing chapter and page,
@@ -243,7 +233,6 @@ const nagwaReaders = (function () {
      * @param {number} currentPage The current rendered page 
      * @param {number} currentChapter The current rendered chapter index
      * @param {number} fontSize The current used font size
-     * @param {boolean} isDarkMode The current dark mode state
      * @param {boolean=} [saveToLocalStorage=true] Whether to save the data to local storage or not
      * @memberof UserPreferences
      */
@@ -251,7 +240,6 @@ const nagwaReaders = (function () {
       currentPage,
       currentChapter,
       fontSize,
-      isDarkMode,
       colorMode,
       fontFamily,
       saveToLocalStorage = true
@@ -259,7 +247,6 @@ const nagwaReaders = (function () {
       this.page = currentPage;
       this.chapter = currentChapter;
       this.fontSize = fontSize;
-      this.isDarkMode = isDarkMode;
       this.colorMode = colorMode;
       this.fontFamily = fontFamily;
       if (saveToLocalStorage) {
@@ -271,7 +258,6 @@ const nagwaReaders = (function () {
           })
         );
         localStorage.setItem(this.localStorageKeys.fontSize, this.fontSize);
-        localStorage.setItem(this.localStorageKeys.isDarkMode, this.isDarkMode);
         localStorage.setItem(this.localStorageKeys.colorMode, this.colorMode);
         localStorage.setItem(this.localStorageKeys.fontFamily, this.fontFamily);
       }
@@ -285,9 +271,6 @@ const nagwaReaders = (function () {
 
     load() {
       this.fontSize = +localStorage.getItem(this.localStorageKeys.fontSize);
-      this.isDarkMode = JSON.parse(
-        localStorage.getItem(this.localStorageKeys.isDarkMode)
-      );
       this.colorMode = localStorage.getItem(this.localStorageKeys.colorMode);
       this.fontFamily = localStorage.getItem(this.localStorageKeys.fontFamily);
       const lastPosition = JSON.parse(
@@ -297,7 +280,6 @@ const nagwaReaders = (function () {
       this.page = lastPosition?.page;
       return {
         fontSize: this.fontSize,
-        isDarkMode: this.isDarkMode,
         colorMode: this.colorMode,
         fontFamily: this.fontFamily,
         chapter: this.chapter,
@@ -320,12 +302,141 @@ const nagwaReaders = (function () {
     constructor(chapterEl, bookId) {
       this.bookId = bookId;
       this.chapterEl = chapterEl;
+      /**
+        * An array of arrays containing the index of the starting and ending words of each page for the current rendered chapter
+        * @type {number[][]} `[[pageIndexStart, pageIndexEnd],...]`
+        */
+      this.pagesContentRanges = []
       this.page = 0;
-      this.storyContainerPadding = 0;
+      this.ROUNDING_TOLERANCE = 3
+      this.bookContainerPadding = 0;
       this.exactColumnsGap = 0;
       this.exactColumnWidth = 0;
       this.columnWidth = 0;
       this.renderChapter();
+    }
+
+    /**
+      * Searches for a span inside an element at a given order
+      * @param {HTMLElement} el The parent element where we will search for a span
+      * @param {"first" | "last"} order The order whether first word or last word
+      * @return {HTMLElement} The desired span 
+      * @memberof BookChapter
+      */
+    getSpan(el, order) {
+      if (order === "first") return el.querySelector("span:first-child")
+      else if (order === "last") return Array.from(el.querySelectorAll("span:last-child")).pop()
+    }
+
+    /**
+      * Gets the highest parent that's below the main story element for a given child element
+      * @param {HTMLElement} el The element that we need to get its parent
+      * @return {HTMLElement} The desired parent 
+      * @memberof BookChapter
+      */
+    getHighestParent(el) {
+      let child = el
+      let parent = child.parentElement
+      while (parent !== UTILS.DOM_ELS.book.firstElementChild) {
+        child = child.parentElement
+        parent = child.parentElement
+      }
+      return child
+    }
+
+
+    /**
+      * Calculates the left edge position of the page in the rendered HTML
+      * @return {number}  the left edge position of the page
+      * @memberof BookChapter
+      */
+    getPageLeft() {
+      return Math.round(this.bookContainerPadding - this.page * (this.exactColumnWidth + this.exactColumnsGap));
+    }
+
+    /**
+      * Calculates the right edge position of the page in the rendered HTML
+      * @return {number}  the right edge position of the page
+      * @memberof BookChapter
+      */
+    getPageRight() { return this.getPageLeft() + this.exactColumnWidth }
+
+    /**
+      * Checks whether an element is or is not in the current page 
+      * @param {HTMLElement} el The element to be checked
+      * @return {boolean} Is the element in another page
+      * @memberof BookChapter
+      */
+    isInOtherPage(el) {
+      return this.getPageRight() - (el?.offsetLeft + Math.min(el?.offsetWidth, this.columnWidth)) >= this.columnWidth - this.ROUNDING_TOLERANCE
+    }
+
+    /**
+      * Loops over all the words in a given element and updates the pagesContentRanges according to words locations
+      * @param {HTMLElement} el The element containing the words that we need to loop over
+      * @memberof BookChapter
+      */
+    loopOverWords(el) {
+      // Array.from(el.querySelectorAll("span[n]")).forEach((wordEl, i, wordArr) => {
+      //   if (this.isInOtherPage(wordEl)) { // word is in another page
+      //     console.log(wordEl);
+      //     this.pagesContentRanges[this.page][1] = +wordArr[i - 1]?.getAttribute('n')
+      //     this.page++
+      //     this.pagesContentRanges[this.page][0] = +wordEl?.getAttribute('n')
+      //   }
+      //   if (i === wordArr.length - 1) { // last word in paragraph
+      //     const nextParent = this.getHighestParent(wordEl)?.nextElementSibling
+      //     if (this.isInOtherPage(nextParent)) {
+      //       this.pagesContentRanges[this.page][1] = +wordEl?.getAttribute('n')
+      //       this.page++
+      //       this.pagesContentRanges[this.page][0] = +this.getSpan(nextParent, "first")?.getAttribute('n')
+      //     }
+      //   }
+      // })
+    }
+
+    /**
+         * Calculates the starting and ending words of each page for the current rendered chapter
+         * @memberof BookChapter
+         */
+    calcPagesContentRanges() {
+      // //update container values
+      // this.page = 0
+      // this.bookContainerPadding = UTILS.extractComputedStyleNumber(UTILS.DOM_ELS.book.parentElement, "padding-left")
+      // this.exactColumnsGap = UTILS.extractComputedStyleNumber(UTILS.DOM_ELS.book, "column-gap")
+      // this.exactColumnWidth = UTILS.extractComputedStyleNumber(UTILS.DOM_ELS.book, "width")
+      // this.columnWidth = UTILS.DOM_ELS.book.offsetWidth
+      // //reset the pagesContentRanges to empty state
+      // this.pagesContentRanges = Array.from({ length: UTILS.calcPageCount() }, () => [])
+      // //loop over the children of the rendered chapter
+
+      // Array.from(UTILS.DOM_ELS.book.firstElementChild.children).forEach((child, i, childrenArr) => {
+      //   //if there's only one child in the chapter
+      //   if (childrenArr.length === 1) this.pagesContentRanges[this.page][0] = +this.getSpan(child, "first")?.getAttribute('n')
+      //   // last element in chapter
+      //   if (i === childrenArr.length - 1) {
+      //     if (this.isInOtherPage(this.getSpan(child, "last"))) { // paragraph split into two pages
+      //       this.loopOverWords(child)
+      //     }
+      //     this.pagesContentRanges[this.page][1] = +this.getSpan(child, "last")?.getAttribute('n')
+      //   }
+      //   //First Element in chapter
+      //   else if (i === 0) {
+      //     this.pagesContentRanges[this.page][0] = +this.getSpan(child, "first")?.getAttribute('n')
+      //     this.loopOverWords(child)
+      //   }
+      //   //any other element
+      //   else {
+      //     if (this.isInOtherPage(child?.nextElementSibling)) {// paragraph at the end of the page
+      //       if (this.isInOtherPage(this.getSpan(child, "last"))) this.loopOverWords(child) // paragraph split into two pages
+      //       else { // paragraph didn't split into two pages
+      //         this.pagesContentRanges[this.page][1] = +this.getSpan(child, "last")?.getAttribute('n')
+      //         this.page++
+      //         this.pagesContentRanges[this.page][0] = +this.getSpan(child?.nextElementSibling, "first")?.getAttribute('n')
+      //       }
+      //     }
+      //   }
+      // })
     }
 
     /**
@@ -338,6 +449,7 @@ const nagwaReaders = (function () {
       section.innerHTML = this.chapterEl?.innerHTML;
       UTILS.DOM_ELS.book.innerHTML = "";
       UTILS.DOM_ELS.book.append(section);
+      this.calcPagesContentRanges();
       this.updateImagesPaths();
       this.bindClickEventOnAllWordsInChapter();
       this.imageInsertionHandler();
@@ -479,13 +591,13 @@ const nagwaReaders = (function () {
       if (el.length) {
         const allElementsOfChapter = document.querySelectorAll('*');
         allElementsOfChapter.forEach(item => {
-          if($(item).is(':visible')) {
+          if ($(item).is(':visible')) {
             console.log(item);
           }
         });
         const image = `<div class="inserted-image" style="height: ${bookHeight}px"><img src="../image.jpg"></div>`;
         parent.after(image)
-        $(image).css('height', )
+        $(image).css('height',)
       }
     }
   }
@@ -498,6 +610,7 @@ const nagwaReaders = (function () {
      * Creates an instance of Book.
      * @param {string=} bookId selected book ID
      * @param {string[]} chapters An list of the book chapters
+     * @param {number} bookWordsCount The count of words in the whole book
      * @param {number=} [fontSize=18] The font size of the story
      * @param {number=} [currentChapterIndex=0] The initial chapter index for the story handler
      * @param {number=} [currentPage=0] The initial page index for the story handler
@@ -507,13 +620,14 @@ const nagwaReaders = (function () {
       bookId,
       chapters,
       fontSize = 18,
+      bookWordsCount,
       currentChapterIndex = 0,
       currentPage = 0,
-      isDarkMode = null,
       colorMode = "white",
       fontFamily = "NotoNaskhArabic"
     ) {
       this.bookId = bookId;
+      this.bookWordsCount = bookWordsCount;
       this.chapters = chapters;
       this.currentChapterIndex = Math.min(
         currentChapterIndex || 0,
@@ -526,15 +640,14 @@ const nagwaReaders = (function () {
       this.currentPage = Math.min(currentPage || 0, UTILS.calcPageCount() - 1);
       this.currentProgressPercent = 0;
       this.rootFontSize = 18;
-      this.isDarkMode = isDarkMode;
       this.colorMode = colorMode;
       this.fontFamily = fontFamily;
       this.fontSizeStep = 0.15;
       this.fontSize = fontSize || this.rootFontSize;
       this.allBookTitles = [];
       this.changeFontSize();
+      this.currentChapter.calcPagesContentRanges();
       this.changePage();
-      this.changeDarkMode(this.isDarkMode);
       this.changeColorMode(this.colorMode);
       this.changeFontFamily(this.fontFamily);
       this.addWholeBook();
@@ -588,6 +701,9 @@ const nagwaReaders = (function () {
       this.chapters.forEach((chapter) => {
         section.innerHTML = section.innerHTML += chapter?.innerHTML;
       });
+      const lastChapter = this.chapters[this.chapters.length - 1];
+      const lastChapterAllSpans = lastChapter.querySelectorAll('span[n]');
+      this.bookWordsCount = +lastChapterAllSpans[lastChapterAllSpans.length - 1].getAttribute('n');
       UTILS.DOM_ELS.bookWrapper.append(section);
       this.allBookTitles = UTILS.DOM_ELS.demoBook?.querySelectorAll("h1");
       setTimeout(() => {
@@ -617,37 +733,19 @@ const nagwaReaders = (function () {
         const currentChapter = this.allBookTitles[this.currentChapterIndex];
         const currentChapterPos = currentChapter?.offsetLeft - x;
         UTILS.DOM_ELS.demoBook?.scrollTo(currentChapterPos, 0);
-        this.updatePagesCount();
       }
     }
 
 
     /**
-    * Updates the DOM element representing the pages count
-    * @memberof Book
-    */
-    updatePagesCount() {
-      this.userPreferences = new UserPreferences(this.bookId);
-      const wholeBook = UTILS.DOM_ELS.demoBook;
-      const columnWidth = UTILS.extractComputedStyleNumber(
-        UTILS.DOM_ELS.book,
-        "width"
-      );
-      const columnsGap = UTILS.extractComputedStyleNumber(
-        UTILS.DOM_ELS.book,
-        "column-gap"
-      );
-      const currentPage = Math.abs(
-        wholeBook?.scrollLeft / (columnWidth + columnsGap)
-      );
-      const pagesNo = wholeBook?.scrollWidth / (columnWidth + columnsGap);
-      const percentage = Math.round((currentPage / pagesNo) * 100) + "%";
-      UTILS.DOM_ELS.barPercent.querySelector("span").style.width = percentage;
-      UTILS.DOM_ELS.percent.textContent = percentage;
-      // UTILS.DOM_ELS.currentPageOfAllPages.textContent = currentPage
-      //   .toFixed(1)
-      //   .split(".")[0];
-      // UTILS.DOM_ELS.allPages.textContent = pagesNo.toFixed(1).split(".")[0];
+      * Updates the DOM element representing the progress percentage value
+      * @memberof StoryHandler
+      */
+    updateProgressPercentage() {
+      // const pageLastWordIndex = this.currentChapter.pagesContentRanges[this.currentPage][1];
+      // this.currentProgressPercent = Math.floor((pageLastWordIndex / this.storyWordsCount) * 100)
+      // if (UTILS.DOM_ELS.percent) UTILS.DOM_ELS.percent.innerText = this.currentProgressPercent + "%"
+      // if (UTILS.DOM_ELS.barPercent) UTILS.DOM_ELS.barPercent.querySelector("span").style.width = this.currentProgressPercent + "%"
     }
 
     /**
@@ -761,6 +859,8 @@ const nagwaReaders = (function () {
       this.updateChapterPageState();
       //scroll to the current page
       this.scrollToCurrentPage();
+      //update DOM with page content percentage
+      this.updateProgressPercentage()
       //disable or enable the pagination controls
       this.matchPageControlsWithState();
     }
@@ -801,30 +901,6 @@ const nagwaReaders = (function () {
 
 
     /**
-    * Sets the dark mode to the desired state
-    * @param {boolean=} isDarkMode The current dark mode state
-    * @memberof Book
-    */
-    changeDarkMode(isDarkMode) {
-      if (UTILS.DOM_ELS.darkModeChk) {
-        //if there was a checkbox for dark mode, fallback to its value if nothing was inputted to the function
-        this.isDarkMode = isDarkMode ?? UTILS.DOM_ELS.darkModeChk?.checked;
-        UTILS.DOM_ELS.darkModeChk.checked = this.isDarkMode;
-      } else {
-        //if there is no checkbox and nothing was inputted fallback to the old dark mode state
-        this.isDarkMode = isDarkMode ?? this.isDarkMode;
-      }
-
-      if (this.isDarkMode) {
-        document.body.classList.remove("darkmode");
-        document.body.classList.add("darkmode");
-      } else {
-        document.body.classList.remove("darkmode");
-      }
-    }
-
-
-    /**
     * Sets the color mode to the desired state
     * @param {string=} colorMode The current color mode state
     * @memberof Book
@@ -860,7 +936,6 @@ const nagwaReaders = (function () {
       document
         .querySelector(`[data-value=${this.fontFamily}]`)
         ?.classList.add("selected");
-      this.updatePagesCount();
     }
   }
 
@@ -897,7 +972,6 @@ const nagwaReaders = (function () {
         this?.userPreferences?.fontSize,
         this?.userPreferences?.chapter,
         this?.userPreferences?.page,
-        this?.userPreferences?.isDarkMode,
         this?.userPreferences?.colorMode,
         this?.userPreferences?.fontFamily
       );
@@ -922,7 +996,6 @@ const nagwaReaders = (function () {
         this.book.currentPage,
         this.book.currentChapterIndex,
         this.book.fontSize,
-        this.book.isDarkMode,
         this.book.colorMode,
         this.book.fontFamily
       );
@@ -991,6 +1064,7 @@ const nagwaReaders = (function () {
     * @memberof Controller
     */
     resizeEventHandler = () => {
+      this.book.currentChapter.calcPagesContentRanges();
       this.changePageToCurrentPercentage();
       this.storeUserPreferences();
     };
@@ -1018,13 +1092,10 @@ const nagwaReaders = (function () {
     * @memberof Controller
     */
     postFontResizeHandler() {
+      this.book.currentChapter.calcPagesContentRanges();
+      this.changePageToCurrentPercentage();
+      this.storeUserPreferences();
       $(".actions-menu").remove();
-      UTILS.DOM_ELS.allPages.textContent = "...";
-      UTILS.DOM_ELS.currentPageOfAllPages.textContent = "...";
-      setTimeout(() => {
-        this.changePageToCurrentPercentage();
-        this.storeUserPreferences();
-      }, 1000);
     }
 
     /**
@@ -1138,16 +1209,6 @@ const nagwaReaders = (function () {
     }
 
     /**
-      * Sets dark mode to a desired value
-      * @param {boolean} isDarkMode The required dark mode value
-      * @memberof Controller
-      */
-    setDarkMode(isDarkMode) {
-      this.book.changeDarkMode(isDarkMode);
-      this.storeUserPreferences();
-    }
-
-    /**
       * Sets color mode to a desired value
       * @param {boolean} colorMode The required color mode value
       * @memberof Controller
@@ -1199,139 +1260,6 @@ const nagwaReaders = (function () {
     }
   })
 
-  /**
-     * A class extending the main {@link Controller} class with modifications for the mobile devices.
-     * @class MobileController
-     * @extends {Controller}
-     */
-  class MobileController extends Controller {
-
-    /**
-     * Overrides the {@link Controller.detectUserPreferences detectUserPreferences} method to do nothing
-     * @memberof MobileController
-     */
-    detectUserPreferences() { }
-
-    /**
-     * Overrides the {@link Controller.storeUserPreferences storeUserPreferences} method to do nothing
-     * @memberof MobileController
-     */
-    storeUserPreferences() { }
-
-    /**
-     * Overrides the {@link Controller.setupEventListeners setupEventListeners} method to only setup resize event listener
-     * @memberof MobileController
-     */
-    setupEventListeners() { window?.addEventListener("resize", () => setTimeout(this.resizeEventHandler.bind(this), 0)) }
-
-    /**
-     * Overrides the {@link Controller.afterNavigationCallback afterNavigationCallback} method to post messages to mobile environment
-     * @memberof MobileController
-     */
-    afterNavigationCallback() { this.postPageUpdatedMessage() }
-
-    /**
-     * Overrides the {@link Controller.afterFontResizeCallback afterFontResizeCallback} method to post messages to mobile environment
-     * @memberof MobileController
-     */
-    afterFontResizeCallback() { this.postPageUpdatedMessage() }
-
-    /**
-     * Overrides the {@link Controller.afterWindowResizeCallback afterWindowResizeCallback} method to post messages to mobile environment
-     * @memberof MobileController
-     */
-    afterWindowResizeCallback() { this.postPageUpdatedMessage() }
-
-    /**
-     * Overrides the {@link Controller.afterDarkModeChangeCallback afterDarkModeChangeCallback} method to post messages to mobile environment
-     * @memberof MobileController
-     */
-    afterDarkModeChangeCallback() { this.postPageUpdatedMessage() }
-
-    /**
-     * Initiates the mobile app with any state required. Falls back to default state: `currentPage=0`, `currentChapter=0`, `fontSize=18` and `isDarkMode=false`
-     * @param {string} bookId The ID of the book to be rendered
-     * @param {number=} currentPage The current rendered page 
-     * @param {number=} currentChapter The current rendered chapter index
-     * @param {number=} fontSize The current used font size
-     * @param {boolean=} isDarkMode The current dark mode state
-     * @memberof UserPreferences
-     */
-    init(bookId, currentPage, currentChapter, fontSize, isDarkMode) {
-      this.userPreferences = new UserPreferences()
-      this.userPreferences.save(currentPage, currentChapter, fontSize, isDarkMode, false)
-      this.initWithBookId(bookId)
-      this.postStoryCreatedMessage()
-    }
-
-    /**
-     * Posts a message object as JSON object to mobile environments
-     * @param {string} messageHandlerName The message handler name to post message to
-     * @param {object} message The message object to transform it to JSON and post it
-     * @memberof MobileController
-     */
-    postMessage(messageHandlerName, message) {
-      const json = JSON.stringify(message)
-      if (window.webkit && window.webkit.messageHandlers[messageHandlerName]) window.webkit.messageHandlers[messageHandlerName].postMessage(json)
-      if (window[messageHandlerName]) window[messageHandlerName].postMessage(json)
-    }
-
-    /**
-     * Posts a message for the pageUpdated message handler. The message object interface: {@link PageUpdatedMessage}
-     * @memberof MobileController
-     */
-    postPageUpdatedMessage() {
-      /** @type {PageUpdatedMessage} */
-      const messageObj = {
-        isDarkMode: this.imageHandler.currentImage.isDarkMode,
-        isFirstPage: this.book.isFirstPage,
-        isLastPage: this.book.isLastPage,
-        chapterMaxPages: UTILS.calcPageCount(),
-        maxChapters: this.book.chapters.length - 1,
-        percentage: this.book.currentProgressPercent,
-        currentPage: this.book.currentPage,
-        currentChapter: this.book.currentChapterIndex,
-        isFirstChapter: this.book.isFirstChapter,
-        isLastChapter: this.book.isLastChapter,
-        fontSize: this.book.fontSize,
-        canIncreaseFont: this.book.canIncreaseFont,
-        canDecreaseFont: this.book.canDecreaseFont
-      }
-      this.postMessage("pageUpdated", messageObj)
-    }
-
-    /**
-     * Posts a message for the storyCreated message handler. The message object interface: {@link StoryCreatedMessage}
-     * @memberof MobileController
-     */
-    postStoryCreatedMessage() {
-      this.postPageUpdatedMessage()
-    }
-  }
-
-  const mobileController = new MobileController()
-  window.addEventListener("load", () => {
-    if (book) mobileController.init(book)
-    else {
-      const bookId = UTILS.getBookId()
-      if (bookId) {
-        const controller = new Controller()
-        controller.initWithBookId(bookId)
-      }
-
-    }
-  })
-  return {
-    init: mobileController.init.bind(mobileController),
-    nextPage: mobileController.goToNextPage.bind(mobileController),
-    prevPage: mobileController.goToPrevPage.bind(mobileController),
-    nextChapter: mobileController.goToNextChapter.bind(mobileController),
-    prevChapter: mobileController.goToPrevChapter.bind(mobileController),
-    increaseFontSize: mobileController.increaseFontSize.bind(mobileController),
-    decreaseFontSize: mobileController.decreaseFontSize.bind(mobileController),
-    darkModeHandle: mobileController.setDarkMode.bind(mobileController),
-    resetFontSize: mobileController.resetFontSize.bind(mobileController),
-  }
 })();
 
 // Dropdown Menu
