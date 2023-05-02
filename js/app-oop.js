@@ -377,22 +377,22 @@ const nagwaReaders = (function () {
       * @memberof BookChapter
       */
     loopOverWords(el) {
-      // Array.from(el.querySelectorAll("span[n]")).forEach((wordEl, i, wordArr) => {
-      //   if (this.isInOtherPage(wordEl)) { // word is in another page
-      //     console.log(wordEl);
-      //     this.pagesContentRanges[this.page][1] = +wordArr[i - 1]?.getAttribute('n')
-      //     this.page++
-      //     this.pagesContentRanges[this.page][0] = +wordEl?.getAttribute('n')
-      //   }
-      //   if (i === wordArr.length - 1) { // last word in paragraph
-      //     const nextParent = this.getHighestParent(wordEl)?.nextElementSibling
-      //     if (this.isInOtherPage(nextParent)) {
-      //       this.pagesContentRanges[this.page][1] = +wordEl?.getAttribute('n')
-      //       this.page++
-      //       this.pagesContentRanges[this.page][0] = +this.getSpan(nextParent, "first")?.getAttribute('n')
-      //     }
-      //   }
-      // })
+      Array.from(el.querySelectorAll("span[n]")).forEach((wordEl, i, wordArr) => {
+        if (this.isInOtherPage(wordEl)) { // word is in another page
+          console.log(wordEl);
+          this.pagesContentRanges[this.page][1] = +wordArr[i - 1]?.getAttribute('n')
+          this.page++
+          this.pagesContentRanges[this.page][0] = +wordEl?.getAttribute('n')
+        }
+        if (i === wordArr.length - 1) { // last word in paragraph
+          const nextParent = this.getHighestParent(wordEl)?.nextElementSibling
+          if (this.isInOtherPage(nextParent)) {
+            this.pagesContentRanges[this.page][1] = +wordEl?.getAttribute('n')
+            this.page++
+            this.pagesContentRanges[this.page][0] = +this.getSpan(nextParent, "first")?.getAttribute('n')
+          }
+        }
+      })
     }
 
     /**
@@ -401,42 +401,42 @@ const nagwaReaders = (function () {
          */
     calcPagesContentRanges() {
       // //update container values
-      // this.page = 0
-      // this.bookContainerPadding = UTILS.extractComputedStyleNumber(UTILS.DOM_ELS.book.parentElement, "padding-left")
-      // this.exactColumnsGap = UTILS.extractComputedStyleNumber(UTILS.DOM_ELS.book, "column-gap")
-      // this.exactColumnWidth = UTILS.extractComputedStyleNumber(UTILS.DOM_ELS.book, "width")
-      // this.columnWidth = UTILS.DOM_ELS.book.offsetWidth
-      // //reset the pagesContentRanges to empty state
-      // this.pagesContentRanges = Array.from({ length: UTILS.calcPageCount() }, () => [])
-      // //loop over the children of the rendered chapter
+      this.page = 0
+      this.bookContainerPadding = UTILS.extractComputedStyleNumber(UTILS.DOM_ELS.book.parentElement, "padding-left")
+      this.exactColumnsGap = UTILS.extractComputedStyleNumber(UTILS.DOM_ELS.book, "column-gap")
+      this.exactColumnWidth = UTILS.extractComputedStyleNumber(UTILS.DOM_ELS.book, "width")
+      this.columnWidth = UTILS.DOM_ELS.book.offsetWidth
+      //reset the pagesContentRanges to empty state
+      this.pagesContentRanges = Array.from({ length: UTILS.calcPageCount() }, () => [])
+      //loop over the children of the rendered chapter
 
-      // Array.from(UTILS.DOM_ELS.book.firstElementChild.children).forEach((child, i, childrenArr) => {
-      //   //if there's only one child in the chapter
-      //   if (childrenArr.length === 1) this.pagesContentRanges[this.page][0] = +this.getSpan(child, "first")?.getAttribute('n')
-      //   // last element in chapter
-      //   if (i === childrenArr.length - 1) {
-      //     if (this.isInOtherPage(this.getSpan(child, "last"))) { // paragraph split into two pages
-      //       this.loopOverWords(child)
-      //     }
-      //     this.pagesContentRanges[this.page][1] = +this.getSpan(child, "last")?.getAttribute('n')
-      //   }
-      //   //First Element in chapter
-      //   else if (i === 0) {
-      //     this.pagesContentRanges[this.page][0] = +this.getSpan(child, "first")?.getAttribute('n')
-      //     this.loopOverWords(child)
-      //   }
-      //   //any other element
-      //   else {
-      //     if (this.isInOtherPage(child?.nextElementSibling)) {// paragraph at the end of the page
-      //       if (this.isInOtherPage(this.getSpan(child, "last"))) this.loopOverWords(child) // paragraph split into two pages
-      //       else { // paragraph didn't split into two pages
-      //         this.pagesContentRanges[this.page][1] = +this.getSpan(child, "last")?.getAttribute('n')
-      //         this.page++
-      //         this.pagesContentRanges[this.page][0] = +this.getSpan(child?.nextElementSibling, "first")?.getAttribute('n')
-      //       }
-      //     }
-      //   }
-      // })
+      Array.from(UTILS.DOM_ELS.book.firstElementChild.children).forEach((child, i, childrenArr) => {
+        //if there's only one child in the chapter
+        if (childrenArr.length === 1) this.pagesContentRanges[this.page][0] = +this.getSpan(child, "first")?.getAttribute('n')
+        // last element in chapter
+        if (i === childrenArr.length - 1) {
+          if (this.isInOtherPage(this.getSpan(child, "last"))) { // paragraph split into two pages
+            this.loopOverWords(child)
+          }
+          this.pagesContentRanges[this.page][1] = +this.getSpan(child, "last")?.getAttribute('n')
+        }
+        //First Element in chapter
+        else if (i === 0) {
+          this.pagesContentRanges[this.page][0] = +this.getSpan(child, "first")?.getAttribute('n')
+          this.loopOverWords(child)
+        }
+        //any other element
+        else {
+          if (this.isInOtherPage(child?.nextElementSibling)) {// paragraph at the end of the page
+            if (this.isInOtherPage(this.getSpan(child, "last"))) this.loopOverWords(child) // paragraph split into two pages
+            else { // paragraph didn't split into two pages
+              this.pagesContentRanges[this.page][1] = +this.getSpan(child, "last")?.getAttribute('n')
+              this.page++
+              this.pagesContentRanges[this.page][0] = +this.getSpan(child?.nextElementSibling, "first")?.getAttribute('n')
+            }
+          }
+        }
+      })
     }
 
     /**
@@ -610,7 +610,6 @@ const nagwaReaders = (function () {
      * Creates an instance of Book.
      * @param {string=} bookId selected book ID
      * @param {string[]} chapters An list of the book chapters
-     * @param {number} bookWordsCount The count of words in the whole book
      * @param {number=} [fontSize=18] The font size of the story
      * @param {number=} [currentChapterIndex=0] The initial chapter index for the story handler
      * @param {number=} [currentPage=0] The initial page index for the story handler
@@ -620,14 +619,13 @@ const nagwaReaders = (function () {
       bookId,
       chapters,
       fontSize = 18,
-      bookWordsCount,
       currentChapterIndex = 0,
       currentPage = 0,
       colorMode = "white",
       fontFamily = "NotoNaskhArabic"
     ) {
       this.bookId = bookId;
-      this.bookWordsCount = bookWordsCount;
+      this.bookWordsCount = null;
       this.chapters = chapters;
       this.currentChapterIndex = Math.min(
         currentChapterIndex || 0,
@@ -647,10 +645,10 @@ const nagwaReaders = (function () {
       this.allBookTitles = [];
       this.changeFontSize();
       this.currentChapter.calcPagesContentRanges();
-      this.changePage();
       this.changeColorMode(this.colorMode);
       this.changeFontFamily(this.fontFamily);
       this.addWholeBook();
+      this.changePage();
     }
 
     /**
@@ -742,10 +740,10 @@ const nagwaReaders = (function () {
       * @memberof Book
       */
     updateProgressPercentage() {
-      // const pageLastWordIndex = this.currentChapter.pagesContentRanges[this.currentPage][1];
-      // this.currentProgressPercent = Math.floor((pageLastWordIndex / this.storyWordsCount) * 100)
-      // if (UTILS.DOM_ELS.percent) UTILS.DOM_ELS.percent.innerText = this.currentProgressPercent + "%"
-      // if (UTILS.DOM_ELS.barPercent) UTILS.DOM_ELS.barPercent.querySelector("span").style.width = this.currentProgressPercent + "%"
+      const pageLastWordIndex = this.currentChapter.pagesContentRanges[this.currentPage][1];
+      this.currentProgressPercent = Math.floor((pageLastWordIndex / this.bookWordsCount) * 100);
+      if (UTILS.DOM_ELS.percent) UTILS.DOM_ELS.percent.innerText = this.currentProgressPercent + "%"
+      if (UTILS.DOM_ELS.barPercent) UTILS.DOM_ELS.barPercent.querySelector("span").style.width = this.currentProgressPercent + "%"
     }
 
     /**
