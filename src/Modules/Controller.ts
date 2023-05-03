@@ -126,6 +126,9 @@ export class Controller {
       Changes current page to a page matching the current scroll percentage
     */
   changePageToCurrentPercentage() {
+    this.book.currentPage = Math.round(this.book.currentScrollPercentage * UTILS.calcPageCount())
+    console.log(this.book.currentPage);
+    
     this.book.changePage();
   }
 

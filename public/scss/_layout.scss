@@ -1,6 +1,6 @@
 h1,
 .part_number {
-  break-before: column;
+  // break-before: column;
 }
 .part_number + h1 {
   break-before: avoid;

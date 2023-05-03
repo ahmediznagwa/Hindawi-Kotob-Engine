@@ -12,6 +12,7 @@ export class Book {
   fontFamily: string;
   currentChapter: BookChapter;
   currentProgressPercent: number;
+  currentScrollPercentage: number;
   rootFontSize: number;
   fontSizeStep: number;
   allBookTitles: NodeListOf<HTMLElement> | HTMLElement[];
@@ -264,6 +265,8 @@ export class Book {
     }
     //Update the state of chapter and page
     this.updateChapterPageState();
+    //update scroll percentage
+    this.currentScrollPercentage = this.currentPage / UTILS.calcPageCount()
     //scroll to the current page
     this.scrollToCurrentPage();
     //update DOM with page content percentage
