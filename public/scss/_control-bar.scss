@@ -207,20 +207,23 @@
 }
 
 .bookmark-list {
-  padding: 7px 0;
-  li {
-    padding: 7px 10px;
-    border-bottom: 1px solid var(--textColorRgb);
+    li {
+
+    border-bottom: 1px solid rgba(var(--textColor), 0.2);
+    padding: 1.5rem;
+    width: 100%;
   }
   h4 {
     margin: 0;
     font-size: 1.8rem;
+    line-height: 1.4;
     margin-right: auto;
   }
   p {
     font-size: 1.6rem;
     margin: 0;
-    color: var(--textColorRgb);
+    line-height: 1.4;
+    color: rgba(var(--textColor), 0.5);
   }
 }
 
@@ -229,6 +232,10 @@
   align-items: center;
   justify-content: center;
   margin: 0 auto;
-  padding: 10px 0 15px !important;
+  padding: 15px !important;
   font-size: 1.6rem;
+  color: $primaryColor;
+  i{
+    margin-inline-end: 10px;
+  }
 }
