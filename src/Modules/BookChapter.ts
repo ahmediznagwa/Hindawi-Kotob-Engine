@@ -12,9 +12,14 @@ export class BookChapter {
   exactColumnWidth: number;
   columnWidth: number;
   currentChapterIndex: number;
-  constructor(chapterEl: HTMLElement, bookId: string) {
+  constructor(
+    chapterEl: HTMLElement,
+    bookId: string,
+    currentChapterIndex: number
+  ) {
     this.bookId = bookId;
     this.chapterEl = chapterEl;
+    this.currentChapterIndex = currentChapterIndex;
 
     /**
      * An array of arrays containing the index of the starting and ending words of each page for the current rendered chapter
@@ -225,7 +230,7 @@ export class BookChapter {
     $(target).closest(".actions-menu").addClass("has-highlight");
     $(target).addClass("highlighted");
     $(".actions-menu").remove();
-    this.saveHighlightedWords();
+    this.saveHighlightedWords(target);
   }
 
   /**
@@ -235,19 +240,32 @@ export class BookChapter {
     $(target).closest(".actions-menu").removeClass("has-highlight");
     $(target).removeClass("highlighted");
     $(".actions-menu").remove();
+    this.saveHighlightedWords(target);
   }
 
-  saveHighlightedWords() {
-    const highlightedWords = Array.from(
-      document.querySelectorAll(".highlighted")
-    );
+  /**
+    Store highlighted words for each chapter
+  */
+  saveHighlightedWords(el: HTMLElement) {
+    const highlightedWords = {};
+    document.querySelectorAll(".highlighted").forEach((word: HTMLElement) => {
+      if (highlightedWords[word.getAttribute("n")]) {
+        delete highlightedWords[word.getAttribute("n")];
+        return;
+      }
+      highlightedWords[word.getAttribute("n")] = 1;
+    });
+
+    const storedhighlightedWords =
+      JSON.parse(localStorage.getItem("highlightedWords")) || {};
+
+    storedhighlightedWords[this.currentChapterIndex] = {
+      words: highlightedWords,
+    };
 
     localStorage.setItem(
       "highlightedWords",
-      JSON.stringify({
-        chapter: this.currentChapterIndex,
-        words: highlightedWords,
-      })
+      JSON.stringify(storedhighlightedWords)
     );
   }
 
@@ -259,9 +277,27 @@ export class BookChapter {
     $(".actions-menu").remove();
   }
 
+  /**
+    Binding click event for all words
+  */
   bindClickEventOnAllWordsInChapter() {
+    const highlightedWords = JSON.parse(
+      localStorage.getItem("highlightedWords")
+    );
+
     UTILS.DOM_ELS.words?.forEach((word: HTMLElement) => {
       word.addEventListener("click", this.wordEventHandler.bind(this));
+      const wordIndex = word.getAttribute("n");
+
+      // Checking if there was stored highlighted words
+      if (
+        highlightedWords &&
+        highlightedWords[this.currentChapterIndex] &&
+        highlightedWords[this.currentChapterIndex]?.words[wordIndex]
+      ) {
+        $(word).closest(".actions-menu").addClass("has-highlight");
+        $(word).addClass("highlighted");
+      }
     });
   }
 

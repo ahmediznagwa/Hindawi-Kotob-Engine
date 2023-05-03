@@ -3,7 +3,7 @@ import { UTILS } from "./Utils";
 
 export class Book {
   bookId: string;
-  chapters: HTMLElement[];
+  chapters: HTMLDivElement[];
   fontSize: number;
   currentChapterIndex: number;
   currentPage: number;
@@ -40,7 +40,8 @@ export class Book {
     );
     this.currentChapter = new BookChapter(
       this.chapters[this.currentChapterIndex],
-      this.bookId
+      this.bookId,
+      this.currentChapterIndex
     );
     this.currentPage = Math.min(currentPage || 0, UTILS.calcPageCount() - 1);
     this.currentProgressPercent = 0;
@@ -101,13 +102,13 @@ export class Book {
     section.classList.add("book");
     section.classList.add("demo");
     section.innerHTML = "";
-    this.chapters.forEach((chapter: HTMLElement) => {
+    this.chapters.forEach((chapter: HTMLDivElement) => {
       section.innerHTML = section.innerHTML += chapter.innerHTML;
     });
     const lastChapter = this.chapters[this.chapters.length - 1];
-    console.log(lastChapter);
+
     const lastChapterAllSpans = lastChapter.querySelectorAll("span[n]");
-    
+
     this.bookWordsCount =
       +lastChapterAllSpans[lastChapterAllSpans.length - 1].getAttribute("n");
     UTILS.DOM_ELS.bookWrapper.append(section);
@@ -144,6 +145,7 @@ export class Book {
       Updates the DOM element representing the progress percentage value
     */
   updateProgressPercentage() {
+    
     const pageLastWordIndex =
       this.currentChapter.pagesContentRanges[this.currentPage][1];
     this.currentProgressPercent = Math.floor(
@@ -190,7 +192,8 @@ export class Book {
         this.chapters[
           Math.min(this.currentChapterIndex, this.chapters.length - 1)
         ],
-        this.bookId
+        this.bookId,
+        this.currentChapterIndex
       );
     this.changePage();
   }
