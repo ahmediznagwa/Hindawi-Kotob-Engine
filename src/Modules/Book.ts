@@ -22,6 +22,8 @@ export class Book {
   isFirstChapter: boolean;
   canIncreaseFont: boolean;
   canDecreaseFont: boolean;
+  currentPageFirstWordId: number;
+  currentPageLastWordId: number;
 
   constructor(
     bookId,
@@ -146,7 +148,6 @@ export class Book {
       Updates the DOM element representing the progress percentage value
     */
   updateProgressPercentage() {
-    
     const pageLastWordIndex =
       this.currentChapter.pagesContentRanges[this.currentPage][1];
     this.currentProgressPercent = Math.floor(
@@ -266,13 +267,27 @@ export class Book {
     //Update the state of chapter and page
     this.updateChapterPageState();
     //update scroll percentage
-    this.currentScrollPercentage = this.currentPage / UTILS.calcPageCount()
+    this.currentScrollPercentage = this.currentPage / UTILS.calcPageCount();
     //scroll to the current page
     this.scrollToCurrentPage();
     //update DOM with page content percentage
     this.updateProgressPercentage();
     //disable or enable the pagination controls
     this.matchPageControlsWithState();
+    //update the ID of first and last word in the current page
+    this.updateStartEndWordID();
+  }
+
+  /**
+    Updates the ID of first and last word in the current page
+  */
+  updateStartEndWordID() {
+    this.currentPageFirstWordId =
+      this.currentChapter.pagesContentRanges[this.currentPage][0];
+    this.currentPageLastWordId =
+      this.currentChapter.pagesContentRanges[this.currentPage][1];
+      console.log(this.currentPageFirstWordId);
+      
   }
 
   /**
