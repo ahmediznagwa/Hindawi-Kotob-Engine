@@ -72,6 +72,16 @@
   }
 }
 
+.bar-left {
+  display: flex;
+  align-items: center;
+  .dropdown {
+    margin-inline-end: 6px;
+    &:last-child {
+      margin-inline-end: 0;
+    }
+  }
+}
 .control-row {
   display: flex;
   align-items: center;
@@ -194,4 +204,31 @@
       margin-left: auto;
     }
   }
+}
+
+.bookmark-list {
+  padding: 7px 0;
+  li {
+    padding: 7px 10px;
+    border-bottom: 1px solid var(--textColorRgb);
+  }
+  h4 {
+    margin: 0;
+    font-size: 1.8rem;
+    margin-right: auto;
+  }
+  p {
+    font-size: 1.6rem;
+    margin: 0;
+    color: var(--textColorRgb);
+  }
+}
+
+.bookmark-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  padding: 10px 0 15px !important;
+  font-size: 1.6rem;
 }
