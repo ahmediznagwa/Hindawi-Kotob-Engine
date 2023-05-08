@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='utf-8'?>
+<package xmlns="http://www.idpf.org/2007/opf" version="2.0" unique-identifier="bookid">
+	<metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
+    <meta name="generator" content="Adobe InDesign 17.0"/>
+    <dc:title>1106000000093</dc:title>
+    <dc:creator/>
+    <dc:subject/>
+    <dc:description/>
+    <dc:publisher/>
+    <dc:date>2022-10-26T13:17:32Z</dc:date>
+    <dc:source/>
+    <dc:relation/>
+    <dc:coverage/>
+    <dc:rights/>
+    <dc:language>ar-SA</dc:language>
+    <dc:language>en-US</dc:language>
+    <dc:identifier id="bookid">urn:uuid:29d919dd-24f5-4384-be78-b447c9dc299b</dc:identifier>
+  </metadata>
+	<manifest>
+		<item id="x------_------" href="1106000000093-01.xhtml" media-type="application/xhtml+xml"/>
+		<item id="x------_-------1" href="1106000000093-02.xhtml" media-type="application/xhtml+xml"/>
+		<item id="x------_-------2" href="1106000000093-03.xhtml" media-type="application/xhtml+xml"/>
+		<item id="x------_-------3" href="1106000000093-04.xhtml" media-type="application/xhtml+xml"/>
+		<item id="x------_-------4" href="1106000000093-05.xhtml" media-type="application/xhtml+xml"/>
+		<item id="x------_-------5" href="1106000000093-06.xhtml" media-type="application/xhtml+xml"/>
+		<item id="x------_-------6" href="1106000000093-07.xhtml" media-type="application/xhtml+xml"/>
+		<item id="x------_-------7" href="1106000000093-08.xhtml" media-type="application/xhtml+xml"/>
+		<item id="x------_-------8" href="1106000000093-09.xhtml" media-type="application/xhtml+xml"/>
+		<item id="x------_-------9" href="1106000000093-10.xhtml" media-type="application/xhtml+xml"/>
+		<item id="x------_-------10" href="1106000000093-11.xhtml" media-type="application/xhtml+xml"/>
+		<item id="x------_-------11" href="1106000000093-12.xhtml" media-type="application/xhtml+xml"/>
+		<item id="x------_-------12" href="1106000000093-13.xhtml" media-type="application/xhtml+xml"/>
+		<item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/>
+		<item id="idGeneratedStyles.css" href="css/idGeneratedStyles.css" media-type="text/css"/>
+		<item id="x1.png" href="image/1.png" media-type="image/png"/>
+		<item id="id" href="cover.xhtml" media-type="application/xhtml+xml"/>
+		<item id="id1" href="image/cover.png" media-type="image/png"/>
+	</manifest>
+	<spine toc="ncx">
+		<itemref idref="id"/>
+		<itemref idref="x------_------"/>
+		<itemref idref="x------_-------1"/>
+		<itemref idref="x------_-------2"/>
+		<itemref idref="x------_-------3"/>
+		<itemref idref="x------_-------4"/>
+		<itemref idref="x------_-------5"/>
+		<itemref idref="x------_-------6"/>
+		<itemref idref="x------_-------7"/>
+		<itemref idref="x------_-------8"/>
+		<itemref idref="x------_-------9"/>
+		<itemref idref="x------_-------10"/>
+		<itemref idref="x------_-------11"/>
+		<itemref idref="x------_-------12"/>
+	</spine>
+</package>

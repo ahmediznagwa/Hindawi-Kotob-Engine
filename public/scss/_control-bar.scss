@@ -3,6 +3,7 @@
   opacity: 0.5;
 }
 .bottom-bar {
+  font-family: 'Noto Sans', sans-serif;
   position: fixed;
   left: 0;
   width: 100%;
@@ -207,8 +208,10 @@
 }
 
 .bookmark-list {
-    li {
-
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  li {
     border-bottom: 1px solid rgba(var(--textColor), 0.2);
     padding: 1.5rem;
     width: 100%;
@@ -227,7 +230,7 @@
   }
 }
 
-.bookmark-btn {
+.add-bookmark-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -235,7 +238,7 @@
   padding: 15px !important;
   font-size: 1.6rem;
   color: $primaryColor;
-  i{
+  i {
     margin-inline-end: 10px;
   }
 }

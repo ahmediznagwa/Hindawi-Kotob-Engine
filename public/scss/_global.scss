@@ -25,10 +25,13 @@ body {
   font-size: 18px;
   padding: 0;
   height: 100%;
+  -epub-writing-mode: inherit;
 
   .book-container {
     background-color: var(--bgColorRgb);
-    color: var(--textColorRgb);
+    *:not(h1) {
+      font-family: inherit;
+    }
   }
 
   .blockquote,
@@ -42,6 +45,12 @@ body {
     --darkBg: 255, 255, 255;
     --greyBg: 17, 17, 17;
     --lightGreyBg: 51, 51, 51;
+    .book-container {
+      color: var(--textColorRgb);
+      * {
+        color: var(--textColorRgb);
+      }
+    }
   }
   &.warm {
     --bgColor: 246, 239, 223;
@@ -49,6 +58,12 @@ body {
     --darkBg: 239, 201, 118;
     --greyBg: 242, 228, 197;
     --lightGreyBg: 246, 239, 223;
+    .book-container {
+      color: var(--textColorRgb);
+      * {
+        color: var(--textColorRgb);
+      }
+    }
   }
 }
 
@@ -119,7 +134,6 @@ body {
   background-color: #fff200ad;
   transition: background-color 0.3s;
 }
-
 
 .inserted-image {
   break-before: avoid;

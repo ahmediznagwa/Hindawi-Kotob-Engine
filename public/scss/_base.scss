@@ -1,4 +1,19 @@
 @font-face {
+  font-family: "Noto Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url("../fonts/notosans-regular-webfont.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Noto Sans";
+  font-style: normal;
+  font-weight: 700;
+  font-display: block;
+  src: url("../fonts/notosans-bold-webfont.woff2") format("woff2");
+}
+
+@font-face {
   font-family: "Font-Awesome";
   font-style: normal;
   font-weight: 900;

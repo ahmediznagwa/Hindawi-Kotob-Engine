@@ -1,48 +1,63 @@
+import { IBookmark } from "../Models/IBookmark.model";
 import { BookChapter } from "./BookChapter";
 import { UTILS } from "./Utils";
+import { prodRootUrl } from "./constants";
 
 export class Book {
   bookId: string;
   chapters: HTMLDivElement[];
+  imagesFolder: string;
+  rootFolder: string;
+  cssFiles: string[];
   fontSize: number;
   currentChapterIndex: number;
   currentPage: number;
   bookWordsCount: number;
   colorMode: string;
   fontFamily: string;
+  bookmarks: IBookmark[];
   currentChapter: BookChapter;
   currentProgressPercent: number;
   currentScrollPercentage: number;
   rootFontSize: number;
   fontSizeStep: number;
-  allBookTitles: NodeListOf<HTMLElement> | HTMLElement[];
   isLastPage: boolean;
   isFirstPage: boolean;
   isLastChapter: boolean;
   isFirstChapter: boolean;
   canIncreaseFont: boolean;
   canDecreaseFont: boolean;
-  currentPageFirstWordId: number;
-  currentPageLastWordId: number;
+  currentPageFirstWordIndex: number;
+  currentPageLastWordIndex: number;
+  anchorWordIndex: number;
 
   constructor(
     bookId,
     chapters,
+    imagesFolder,
+    rootFolder,
+    cssFiles,
     fontSize = 18,
     currentChapterIndex = 0,
     currentPage = 0,
     colorMode = "white",
-    fontFamily = "NotoNaskhArabic"
+    fontFamily = "NotoNaskhArabic",
+    bookmarks = []
   ) {
     this.bookId = bookId;
     this.bookWordsCount = null;
     this.chapters = chapters;
+    this.imagesFolder = imagesFolder;
+    this.rootFolder = rootFolder;
+    this.cssFiles = cssFiles;
     this.currentChapterIndex = Math.min(
       currentChapterIndex || 0,
       this.chapters.length - 1
     );
     this.currentChapter = new BookChapter(
       this.chapters[this.currentChapterIndex],
+      this.imagesFolder,
+      this.rootFolder,
       this.bookId,
       this.currentChapterIndex
     );
@@ -51,15 +66,18 @@ export class Book {
     this.rootFontSize = 18;
     this.colorMode = colorMode;
     this.fontFamily = fontFamily;
+    this.bookmarks = bookmarks;
     this.fontSizeStep = 0.15;
     this.fontSize = fontSize || this.rootFontSize;
-    this.allBookTitles = [];
     this.changeFontSize();
     this.currentChapter.calcPagesContentRanges();
+    this.currentPage = this.calcAnchorWordPage();
     this.changeColorMode(this.colorMode);
     this.changeFontFamily(this.fontFamily);
-    this.addWholeBook();
+    this.calculateBookWordsCount();
     this.changePage();
+    this.renderBookmarks();
+    this.addBookStyles();
   }
 
   /**
@@ -98,9 +116,9 @@ export class Book {
   }
 
   /**
-      Adding whole book in the dom to calculate total pages number
-    */
-  addWholeBook() {
+    Calculating book words count to use in scroll percentage
+  */
+  calculateBookWordsCount() {
     const section = document.createElement("section") as HTMLElement;
     section.classList.add("book");
     section.classList.add("demo");
@@ -114,11 +132,6 @@ export class Book {
 
     this.bookWordsCount =
       +lastChapterAllSpans[lastChapterAllSpans.length - 1].getAttribute("n");
-    UTILS.DOM_ELS.bookWrapper.append(section);
-    this.allBookTitles = UTILS.DOM_ELS.demoBook?.querySelectorAll("h1");
-    setTimeout(() => {
-      this.scrollToCurrentPage();
-    }, 2000);
   }
 
   /**
@@ -135,29 +148,44 @@ export class Book {
     );
     const x = (columnWidth + columnsGap) * this.currentPage;
     UTILS.DOM_ELS.book.scrollTo(-x, 0);
-
-    // Scrolling in the hidden book
-    if (this.allBookTitles) {
-      const currentChapter = this.allBookTitles[this.currentChapterIndex];
-      const currentChapterPos = currentChapter?.offsetLeft - x;
-      UTILS.DOM_ELS.demoBook?.scrollTo(currentChapterPos, 0);
-    }
   }
 
   /**
       Updates the DOM element representing the progress percentage value
     */
   updateProgressPercentage() {
-    const pageLastWordIndex =
-      this.currentChapter.pagesContentRanges[this.currentPage][1];
-    this.currentProgressPercent = Math.floor(
-      (pageLastWordIndex / this.bookWordsCount) * 100
-    );
-    if (UTILS.DOM_ELS.percent)
-      UTILS.DOM_ELS.percent.innerText = this.currentProgressPercent + "%";
-    if (UTILS.DOM_ELS.barPercent)
+    // DR. HINDAWI'S EQUATION TO CALCULATE THE PROGRESS PERCENTAGE
+    // i = first word on the page j = last word on the page n = number of words in the reader
+    // t = ROUND((n-(i-1))/n)*(i-1)/n+ROUND((i-1)/n)*j/n
+    // t = isInFirstHalf ? (i-1)/n : j/n
+    // Percentage = ((i-1) + (j-i+1)*t)/n
+
+    const isInFirstHalf =
+      Math.round((this.currentPageFirstWordIndex - 1) / this.bookWordsCount) ==
+      0;
+    const firstWordProgress =
+      (this.currentPageFirstWordIndex - 1) / this.bookWordsCount;
+    const lastWordProgress =
+      this.currentPageLastWordIndex / this.bookWordsCount;
+    const t = isInFirstHalf ? firstWordProgress : lastWordProgress;
+    const percentage =
+      (this.currentPageFirstWordIndex -
+        1 +
+        t *
+          (this.currentPageLastWordIndex -
+            this.currentPageFirstWordIndex +
+            1)) /
+      this.bookWordsCount;
+    this.currentProgressPercent = (percentage || 0) * 100;
+
+    if (UTILS.DOM_ELS.percent) {
+      UTILS.DOM_ELS.percent.innerText =
+        this.currentProgressPercent.toFixed(0) + "%";
+    }
+    if (UTILS.DOM_ELS.barPercent) {
       UTILS.DOM_ELS.barPercent.querySelector("span").style.width =
         this.currentProgressPercent + "%";
+    }
   }
 
   /**
@@ -194,6 +222,8 @@ export class Book {
         this.chapters[
           Math.min(this.currentChapterIndex, this.chapters.length - 1)
         ],
+        this.imagesFolder,
+        this.rootFolder,
         this.bookId,
         this.currentChapterIndex
       );
@@ -270,24 +300,55 @@ export class Book {
     this.currentScrollPercentage = this.currentPage / UTILS.calcPageCount();
     //scroll to the current page
     this.scrollToCurrentPage();
+    //update the ID of first and last word in the current page
+    this.updateStartEndWordID();
     //update DOM with page content percentage
     this.updateProgressPercentage();
     //disable or enable the pagination controls
     this.matchPageControlsWithState();
-    //update the ID of first and last word in the current page
-    this.updateStartEndWordID();
   }
 
   /**
     Updates the ID of first and last word in the current page
   */
   updateStartEndWordID() {
-    this.currentPageFirstWordId =
+    this.currentPageFirstWordIndex =
       this.currentChapter.pagesContentRanges[this.currentPage][0];
-    this.currentPageLastWordId =
+    this.currentPageLastWordIndex =
       this.currentChapter.pagesContentRanges[this.currentPage][1];
-      console.log(this.currentPageFirstWordId);
-      
+    this.anchorWordIndex = this.currentPageFirstWordIndex;
+  }
+
+  /**
+    Calculates the page where the anchor word resides depending on its location.  
+  */
+  calcAnchorWordPage(): number {
+    const anchorWordEl = document.querySelector(
+      `span[n="${this.anchorWordIndex}"]`
+    ) as HTMLElement;
+    if (anchorWordEl) {
+      const storyContainerPadding = UTILS.extractComputedStyleNumber(
+        UTILS.DOM_ELS.book.parentElement,
+        "padding-left"
+      );
+      const exactColumnsGap = UTILS.extractComputedStyleNumber(
+        UTILS.DOM_ELS.book,
+        "column-gap"
+      );
+      const exactColumnWidth = UTILS.extractComputedStyleNumber(
+        UTILS.DOM_ELS.book,
+        "width"
+      );
+      const anchorWordLeft = anchorWordEl.offsetLeft;
+      const anchorWordRight = anchorWordLeft + anchorWordEl.offsetWidth;
+      let calculatedPage = 0;
+      const rawCalculatedPage =
+        (anchorWordRight - exactColumnWidth - storyContainerPadding) /
+        (exactColumnWidth + exactColumnsGap);
+      const approximatedCalculatedPage = +rawCalculatedPage.toFixed(2);
+      calculatedPage = Math.abs(Math.ceil(approximatedCalculatedPage));
+      return Math.min(Math.max(calculatedPage, 0), UTILS.calcPageCount());
+    } else return 0;
   }
 
   /**
@@ -322,11 +383,9 @@ export class Book {
   }
 
   /**
-   * Sets the color mode to the desired state
-   * @param {string=} colorMode The current color mode state
-   * @memberof Book
-   */
-  changeColorMode(colorMode) {
+    Sets the color mode to the desired state
+  */
+  changeColorMode(colorMode: string) {
     this.colorMode = colorMode || "white";
     UTILS.DOM_ELS.colorModeBtns.forEach((item) => {
       document.body.classList.remove(item.dataset.value);
@@ -338,11 +397,9 @@ export class Book {
   }
 
   /**
-   * Sets the font family to the desired state
-   * @param {string=} fontFamily The current font family state
-   * @memberof Book
-   */
-  changeFontFamily(fontFamily) {
+    Sets the font family to the desired state
+  */
+  changeFontFamily(fontFamily: string) {
     this.fontFamily = fontFamily || "NotoNaskhArabic";
     UTILS.DOM_ELS.fontFamilyBtns.forEach((item) => {
       document.body.classList.remove(item.dataset.value);
@@ -358,5 +415,41 @@ export class Book {
     document
       .querySelector(`[data-value=${this.fontFamily}]`)
       ?.classList.add("selected");
+  }
+
+  /**
+    Render bookmarks list into DOM
+  */
+  renderBookmarks() {
+    const list = UTILS.DOM_ELS.bookmarksList;
+
+    if (this.bookmarks && this.bookmarks.length) {
+      $(list).html("");
+      this.bookmarks.forEach((bookmark) => {
+        $(list).append(
+          `
+          <li class="bookmark-item" data-chapter-index="${
+            bookmark.chapterIndex
+          }" data-anchor-word-index="${bookmark.anchorWordIndex}">
+            <h4>${bookmark.title}</h4>
+            <p>${new Date(bookmark.createdOn).toUTCString()}</p>
+          </li>
+          `
+        );
+      });
+    }
+  }
+
+  /**
+    Add book styles to the index.html head
+  */
+  addBookStyles() {
+    this.cssFiles.forEach((filePath) => {
+      const link = document.createElement("link");
+      link.type = "text/css";
+      link.rel = "stylesheet";
+      link.href = `${prodRootUrl}/packages/${this.bookId}/${this.rootFolder}/${filePath}`;
+      document.head.prepend(link);
+    });
   }
 }

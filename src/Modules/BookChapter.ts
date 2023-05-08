@@ -3,6 +3,8 @@ import { prodRootUrl } from "./constants";
 
 export class BookChapter {
   chapterEl: HTMLElement;
+  imagesFolder: string;
+  rootFolder: string;
   bookId: string;
   pagesContentRanges: number[][];
   page: number;
@@ -14,11 +16,15 @@ export class BookChapter {
   currentChapterIndex: number;
   constructor(
     chapterEl: HTMLElement,
+    imagesFolder: string,
+    rootFolder: string,
     bookId: string,
     currentChapterIndex: number
   ) {
     this.bookId = bookId;
     this.chapterEl = chapterEl;
+    this.imagesFolder = imagesFolder;
+    this.rootFolder = rootFolder;
     this.currentChapterIndex = currentChapterIndex;
 
     /**
@@ -204,7 +210,7 @@ export class BookChapter {
     UTILS.DOM_ELS.book.innerHTML = "";
     UTILS.DOM_ELS.book.append(section);
     this.calcPagesContentRanges();
-    this.updateImagesPaths();
+    this.updateImagesFolders();
     this.bindClickEventOnAllWordsInChapter();
     this.imageInsertionHandler();
   }
@@ -212,14 +218,12 @@ export class BookChapter {
   /**
     Update chapter images relative to selected book folder
   */
-  updateImagesPaths() {
+  updateImagesFolders() {
     const images = UTILS.DOM_ELS.book.querySelectorAll("img");
     images.forEach((img: HTMLImageElement) => {
-      const currentSrc = img.getAttribute("src");
-      img.src = currentSrc.replace(
-        "../Images/",
-        `${prodRootUrl}/packages/${this.bookId}/Images/`
-      );
+      const imgSrc = img.getAttribute("src").split('/');
+      const imgName = imgSrc[imgSrc.length - 1];
+      img.src = `${prodRootUrl}/packages/${this.bookId}/${this.rootFolder}/${this.imagesFolder}/${imgName}`;
     });
   }
 

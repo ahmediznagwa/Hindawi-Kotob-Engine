@@ -60,6 +60,12 @@ export class UTILS {
     get bookWrapper(): HTMLElement {
       return document.querySelector(".book-wrapper");
     },
+    get addBookmarkBtn(): HTMLButtonElement {
+      return document.querySelector(".add-bookmark-btn");
+    },
+    get bookmarksList(): HTMLElement {
+      return document.querySelector(".bookmark-list");
+    },
     get words(): NodeListOf<HTMLElement> {
       return document.querySelectorAll("span[n]");
     },
@@ -77,6 +83,9 @@ export class UTILS {
     },
     get fontFamilyBtns(): NodeListOf<HTMLElement> {
       return document.querySelectorAll(".change-font-family");
+    },
+    get bookmarksBtns(): NodeListOf<HTMLElement> {
+      return document.querySelectorAll(".bookmark-item");
     },
   };
 
