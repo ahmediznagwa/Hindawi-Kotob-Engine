@@ -409,20 +409,14 @@ export class BookChapter {
       .addEventListener("click", this.copyText.bind(this, element));
   }
 
-  imageInsertionHandler() {
+  imageInsertionHandler(wordIndex: number = 106) {
     const book = $(UTILS.DOM_ELS.book);
-    const el = book.find("#selected-word");
-    const parent = el.parent();
+    const el = book.find(`span[n='${wordIndex}']`);
+    const bookChapter = el.closest('.book-chapter');
     const bookHeight = book.outerHeight();
     if (el.length) {
-      const allElementsOfChapter = document.querySelectorAll("*");
-      allElementsOfChapter.forEach((item) => {
-        if ($(item).is(":visible")) {
-          console.log(item);
-        }
-      });
-      const image = `<div class="inserted-image" style="height: ${bookHeight}px"><img src="../image.jpg"></div>`;
-      parent.after(image);
+      const image = `<div class="inserted-image" style="height: ${bookHeight}px"><img src="image.jpg"></div>`;
+      bookChapter.append(image);
       $(image).css("height");
     }
   }

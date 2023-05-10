@@ -371,4 +371,19 @@ export class Controller {
       }
     });
   }
+
+  /**
+    Handles insetion of images at specific
+  */
+  imageInsertionHandler(wordIndex: number = 106) {
+    const book = $(UTILS.DOM_ELS.book);
+    const el = book.find(`span[n='${wordIndex}']`);
+    const bookChapter = el.closest('.book-chapter');
+    const bookHeight = book.outerHeight();
+    if (el.length) {
+      const image = `<div class="inserted-image" style="height: ${bookHeight}px"><img src="../image.jpg"></div>`;
+      bookChapter.append(image);
+      $(image).css("height");
+    }
+  }
 }
