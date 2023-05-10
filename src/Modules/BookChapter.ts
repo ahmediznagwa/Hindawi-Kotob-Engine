@@ -66,6 +66,28 @@ export class BookChapter {
   }
 
   /**
+    Searches for element that has span
+  */
+  getElement(el: HTMLElement, direction: "next" | "prev"): HTMLElement {
+    let child = el;
+    if (child.parentNode.children.length === 1) {
+      return child;
+    }
+    const nextChild =
+      direction === "next"
+        ? (child.nextElementSibling as HTMLElement)
+        : (child.previousElementSibling as HTMLElement);
+    child = nextChild;
+
+    if (!child?.querySelector("span[n]")) {
+      this.getElement(child, direction);
+      return;
+    }
+
+    return child;
+  }
+
+  /**
     Calculates the left edge position of the page in the rendered HTML
   */
   getPageLeft(): number {
@@ -89,7 +111,7 @@ export class BookChapter {
     return (
       this.getPageRight() -
         (el?.offsetLeft + Math.min(el?.offsetWidth, this.columnWidth)) >=
-      this.columnWidth - this.ROUNDING_TOLERANCE
+      this.columnWidth + this.ROUNDING_TOLERANCE
     );
   }
 
@@ -153,24 +175,43 @@ export class BookChapter {
     Array.from(UTILS.DOM_ELS.book.firstElementChild.children).forEach(
       (child: HTMLElement, i: number, childrenArr: HTMLElement[]) => {
         //if there's only one child in the chapter
-        if (childrenArr.length === 1)
+        if (childrenArr.length === 1) {
           this.pagesContentRanges[this.page][0] = +this.getSpan(
             child,
             "first"
           )?.getAttribute("n");
+        }
         // last element in chapter
         if (i === childrenArr.length - 1) {
           if (this.isInOtherPage(this.getSpan(child, "last"))) {
             // paragraph split into two pages
             this.loopOverWords(child);
           }
+          if (!child.querySelector("span[n]")) {
+            const element = this.getElement(child, "prev");
+            this.pagesContentRanges[this.page][1] = +this.getSpan(
+              element,
+              "last"
+            )?.getAttribute("n");
+            return;
+          }
           this.pagesContentRanges[this.page][1] = +this.getSpan(
             child,
             "last"
           )?.getAttribute("n");
         }
-        //First Element in chapter
-        else if (i === 0) {
+        // first element in chapter
+        if (i === 0) {
+          if (!child.querySelector("span[n]")) {
+            const element = this.getElement(child, "next");
+            this.pagesContentRanges[this.page][0] = +this.getSpan(
+              element,
+              "first"
+            )?.getAttribute("n");
+            this.loopOverWords(element);
+            return;
+          }
+
           this.pagesContentRanges[this.page][0] = +this.getSpan(
             child,
             "first"
@@ -199,7 +240,6 @@ export class BookChapter {
         }
       }
     );
-    console.log(this.pagesContentRanges);
   }
 
   /**

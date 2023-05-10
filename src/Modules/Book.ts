@@ -73,9 +73,13 @@ export class Book {
     this.changeFontSize();
     this.changeColorMode(this.colorMode);
     this.changeFontFamily(this.fontFamily);
-    this.currentChapter.calcPagesContentRanges();
-    this.currentPage = this.calcAnchorWordPage();
-    this.changePage();
+    UTILS.DOM_ELS.book.classList.add("loading");
+    setTimeout(() => {
+      UTILS.DOM_ELS.book.classList.remove("loading");
+      this.currentChapter.calcPagesContentRanges();
+      this.currentPage = this.calcAnchorWordPage();
+      this.changePage();
+    }, 1000);
     this.renderBookmarks();
     this.addBookStyles();
   }
@@ -147,6 +151,7 @@ export class Book {
       "column-gap"
     );
     const x = (columnWidth + columnsGap) * this.currentPage;
+
     UTILS.DOM_ELS.book.scrollTo(-x, 0);
   }
 
@@ -227,7 +232,10 @@ export class Book {
         this.bookId,
         this.currentChapterIndex
       );
-    this.changePage();
+    setTimeout(() => {
+      this.currentChapter.calcPagesContentRanges();
+      this.changePage();
+    }, 1000);
   }
 
   /**
@@ -269,8 +277,7 @@ export class Book {
   /**
       Changes the current viewed page into a different one depending on the inputted mode
     */
-  changePage(mode?: "next" | "prev" | "first" | "last") {
-    //increment or decrement the current page
+  async changePage(mode?: "next" | "prev" | "first" | "last") {
     switch (mode) {
       case "next":
         if (!this.isLastPage) this.currentPage++;
@@ -298,9 +305,6 @@ export class Book {
     this.updateChapterPageState();
     //update scroll percentage
     this.currentScrollPercentage = this.currentPage / UTILS.calcPageCount();
-    console.log(this.currentPage);
-    console.log(UTILS.calcPageCount);
-    
     //scroll to the current page
     this.scrollToCurrentPage();
     //update the ID of first and last word in the current page
@@ -315,12 +319,16 @@ export class Book {
     Updates the ID of first and last word in the current page
   */
   updateStartEndWordID() {
-    console.log(this.currentChapter.pagesContentRanges);
+    console.log("pagesContentRanges", this.currentChapter.pagesContentRanges);
+    console.log("currentPage", this.currentPage);
 
     this.currentPageFirstWordIndex =
       this.currentChapter.pagesContentRanges[this.currentPage][0];
     this.currentPageLastWordIndex =
       this.currentChapter.pagesContentRanges[this.currentPage][1];
+
+    console.log("currentPageFirstWordIndex", this.currentPageFirstWordIndex);
+    console.log("currentPageLastWordIndex", this.currentPageLastWordIndex);
     this.anchorWordIndex = this.currentPageFirstWordIndex;
   }
 
