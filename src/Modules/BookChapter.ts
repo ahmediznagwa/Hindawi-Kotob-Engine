@@ -249,20 +249,15 @@ export class BookChapter {
     const section = document.createElement("section");
     section.classList.add("book-chapter");
     section.innerHTML = this.chapterEl?.innerHTML;
+    if (!this.chapterEl?.innerHTML) {
+      section.appendChild(this.chapterEl);
+    }
     UTILS.DOM_ELS.book.innerHTML = "";
     UTILS.DOM_ELS.book.append(section);
     this.calcPagesContentRanges();
     this.updateImagesFolders();
     this.bindClickEventOnAllWordsInChapter();
     this.imageInsertionHandler();
-  }
-
-  /**
-    Calculates the current amount of pages rendered
-  */
-
-  calcChapterPagesCount(): number {
-    return this.pagesContentRanges.length;
   }
 
   /**

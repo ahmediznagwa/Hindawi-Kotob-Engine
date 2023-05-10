@@ -364,7 +364,10 @@ export class Controller {
         anchorWordIndex === max
       ) {
         this.book.currentPage = pageIndex;
-        this.book.changePage();
+        setTimeout(() => {
+          this.book.currentChapter.calcPagesContentRanges();
+          this.book.changePage();
+        }, 1000);
       }
     });
   }

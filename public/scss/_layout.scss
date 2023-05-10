@@ -13,6 +13,10 @@ h1,
   word-break: break-word;
   direction: rtl;
 }
+
+.book-chapter > img:only-child {
+  width: 100%;
+}
 .book-chapter h1:first-child {
   break-before: avoid;
 }
@@ -27,7 +31,7 @@ h1,
   column-fill: balance;
   scrollbar-width: 0;
   appearance: none;
-  transition: .3s;
+  transition: 0.3s;
 
   &.loading {
     opacity: 0.3;
