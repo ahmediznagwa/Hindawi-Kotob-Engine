@@ -103,6 +103,7 @@ export class UTILS {
   static calcPageCount(): number {
     const columnsGap =
       this.extractComputedStyleNumber(this.DOM_ELS.book, "column-gap") || 0;
+
     return Math.round(
       (this.DOM_ELS.book.scrollWidth + columnsGap) /
         (this.DOM_ELS.book.offsetWidth + columnsGap)

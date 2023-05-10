@@ -39,7 +39,7 @@ export class Book {
     cssFiles,
     fontSize = 18,
     currentChapterIndex = 0,
-    currentPage = 0,
+    anchorWordIndex,
     colorMode = "white",
     fontFamily = "NotoNaskhArabic",
     bookmarks = []
@@ -61,7 +61,8 @@ export class Book {
       this.bookId,
       this.currentChapterIndex
     );
-    this.currentPage = Math.min(currentPage || 0, UTILS.calcPageCount() - 1);
+    this.calculateBookWordsCount();
+    this.anchorWordIndex = Math.min(anchorWordIndex || 0, this.bookWordsCount);
     this.currentProgressPercent = 0;
     this.rootFontSize = 18;
     this.colorMode = colorMode;
@@ -70,11 +71,10 @@ export class Book {
     this.fontSizeStep = 0.15;
     this.fontSize = fontSize || this.rootFontSize;
     this.changeFontSize();
-    this.currentChapter.calcPagesContentRanges();
-    this.currentPage = this.calcAnchorWordPage();
     this.changeColorMode(this.colorMode);
     this.changeFontFamily(this.fontFamily);
-    this.calculateBookWordsCount();
+    this.currentChapter.calcPagesContentRanges();
+    this.currentPage = this.calcAnchorWordPage();
     this.changePage();
     this.renderBookmarks();
     this.addBookStyles();
@@ -298,6 +298,9 @@ export class Book {
     this.updateChapterPageState();
     //update scroll percentage
     this.currentScrollPercentage = this.currentPage / UTILS.calcPageCount();
+    console.log(this.currentPage);
+    console.log(UTILS.calcPageCount);
+    
     //scroll to the current page
     this.scrollToCurrentPage();
     //update the ID of first and last word in the current page
@@ -312,6 +315,8 @@ export class Book {
     Updates the ID of first and last word in the current page
   */
   updateStartEndWordID() {
+    console.log(this.currentChapter.pagesContentRanges);
+
     this.currentPageFirstWordIndex =
       this.currentChapter.pagesContentRanges[this.currentPage][0];
     this.currentPageLastWordIndex =
@@ -323,32 +328,20 @@ export class Book {
     Calculates the page where the anchor word resides depending on its location.  
   */
   calcAnchorWordPage(): number {
-    const anchorWordEl = document.querySelector(
-      `span[n="${this.anchorWordIndex}"]`
-    ) as HTMLElement;
-    if (anchorWordEl) {
-      const storyContainerPadding = UTILS.extractComputedStyleNumber(
-        UTILS.DOM_ELS.book.parentElement,
-        "padding-left"
-      );
-      const exactColumnsGap = UTILS.extractComputedStyleNumber(
-        UTILS.DOM_ELS.book,
-        "column-gap"
-      );
-      const exactColumnWidth = UTILS.extractComputedStyleNumber(
-        UTILS.DOM_ELS.book,
-        "width"
-      );
-      const anchorWordLeft = anchorWordEl.offsetLeft;
-      const anchorWordRight = anchorWordLeft + anchorWordEl.offsetWidth;
-      let calculatedPage = 0;
-      const rawCalculatedPage =
-        (anchorWordRight - exactColumnWidth - storyContainerPadding) /
-        (exactColumnWidth + exactColumnsGap);
-      const approximatedCalculatedPage = +rawCalculatedPage.toFixed(2);
-      calculatedPage = Math.abs(Math.ceil(approximatedCalculatedPage));
-      return Math.min(Math.max(calculatedPage, 0), UTILS.calcPageCount());
-    } else return 0;
+    let pageNo = 0;
+    this.currentChapter.pagesContentRanges.forEach((page, pageIndex) => {
+      const min = Math.min(page[0], page[1]),
+        max = Math.max(page[0], page[1]);
+      if (
+        (this.anchorWordIndex > min && this.anchorWordIndex < max) ||
+        this.anchorWordIndex === min ||
+        this.anchorWordIndex === max
+      ) {
+        pageNo = pageIndex;
+      }
+    });
+
+    return pageNo;
   }
 
   /**

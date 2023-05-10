@@ -143,6 +143,7 @@ export class BookChapter {
     );
     this.columnWidth = UTILS.DOM_ELS.book.offsetWidth;
     //reset the pagesContentRanges to empty state
+
     this.pagesContentRanges = Array.from(
       { length: UTILS.calcPageCount() },
       () => []
@@ -198,6 +199,7 @@ export class BookChapter {
         }
       }
     );
+    console.log(this.pagesContentRanges);
   }
 
   /**
@@ -216,12 +218,20 @@ export class BookChapter {
   }
 
   /**
+    Calculates the current amount of pages rendered
+  */
+
+  calcChapterPagesCount(): number {
+    return this.pagesContentRanges.length;
+  }
+
+  /**
     Update chapter images relative to selected book folder
   */
   updateImagesFolders() {
     const images = UTILS.DOM_ELS.book.querySelectorAll("img");
     images.forEach((img: HTMLImageElement) => {
-      const imgSrc = img.getAttribute("src").split('/');
+      const imgSrc = img.getAttribute("src").split("/");
       const imgName = imgSrc[imgSrc.length - 1];
       img.src = `${prodRootUrl}/packages/${this.bookId}/${this.rootFolder}/${this.imagesFolder}/${imgName}`;
     });

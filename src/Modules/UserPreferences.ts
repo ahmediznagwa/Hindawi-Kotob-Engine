@@ -2,7 +2,7 @@ import { IBookmark } from "../Models/IBookmark.model";
 
 export class UserPreferences {
   bookId: string;
-  page: number;
+  anchorWordIndex: number;
   chapter: number;
   fontSize: number;
   colorMode: string;
@@ -12,7 +12,7 @@ export class UserPreferences {
 
   constructor(bookId) {
     this.bookId = bookId;
-    this.page = 0;
+    this.anchorWordIndex = 0;
     this.chapter = 0;
     this.fontSize = 0;
     this.colorMode = null;
@@ -24,7 +24,7 @@ export class UserPreferences {
       colorMode: "colorMode",
       fontFamily: "fontFamily",
       lastPosition: `${this.bookId}_lastPosition`, //its value in Localstorage will be a JSON containing chapter and page,
-      page: "page",
+      anchorWordIndex: "anchorWordIndex",
       chapter: "chapter",
       bookmarks: "bookmarks",
     };
@@ -34,7 +34,7 @@ export class UserPreferences {
     Saves the current app state in local storage or in memory
   */
   save(
-    currentPage: number,
+    anchorWordIndex: number,
     currentChapter: number,
     fontSize: number,
     colorMode: string,
@@ -42,7 +42,7 @@ export class UserPreferences {
     bookmarks: IBookmark[],
     saveToLocalStorage = true
   ) {
-    this.page = currentPage;
+    this.anchorWordIndex = anchorWordIndex;
     this.chapter = currentChapter;
     this.fontSize = fontSize;
     this.colorMode = colorMode;
@@ -53,7 +53,7 @@ export class UserPreferences {
         this.localStorageKeys.lastPosition,
         JSON.stringify({
           [this.localStorageKeys.chapter]: this.chapter,
-          [this.localStorageKeys.page]: this.page,
+          [this.localStorageKeys.anchorWordIndex]: this.anchorWordIndex,
         })
       );
       localStorage.setItem(
@@ -84,14 +84,14 @@ export class UserPreferences {
       localStorage.getItem(this.localStorageKeys.lastPosition)
     );
     this.chapter = lastPosition?.chapter;
-    this.page = lastPosition?.page;
+    this.anchorWordIndex = lastPosition?.anchorWordIndex;
     return {
       fontSize: this.fontSize,
       colorMode: this.colorMode,
       fontFamily: this.fontFamily,
       bookmarks: this.bookmarks,
       chapter: this.chapter,
-      page: this.page,
+      anchorWordIndex: this.anchorWordIndex,
     };
   }
 }

@@ -34,7 +34,7 @@ export class Controller {
       this.htmlExtractor.cssFiles,
       this?.userPreferences?.fontSize,
       this?.userPreferences?.chapter,
-      this?.userPreferences?.page,
+      this?.userPreferences?.anchorWordIndex,
       this?.userPreferences?.colorMode,
       this?.userPreferences?.fontFamily,
       this?.userPreferences?.bookmarks
@@ -54,7 +54,7 @@ export class Controller {
   */
   storeUserPreferences() {
     this?.userPreferences?.save(
-      this.book.currentPage,
+      this.book.anchorWordIndex,
       this.book.currentChapterIndex,
       this.book.fontSize,
       this.book.colorMode,
@@ -143,6 +143,7 @@ export class Controller {
     this.book.currentPage = Math.round(
       this.book.currentScrollPercentage * UTILS.calcPageCount()
     );
+
     this.book.changePage();
   }
 
@@ -352,7 +353,7 @@ export class Controller {
       this.book.bookId,
       this.book.currentChapterIndex
     );
-    
+
     // Detect anchor word page index
     this.book.currentChapter.pagesContentRanges.forEach((page, pageIndex) => {
       const min = Math.min(page[0], page[1]),
