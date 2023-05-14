@@ -26,7 +26,7 @@ export class UserPreferences {
       lastPosition: `${this.bookId}_lastPosition`, //its value in Localstorage will be a JSON containing chapter and page,
       anchorWordIndex: "anchorWordIndex",
       chapter: "chapter",
-      bookmarks: "bookmarks",
+      bookmarks: `${this.bookId}_bookmarks`,
     };
   }
 
