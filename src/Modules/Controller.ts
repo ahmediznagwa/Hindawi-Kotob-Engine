@@ -116,6 +116,11 @@ export class Controller {
       "click",
       this.addBookmark.bind(this)
     );
+    UTILS.DOM_ELS.bookmarksBtns?.forEach((btn) => {
+      btn
+        .querySelector(".btn")
+        .addEventListener("click", this.removeBookmark.bind(this));
+    });
     UTILS.DOM_ELS.colorModeBtns?.forEach((btn) => {
       btn.addEventListener("click", this.colorModeEventHandler.bind(this));
     });
@@ -153,28 +158,6 @@ export class Controller {
   changePageToAnchorWordLocation() {
     this.book.currentPage = this.book.calcAnchorWordPage();
     this.book.changePage();
-  }
-
-  /**
-    add bookmark for the current page
-  */
-  addBookmark() {
-    const bookmarks = this.book.bookmarks || [];
-    const bookmark: IBookmark = {
-      title: this.book.currentChapter.chapterEl.querySelector("h1").textContent,
-      chapterIndex: this.book.currentChapterIndex,
-      anchorWordIndex: this.book.anchorWordIndex,
-      createdOn: Date.now(),
-    };
-    bookmarks.push(bookmark);
-    this.book.bookmarks = bookmarks;
-    this.book.renderBookmarks();
-
-    // Appending event listeners to appended elements
-    UTILS.DOM_ELS.bookmarksBtns?.forEach((btn) => {
-      btn.addEventListener("click", this.goToBookmark.bind(this));
-    });
-    this.storeUserPreferences();
   }
 
   /**
@@ -331,6 +314,61 @@ export class Controller {
         }, 1000);
       }
     });
+  }
+
+  /**
+    add bookmark for the current page
+  */
+  addBookmark() {
+    const bookmarks = this.book.bookmarks || [];
+    const bookmark: IBookmark = {
+      title: this.book.currentChapter.chapterEl.querySelector("h1").textContent,
+      chapterIndex: this.book.currentChapterIndex,
+      anchorWordIndex: this.book.anchorWordIndex,
+      createdOn: Date.now(),
+    };
+    if (bookmarks.some((e) => e.anchorWordIndex === bookmark.anchorWordIndex)) {
+      return;
+    }
+    bookmarks.push(bookmark);
+    this.book.bookmarks = bookmarks;
+    this.book.renderBookmarks();
+
+    // Appending event listeners to appended elements
+    UTILS.DOM_ELS.bookmarksBtns?.forEach((btn) => {
+      btn.addEventListener("click", this.goToBookmark.bind(this));
+    });
+    UTILS.DOM_ELS.bookmarksBtns?.forEach((btn) => {
+      btn
+        .querySelector(".btn")
+        .addEventListener("click", this.removeBookmark.bind(this));
+    });
+    this.storeUserPreferences();
+  }
+
+  /**
+      add bookmark for the current page
+    */
+  removeBookmark(e) {
+    e.stopPropagation();
+    const el = e.target.closest("li") as HTMLElement;
+    const anchorWordIndex = +el.getAttribute("data-anchor-word-index");
+    let bookmarks = this.book.bookmarks || [];
+    bookmarks = bookmarks.filter((e) => e.anchorWordIndex !== anchorWordIndex);
+
+    this.book.bookmarks = bookmarks;
+    this.book.renderBookmarks();
+
+    // Appending event listeners to appended elements
+    UTILS.DOM_ELS.bookmarksBtns?.forEach((btn) => {
+      btn.addEventListener("click", this.goToBookmark.bind(this));
+    });
+    UTILS.DOM_ELS.bookmarksBtns?.forEach((btn) => {
+      btn
+        .querySelector(".btn")
+        .addEventListener("click", this.removeBookmark.bind(this));
+    });
+    this.storeUserPreferences();
   }
 
   /**

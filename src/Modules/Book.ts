@@ -319,16 +319,11 @@ export class Book {
     Updates the ID of first and last word in the current page
   */
   updateStartEndWordID() {
-    console.log("pagesContentRanges", this.currentChapter.pagesContentRanges);
-    console.log("currentPage", this.currentPage);
-
     this.currentPageFirstWordIndex =
       this.currentChapter.pagesContentRanges[this.currentPage][0];
     this.currentPageLastWordIndex =
       this.currentChapter.pagesContentRanges[this.currentPage][1];
 
-    console.log("currentPageFirstWordIndex", this.currentPageFirstWordIndex);
-    console.log("currentPageLastWordIndex", this.currentPageLastWordIndex);
     this.anchorWordIndex = this.currentPageFirstWordIndex;
   }
 
@@ -424,7 +419,7 @@ export class Book {
   renderBookmarks() {
     const list = UTILS.DOM_ELS.bookmarksList;
 
-    if (this.bookmarks && this.bookmarks.length) {
+    if (this.bookmarks) {
       $(list).html("");
       this.bookmarks.forEach((bookmark) => {
         $(list).append(
@@ -432,8 +427,13 @@ export class Book {
           <li class="bookmark-item" data-chapter-index="${
             bookmark.chapterIndex
           }" data-anchor-word-index="${bookmark.anchorWordIndex}">
-            <h4>${bookmark.title}</h4>
-            <p>${new Date(bookmark.createdOn).toUTCString()}</p>
+            <div>
+              <h4>${bookmark.title}</h4>
+              <p>${new Date(bookmark.createdOn).toUTCString()}</p>
+            </div>
+            <button class="btn-icon btn">
+              <i class="f-icon trash-icon"></i>
+            </button>
           </li>
           `
         );

@@ -260,7 +260,7 @@ export class BookChapter {
     this.calcPagesContentRanges();
     this.updateImagesFolders();
     this.bindClickEventOnAllWordsInChapter();
-    this.insertFullPageImage();
+    // this.insertFullPageImage(); insert fullpage image after specific index
   }
 
   /**

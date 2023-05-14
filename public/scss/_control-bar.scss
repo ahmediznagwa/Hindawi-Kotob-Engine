@@ -3,7 +3,7 @@
   opacity: 0.5;
 }
 .bottom-bar {
-  font-family: 'Noto Sans', sans-serif;
+  font-family: "Noto Sans", sans-serif;
   position: fixed;
   left: 0;
   width: 100%;
@@ -215,6 +215,9 @@
     border-bottom: 1px solid rgba(var(--textColor), 0.2);
     padding: 1.5rem;
     width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
   h4 {
     margin: 0;
