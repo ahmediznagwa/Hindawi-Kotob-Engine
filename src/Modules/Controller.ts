@@ -297,6 +297,7 @@ export class Controller {
       this.book.bookId,
       this.book.currentChapterIndex
     );
+    this.book.currentChapter.calcPagesContentRanges();
 
     // Detect anchor word page index
     this.book.currentChapter.pagesContentRanges.forEach((page, pageIndex) => {
@@ -308,6 +309,7 @@ export class Controller {
         anchorWordIndex === max
       ) {
         this.book.currentPage = pageIndex;
+        this.book.changePage();
         setTimeout(() => {
           this.book.currentChapter.calcPagesContentRanges();
           this.book.changePage();
