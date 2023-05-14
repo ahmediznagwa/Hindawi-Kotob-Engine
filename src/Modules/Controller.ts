@@ -9,6 +9,12 @@ export class Controller {
   htmlExtractor: HTMLExtractor;
   book: Book;
   userPreferences: UserPreferences;
+  midWordFirstPageTop: number;
+  midWordTop: number;
+  lastWordTop: number;
+  midWordFirstPageLeft: number;
+  midWordLeft: number;
+  lastWordLeft: number;
   constructor() {}
 
   /**
@@ -130,6 +136,10 @@ export class Controller {
     UTILS.DOM_ELS.bookmarksBtns?.forEach((btn) => {
       btn.addEventListener("click", this.goToBookmark.bind(this));
     });
+    this.wordPositionChangeHandler();
+    document.fonts.onloadingdone = () => {
+      this.resizeEventHandler();
+    };
   }
 
   /**
@@ -140,6 +150,50 @@ export class Controller {
     this.changePageToAnchorWordLocation();
     this.storeUserPreferences();
   };
+
+  /**
+    Sets an infinite interval that checks for the middle and last words positions to detect any changes in them and applis logic
+  */
+  wordPositionChangeHandler() {
+    setInterval(() => {
+      const pagesContentRanges = this.book.currentChapter.pagesContentRanges;
+      const lastWordIndexInChapter =
+        pagesContentRanges[pagesContentRanges.length - 1][1];
+      const firstWordIndexInChapter = pagesContentRanges[0][0];
+      const lastWordIndexInFirstPage = pagesContentRanges[0][1];
+      const middleWordIndexInFirstPage = Math.floor(
+        (lastWordIndexInFirstPage - firstWordIndexInChapter) / 2
+      );
+      const middleWordIndexInChapter =
+        Math.floor((lastWordIndexInChapter - firstWordIndexInChapter) / 2) +
+        firstWordIndexInChapter;
+      const lastWordInChapter = document.querySelector(
+        `span[n="${lastWordIndexInChapter}"]`
+      ) as HTMLElement;
+      const middleWordInChapter = document.querySelector(
+        `span[n="${middleWordIndexInChapter}"]`
+      ) as HTMLElement;
+      const middleWordInFirstPage = document.querySelector(
+        `span[n="${middleWordIndexInFirstPage}"]`
+      ) as HTMLElement;
+      if (
+        this.midWordFirstPageTop !== middleWordInFirstPage?.offsetTop ||
+        this.midWordTop !== middleWordInChapter?.offsetTop ||
+        this.lastWordTop !== lastWordInChapter?.offsetTop ||
+        this.midWordFirstPageLeft !== middleWordInFirstPage?.offsetLeft ||
+        this.midWordLeft !== middleWordInChapter?.offsetLeft ||
+        this.lastWordLeft !== lastWordInChapter?.offsetLeft
+      ) {
+        this.midWordLeft = middleWordInChapter?.offsetLeft;
+        this.lastWordLeft = lastWordInChapter?.offsetLeft;
+        this.midWordTop = middleWordInChapter?.offsetTop;
+        this.lastWordTop = lastWordInChapter?.offsetTop;
+        this.midWordFirstPageTop = middleWordInFirstPage?.offsetTop;
+        this.midWordFirstPageLeft = middleWordInFirstPage?.offsetLeft;
+        this.resizeEventHandler();
+      }
+    });
+  }
 
   /**
     Changes current page to a page matching the current scroll percentage
