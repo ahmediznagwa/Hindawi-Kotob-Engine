@@ -123,7 +123,7 @@ export class Controller {
       btn.addEventListener("click", this.fontFamilyEventHandler.bind(this));
     });
     UTILS.DOM_ELS.bookmarksBtns?.forEach((btn) => {
-      btn.addEventListener("click", this.bookmarkEventHandler.bind(this));
+      btn.addEventListener("click", this.goToBookmark.bind(this));
     });
   }
 
@@ -172,7 +172,7 @@ export class Controller {
 
     // Appending event listeners to appended elements
     UTILS.DOM_ELS.bookmarksBtns?.forEach((btn) => {
-      btn.addEventListener("click", this.bookmarkEventHandler.bind(this));
+      btn.addEventListener("click", this.goToBookmark.bind(this));
     });
     this.storeUserPreferences();
   }
@@ -300,6 +300,40 @@ export class Controller {
   }
 
   /**
+    Handles what happened after clicking on specific bookmark in the list
+  */
+  goToBookmark(e) {
+    const el = e.target.closest("li") as HTMLElement;
+    const chapterIndex = el.getAttribute("data-chapter-index");
+    const anchorWordIndex = +el.getAttribute("data-anchor-word-index");
+
+    this.book.currentChapter = new BookChapter(
+      this.book.chapters[chapterIndex],
+      this.book.imagesFolder,
+      this.book.rootFolder,
+      this.book.bookId,
+      this.book.currentChapterIndex
+    );
+
+    // Detect anchor word page index
+    this.book.currentChapter.pagesContentRanges.forEach((page, pageIndex) => {
+      const min = Math.min(page[0], page[1]),
+        max = Math.max(page[0], page[1]);
+      if (
+        (anchorWordIndex > min && anchorWordIndex < max) ||
+        anchorWordIndex === min ||
+        anchorWordIndex === max
+      ) {
+        this.book.currentPage = pageIndex;
+        setTimeout(() => {
+          this.book.currentChapter.calcPagesContentRanges();
+          this.book.changePage();
+        }, 1000);
+      }
+    });
+  }
+
+  /**
     Sets font family to a desired value
   */
   setFontFamily(fontFamily: string) {
@@ -336,54 +370,5 @@ export class Controller {
     });
     e.target.classList.add("selected");
     this.setFontFamily(e.target.dataset.value);
-  }
-
-  /**
-    Handles what happened after clicking on specific bookmark in the list
-  */
-  bookmarkEventHandler(e) {
-    const el = e.target.closest("li") as HTMLElement;
-    const chapterIndex = el.getAttribute("data-chapter-index");
-    const anchorWordIndex = +el.getAttribute("data-anchor-word-index");
-
-    this.book.currentChapter = new BookChapter(
-      this.book.chapters[chapterIndex],
-      this.book.imagesFolder,
-      this.book.rootFolder,
-      this.book.bookId,
-      this.book.currentChapterIndex
-    );
-
-    // Detect anchor word page index
-    this.book.currentChapter.pagesContentRanges.forEach((page, pageIndex) => {
-      const min = Math.min(page[0], page[1]),
-        max = Math.max(page[0], page[1]);
-      if (
-        (anchorWordIndex > min && anchorWordIndex < max) ||
-        anchorWordIndex === min ||
-        anchorWordIndex === max
-      ) {
-        this.book.currentPage = pageIndex;
-        setTimeout(() => {
-          this.book.currentChapter.calcPagesContentRanges();
-          this.book.changePage();
-        }, 1000);
-      }
-    });
-  }
-
-  /**
-    Handles insetion of images at specific
-  */
-  imageInsertionHandler(wordIndex: number = 106) {
-    const book = $(UTILS.DOM_ELS.book);
-    const el = book.find(`span[n='${wordIndex}']`);
-    const bookChapter = el.closest('.book-chapter');
-    const bookHeight = book.outerHeight();
-    if (el.length) {
-      const image = `<div class="inserted-image" style="height: ${bookHeight}px"><img src="../image.jpg"></div>`;
-      bookChapter.append(image);
-      $(image).css("height");
-    }
   }
 }

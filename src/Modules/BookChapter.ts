@@ -44,12 +44,15 @@ export class BookChapter {
     Searches for a span inside an element at a given order
   */
   getSpan(el: HTMLElement, order: "first" | "last"): HTMLElement {
-    if (order === "first")
+    if (order === "first") {
+      console.log(el);
+      
       return el.querySelector("span:first-child") as HTMLElement;
-    else if (order === "last")
+    } else if (order === "last") {
       return Array.from(
         el.querySelectorAll("span:last-child")
       ).pop() as HTMLElement;
+    }
   }
 
   /**
@@ -70,7 +73,10 @@ export class BookChapter {
   */
   getElement(el: HTMLElement, direction: "next" | "prev"): HTMLElement {
     let child = el;
-    if (child.parentNode.children.length === 1) {
+    if (child?.querySelector("span[n]")) {
+      return child;
+    }
+    if (child.parentNode?.children.length === 1) {
       return child;
     }
     const nextChild =
@@ -183,20 +189,13 @@ export class BookChapter {
         }
         // last element in chapter
         if (i === childrenArr.length - 1) {
+          const element = this.getElement(child, "prev");
           if (this.isInOtherPage(this.getSpan(child, "last"))) {
             // paragraph split into two pages
             this.loopOverWords(child);
           }
-          if (!child.querySelector("span[n]")) {
-            const element = this.getElement(child, "prev");
-            this.pagesContentRanges[this.page][1] = +this.getSpan(
-              element,
-              "last"
-            )?.getAttribute("n");
-            return;
-          }
           this.pagesContentRanges[this.page][1] = +this.getSpan(
-            child,
+            element,
             "last"
           )?.getAttribute("n");
         }
@@ -222,17 +221,21 @@ export class BookChapter {
         else {
           if (this.isInOtherPage(child?.nextElementSibling as HTMLElement)) {
             // paragraph at the end of the page
-            if (this.isInOtherPage(this.getSpan(child, "last")))
+            if (this.isInOtherPage(this.getSpan(child, "last"))) {
               this.loopOverWords(child); // paragraph split into two pages
-            else {
+            } else {
               // paragraph didn't split into two pages
+
               this.pagesContentRanges[this.page][1] = +this.getSpan(
-                child,
+                this.getElement(child, "prev"),
                 "last"
               )?.getAttribute("n");
               this.page++;
               this.pagesContentRanges[this.page][0] = +this.getSpan(
-                child?.nextElementSibling as HTMLElement,
+                this.getElement(
+                  child?.nextElementSibling as HTMLElement,
+                  "prev"
+                ),
                 "first"
               )?.getAttribute("n");
             }
@@ -257,7 +260,7 @@ export class BookChapter {
     this.calcPagesContentRanges();
     this.updateImagesFolders();
     this.bindClickEventOnAllWordsInChapter();
-    this.imageInsertionHandler();
+    this.insertFullPageImage();
   }
 
   /**
@@ -409,15 +412,16 @@ export class BookChapter {
       .addEventListener("click", this.copyText.bind(this, element));
   }
 
-  imageInsertionHandler(wordIndex: number = 106) {
+  insertFullPageImage(wordIndex: number = 533) {
     const book = $(UTILS.DOM_ELS.book);
     const el = book.find(`span[n='${wordIndex}']`);
-    const bookChapter = el.closest('.book-chapter');
+    const bookChapter = el.closest(".book-chapter");
     const bookHeight = book.outerHeight();
     if (el.length) {
       const image = `<div class="inserted-image" style="height: ${bookHeight}px"><img src="image.jpg"></div>`;
       bookChapter.append(image);
       $(image).css("height");
+      this.calcPagesContentRanges();
     }
   }
 }
