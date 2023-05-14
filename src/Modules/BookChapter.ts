@@ -45,9 +45,11 @@ export class BookChapter {
   */
   getSpan(el: HTMLElement, order: "first" | "last"): HTMLElement {
     if (order === "first") {
-      console.log(el);
-      
-      return el.querySelector("span:first-child") as HTMLElement;
+      let span = el.querySelector("span:first-child") as HTMLElement;
+      if (!span?.getAttribute("n")) {
+        span = span?.querySelector("span[n]");
+      }
+      return span;
     } else if (order === "last") {
       return Array.from(
         el.querySelectorAll("span:last-child")
@@ -201,8 +203,8 @@ export class BookChapter {
         }
         // first element in chapter
         if (i === 0) {
+          const element = this.getElement(child, "next");
           if (!child.querySelector("span[n]")) {
-            const element = this.getElement(child, "next");
             this.pagesContentRanges[this.page][0] = +this.getSpan(
               element,
               "first"
@@ -212,7 +214,7 @@ export class BookChapter {
           }
 
           this.pagesContentRanges[this.page][0] = +this.getSpan(
-            child,
+            element,
             "first"
           )?.getAttribute("n");
           this.loopOverWords(child);
