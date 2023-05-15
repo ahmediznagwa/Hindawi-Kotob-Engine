@@ -1,4 +1,3 @@
-
 import { Controller } from "./Modules/Controller";
 import { UTILS } from "./Modules/Utils";
 
@@ -11,6 +10,10 @@ const nagwaReaders = (function () {
     }
   });
 })();
+
+function showAlert() {
+  alert("it is working");
+}
 
 // Dropdown Menu
 initDropdowns();

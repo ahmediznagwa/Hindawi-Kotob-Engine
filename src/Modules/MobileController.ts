@@ -80,6 +80,3 @@ export class MobileController extends Controller {
     console.log("POSTED PAGE UPDATED MESSAGE");
   }
 }
-
-const mobileController = new MobileController();
-mobileController.initWithBookId(bookId)
