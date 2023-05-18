@@ -1,4 +1,6 @@
 import { IBookmark } from "../Models/IBookmark.model";
+import { PageUpdatedMessage } from "../Models/IPostMessage.model";
+import { IUserPreferencesState } from "../Models/IUserPreferencesState.model";
 import { Book } from "./Book";
 import { BookChapter } from "./BookChapter";
 import { HTMLExtractor } from "./HTMLExtractor";
@@ -20,7 +22,26 @@ export class Controller {
   /**
     Initiates the app asynchronously by tacking the book ID and fetching the HTML document
   */
-  async initWithBookId(bookId: string) {
+  async initWithBookId(bookId: string, config?: IUserPreferencesState) {
+    alert("ya mosahel");
+    let {
+      anchorWordIndex,
+      currentChapter,
+      fontSize,
+      colorMode,
+      fontFamily,
+      bookmarks,
+    } = config || {};
+    this.userPreferences = new UserPreferences(bookId);
+    this.userPreferences.save(
+      anchorWordIndex,
+      currentChapter,
+      fontSize,
+      colorMode,
+      fontFamily,
+      bookmarks,
+      false
+    );
     this.htmlExtractor = new HTMLExtractor(bookId);
     await this.htmlExtractor.extractChapters();
     this.detectUserPreferences(bookId);
@@ -67,6 +88,41 @@ export class Controller {
       this.book.fontFamily,
       this.book.bookmarks
     );
+    this.postPageUpdatedMessage();
+  }
+
+  /**
+   * Posts a message for the pageUpdated message handler
+   */
+  postPageUpdatedMessage() {
+    const messageObj: PageUpdatedMessage = {
+      isFirstPage: this.book.isFirstPage,
+      isLastPage: this.book.isLastPage,
+      chapterMaxPages: UTILS.calcPageCount(),
+      maxChapters: this.book.chapters.length - 1,
+      percentage: Math.round(this.book.currentProgressPercent),
+      currentPage: this.book.currentPage,
+      currentChapter: this.book.currentChapterIndex,
+      isFirstChapter: this.book.isFirstChapter,
+      isLastChapter: this.book.isLastChapter,
+      fontSize: this.book.fontSize,
+      canIncreaseFont: this.book.canIncreaseFont,
+      canDecreaseFont: this.book.canDecreaseFont,
+      anchorWordIndex: this.book.anchorWordIndex,
+    };
+    this.postMessage("pageUpdated", messageObj);
+    console.log("POSTED PAGE UPDATED MESSAGE");
+  }
+
+  /**
+    Posts a message object as JSON object to mobile environments
+  */
+  postMessage(messageHandlerName: string, message: object) {
+    const json = JSON.stringify(message);
+    const win = window as any;
+    if (win.webkit?.messageHandlers[messageHandlerName])
+      win.webkit.messageHandlers[messageHandlerName].postMessage(json);
+    if (win[messageHandlerName]) win[messageHandlerName].postMessage(json);
   }
 
   /**

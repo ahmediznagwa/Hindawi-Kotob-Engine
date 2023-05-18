@@ -1,5 +1,3 @@
-import { prodRootUrl } from "./constants";
-
 export class HTMLExtractor {
   bookId: string;
   rootFolder: string;
@@ -17,9 +15,7 @@ export class HTMLExtractor {
       Sets the chapters order of the parsed book
     */
   async setNav() {
-    const res = await fetch(
-      `${prodRootUrl}/packages/${this.bookId}/META-INF/container.xml`
-    );
+    const res = await fetch(`${this.bookId}/META-INF/container.xml`);
     const htmlTxt = await res.text();
     const parser = new DOMParser();
     const container = parser.parseFromString(htmlTxt, "text/html");
@@ -29,9 +25,7 @@ export class HTMLExtractor {
 
     // Define Book Root Folder
     this.rootFolder = rootFilePath.split("/")[0];
-    const packageRes = await fetch(
-      `${prodRootUrl}/packages/${this.bookId}/${rootFilePath}`
-    );
+    const packageRes = await fetch(`${this.bookId}/${rootFilePath}`);
     const packageTxt = await packageRes.text();
     const packageFile = parser.parseFromString(packageTxt, "text/html");
 
@@ -82,9 +76,7 @@ export class HTMLExtractor {
    * Sets the current XML document to the inputted XML string after parsing
    */
   async getHTMLDoc(path: string): Promise<string> {
-    const res = await fetch(
-      `${prodRootUrl}/packages/${this.bookId}/${this.rootFolder}/${path}`
-    );
+    const res = await fetch(`${this.bookId}/${this.rootFolder}/${path}`);
     return await res.text();
   }
 }

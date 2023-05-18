@@ -1,5 +1,4 @@
 import { UTILS } from "./Utils";
-import { prodRootUrl } from "./constants";
 
 export class BookChapter {
   chapterEl: HTMLElement;
@@ -273,7 +272,7 @@ export class BookChapter {
     images.forEach((img: HTMLImageElement) => {
       const imgSrc = img.getAttribute("src").split("/");
       const imgName = imgSrc[imgSrc.length - 1];
-      img.src = `${prodRootUrl}/packages/${this.bookId}/${this.rootFolder}/${this.imagesFolder}/${imgName}`;
+      img.src = `${this.bookId}/${this.rootFolder}/${this.imagesFolder}/${imgName}`;
     });
   }
 

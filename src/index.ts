@@ -1,7 +1,11 @@
 import { Controller } from "./Modules/Controller";
 import { UTILS } from "./Modules/Utils";
-
-const nagwaReaders = (function () {
+declare global {
+  interface Window {
+    hindawiReaders: any;
+  }
+}
+export const hindawiReaders = (function () {
   const controller = new Controller();
   window.addEventListener("load", () => {
     const bookId = UTILS.getBookId();
@@ -9,11 +13,12 @@ const nagwaReaders = (function () {
       controller.initWithBookId(bookId);
     }
   });
+  return {
+    init: controller.initWithBookId.bind(controller),
+  };
 })();
 
-function showAlert() {
-  alert("it is working");
-}
+window.hindawiReaders = hindawiReaders;
 
 // Dropdown Menu
 initDropdowns();

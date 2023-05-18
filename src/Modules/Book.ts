@@ -1,7 +1,6 @@
 import { IBookmark } from "../Models/IBookmark.model";
 import { BookChapter } from "./BookChapter";
 import { UTILS } from "./Utils";
-import { prodRootUrl } from "./constants";
 
 export class Book {
   bookId: string;
@@ -449,7 +448,7 @@ export class Book {
       const link = document.createElement("link");
       link.type = "text/css";
       link.rel = "stylesheet";
-      link.href = `${prodRootUrl}/packages/${this.bookId}/${this.rootFolder}/${filePath}`;
+      link.href = `${this.bookId}/${this.rootFolder}/${filePath}`;
       document.head.prepend(link);
     });
   }
