@@ -5,8 +5,6 @@ import { UTILS } from "./Utils";
 export class Book {
   bookId: string;
   chapters: HTMLDivElement[];
-  imagesFolder: string;
-  rootFolder: string;
   cssFiles: string[];
   fontSize: number;
   currentChapterIndex: number;
@@ -33,8 +31,6 @@ export class Book {
   constructor(
     bookId,
     chapters,
-    imagesFolder,
-    rootFolder,
     cssFiles,
     fontSize = 18,
     currentChapterIndex = 0,
@@ -46,8 +42,6 @@ export class Book {
     this.bookId = bookId;
     this.bookWordsCount = null;
     this.chapters = chapters;
-    this.imagesFolder = imagesFolder;
-    this.rootFolder = rootFolder;
     this.cssFiles = cssFiles;
     this.currentChapterIndex = Math.min(
       currentChapterIndex || 0,
@@ -55,8 +49,6 @@ export class Book {
     );
     this.currentChapter = new BookChapter(
       this.chapters[this.currentChapterIndex],
-      this.imagesFolder,
-      this.rootFolder,
       this.bookId,
       this.currentChapterIndex
     );
@@ -226,8 +218,6 @@ export class Book {
         this.chapters[
           Math.min(this.currentChapterIndex, this.chapters.length - 1)
         ],
-        this.imagesFolder,
-        this.rootFolder,
         this.bookId,
         this.currentChapterIndex
       );
@@ -444,12 +434,12 @@ export class Book {
     Add book styles to the index.html head
   */
   addBookStyles() {
-    this.cssFiles.forEach((filePath) => {
-      const link = document.createElement("link");
-      link.type = "text/css";
-      link.rel = "stylesheet";
-      link.href = `${this.bookId}/${this.rootFolder}/${filePath}`;
-      document.head.prepend(link);
-    });
+    // this.cssFiles.forEach((filePath) => {
+    //   const link = document.createElement("link");
+    //   link.type = "text/css";
+    //   link.rel = "stylesheet";
+    //   link.href = `${this.bookId}/${this.rootFolder}/${filePath}`;
+    //   document.head.prepend(link);
+    // });
   }
 }

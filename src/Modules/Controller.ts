@@ -20,10 +20,13 @@ export class Controller {
   constructor() {}
 
   /**
-    Initiates the app asynchronously by tacking the book ID and fetching the HTML document
+    Initiates the app asynchronously by getting the chapters array
   */
-  async initWithBookId(bookId: string, config?: IUserPreferencesState) {
-    alert("ya mosahel");
+  async initWithChapters(
+    bookId: string,
+    chapters: string[],
+    config?: IUserPreferencesState
+  ) {
     let {
       anchorWordIndex,
       currentChapter,
@@ -43,7 +46,14 @@ export class Controller {
       false
     );
     this.htmlExtractor = new HTMLExtractor(bookId);
-    await this.htmlExtractor.extractChapters();
+    const parser = new DOMParser();
+
+    this.htmlExtractor.chapters = chapters.map(
+      (chapterString) =>
+        parser.parseFromString(chapterString, "text/html").querySelector("body")
+          .firstElementChild
+    );
+
     this.detectUserPreferences(bookId);
     this.setupHandlers();
     this.setupEventListeners();
@@ -56,8 +66,6 @@ export class Controller {
     this.book = new Book(
       this.htmlExtractor.bookId,
       this.htmlExtractor.chapters,
-      this.htmlExtractor.imagesFolder,
-      this.htmlExtractor.rootFolder,
       this.htmlExtractor.cssFiles,
       this?.userPreferences?.fontSize,
       this?.userPreferences?.chapter,
@@ -402,8 +410,6 @@ export class Controller {
 
     this.book.currentChapter = new BookChapter(
       this.book.chapters[chapterIndex],
-      this.book.imagesFolder,
-      this.book.rootFolder,
       this.book.bookId,
       this.book.currentChapterIndex
     );

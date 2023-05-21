@@ -1,5 +1,5 @@
 import { Controller } from "./Modules/Controller";
-import { UTILS } from "./Modules/Utils";
+import { chapter1, chapter2 } from "./Modules/constants";
 declare global {
   interface Window {
     hindawiReaders: any;
@@ -8,13 +8,10 @@ declare global {
 export const hindawiReaders = (function () {
   const controller = new Controller();
   window.addEventListener("load", () => {
-    const bookId = UTILS.getBookId();
-    if (bookId) {
-      controller.initWithBookId(bookId);
-    }
+    controller.initWithChapters("packages/life_prison", [chapter1, chapter2]);
   });
   return {
-    init: controller.initWithBookId.bind(controller),
+    init: controller.initWithChapters.bind(controller),
   };
 })();
 

@@ -2,8 +2,6 @@ import { UTILS } from "./Utils";
 
 export class BookChapter {
   chapterEl: HTMLElement;
-  imagesFolder: string;
-  rootFolder: string;
   bookId: string;
   pagesContentRanges: number[][];
   page: number;
@@ -15,15 +13,11 @@ export class BookChapter {
   currentChapterIndex: number;
   constructor(
     chapterEl: HTMLElement,
-    imagesFolder: string,
-    rootFolder: string,
     bookId: string,
     currentChapterIndex: number
   ) {
     this.bookId = bookId;
     this.chapterEl = chapterEl;
-    this.imagesFolder = imagesFolder;
-    this.rootFolder = rootFolder;
     this.currentChapterIndex = currentChapterIndex;
 
     /**
@@ -252,6 +246,8 @@ export class BookChapter {
   renderChapter() {
     const section = document.createElement("section");
     section.classList.add("book-chapter");
+    console.log(this.chapterEl);
+
     section.innerHTML = this.chapterEl?.innerHTML;
     if (!this.chapterEl?.innerHTML) {
       section.appendChild(this.chapterEl);
@@ -259,7 +255,7 @@ export class BookChapter {
     UTILS.DOM_ELS.book.innerHTML = "";
     UTILS.DOM_ELS.book.append(section);
     this.calcPagesContentRanges();
-    this.updateImagesFolders();
+    this.updateImagesPaths();
     this.bindClickEventOnAllWordsInChapter();
     // this.insertFullPageImage(); insert fullpage image after specific index
   }
@@ -267,13 +263,8 @@ export class BookChapter {
   /**
     Update chapter images relative to selected book folder
   */
-  updateImagesFolders() {
-    const images = UTILS.DOM_ELS.book.querySelectorAll("img");
-    images.forEach((img: HTMLImageElement) => {
-      const imgSrc = img.getAttribute("src").split("/");
-      const imgName = imgSrc[imgSrc.length - 1];
-      img.src = `${this.bookId}/${this.rootFolder}/${this.imagesFolder}/${imgName}`;
-    });
+  updateImagesPaths() {
+
   }
 
   /**
