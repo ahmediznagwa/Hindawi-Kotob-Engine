@@ -119,7 +119,9 @@ export class Book {
     section.classList.add("demo");
     section.innerHTML = "";
     this.chapters.forEach((chapter: HTMLDivElement) => {
-      section.innerHTML = section.innerHTML += chapter.innerHTML;
+      section.innerHTML = section.innerHTML += chapter?.innerHTML
+        ? chapter?.innerHTML
+        : chapter;
     });
     const lastChapter = this.chapters[this.chapters.length - 1];
 

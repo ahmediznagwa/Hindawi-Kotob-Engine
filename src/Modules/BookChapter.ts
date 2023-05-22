@@ -246,7 +246,6 @@ export class BookChapter {
   renderChapter() {
     const section = document.createElement("section");
     section.classList.add("book-chapter");
-    console.log(this.chapterEl);
 
     section.innerHTML = this.chapterEl?.innerHTML;
     if (!this.chapterEl?.innerHTML) {
@@ -263,9 +262,7 @@ export class BookChapter {
   /**
     Update chapter images relative to selected book folder
   */
-  updateImagesPaths() {
-
-  }
+  updateImagesPaths() {}
 
   /**
     Highlight selected word

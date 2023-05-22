@@ -24,39 +24,54 @@ export class Controller {
   */
   async initWithChapters(
     bookId: string,
-    chapters: string[],
+    json: string,
     config?: IUserPreferencesState
   ) {
-    let {
-      anchorWordIndex,
-      currentChapter,
-      fontSize,
-      colorMode,
-      fontFamily,
-      bookmarks,
-    } = config || {};
-    this.userPreferences = new UserPreferences(bookId);
-    this.userPreferences.save(
-      anchorWordIndex,
-      currentChapter,
-      fontSize,
-      colorMode,
-      fontFamily,
-      bookmarks,
-      false
-    );
-    this.htmlExtractor = new HTMLExtractor(bookId);
-    const parser = new DOMParser();
+    try {
+      alert("Function Init");
+      let {
+        anchorWordIndex,
+        currentChapter,
+        fontSize,
+        colorMode,
+        fontFamily,
+        bookmarks,
+      } = config || {};
+      this.userPreferences = new UserPreferences(bookId);
+      this.userPreferences.save(
+        anchorWordIndex,
+        currentChapter,
+        fontSize,
+        colorMode,
+        fontFamily,
+        bookmarks,
+        false
+      );
+      this.htmlExtractor = new HTMLExtractor(bookId);
+      const parser = new DOMParser();
 
-    this.htmlExtractor.chapters = chapters.map(
-      (chapterString) =>
-        parser.parseFromString(chapterString, "text/html").querySelector("body")
-          .firstElementChild
-    );
+      const chapters = json
+        .replace("[", "")
+        .replace("]", "")
+        .trim()
+        .split('<?xml version="1.0" encoding="UTF-8"?>');
+      chapters.shift();
 
-    this.detectUserPreferences(bookId);
-    this.setupHandlers();
-    this.setupEventListeners();
+      this.htmlExtractor.chapters = chapters.map(
+        (chapterString) =>
+          parser
+            .parseFromString(chapterString, "text/html")
+            .querySelector("body").firstElementChild
+      );
+
+      alert("Got Chapters");
+
+      this.detectUserPreferences(bookId);
+      this.setupHandlers();
+      this.setupEventListeners();
+    } catch (error) {
+      alert(error);
+    }
   }
 
   /**
