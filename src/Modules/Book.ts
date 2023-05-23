@@ -436,12 +436,10 @@ export class Book {
     Add book styles to the index.html head
   */
   addBookStyles() {
-    // this.cssFiles.forEach((filePath) => {
-    //   const link = document.createElement("link");
-    //   link.type = "text/css";
-    //   link.rel = "stylesheet";
-    //   link.href = `${this.bookId}/${this.rootFolder}/${filePath}`;
-    //   document.head.prepend(link);
-    // });
+    this.cssFiles.forEach((cssString) => {
+      const style = document.createElement("style");
+      style.textContent = cssString;
+      document.head.prepend(style);
+    });
   }
 }

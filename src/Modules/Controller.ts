@@ -25,6 +25,7 @@ export class Controller {
   async initWithChapters(
     bookId: string,
     json: string,
+    css: string,
     config?: IUserPreferencesState
   ) {
     try {
@@ -65,6 +66,13 @@ export class Controller {
       );
 
       alert("Got Chapters");
+
+      this.htmlExtractor.cssFiles = css
+        .replace("[", "")
+        .replace("]", "")
+        .split('@charset "UTF-8";');
+      this.htmlExtractor.cssFiles.shift();
+      alert("Got CSS");
 
       this.detectUserPreferences(bookId);
       this.setupHandlers();
