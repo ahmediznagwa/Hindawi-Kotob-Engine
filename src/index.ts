@@ -7,9 +7,9 @@ declare global {
 }
 export const hindawiReaders = (function () {
   const controller = new Controller();
-  window.addEventListener("load", () => {
-    controller.initWithChapters("packages/life_prison", json, css);
-  });
+  // window.addEventListener("load", () => {
+  //   controller.initWithChapters("packages/life_prison", json, css);
+  // });
   return {
     init: controller.initWithChapters.bind(controller),
   };
