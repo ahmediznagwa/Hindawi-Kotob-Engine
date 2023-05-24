@@ -68,10 +68,11 @@ export class Controller {
       alert("Got Chapters");
 
       this.htmlExtractor.cssFiles = css
-        .replace("[", "")
-        .replace("]", "")
+        .replace("['", "")
+        .replace("']", "")
         .split('@charset "UTF-8";');
       this.htmlExtractor.cssFiles.shift();
+
       alert("Got CSS");
 
       this.detectUserPreferences(bookId);

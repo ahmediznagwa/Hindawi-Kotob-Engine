@@ -438,7 +438,7 @@ export class Book {
   addBookStyles() {
     this.cssFiles.forEach((cssString) => {
       const style = document.createElement("style");
-      style.textContent = cssString;
+      style.textContent = cssString.replaceAll('{', '\n{\n').replaceAll('}', '\n}\n');
       document.head.prepend(style);
     });
   }
