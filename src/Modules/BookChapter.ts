@@ -248,6 +248,8 @@ export class BookChapter {
     section.classList.add("book-chapter");
 
     section.innerHTML = this.chapterEl?.innerHTML;
+    console.log(this.chapterEl);
+    
     if (!this.chapterEl?.innerHTML) {
       section.appendChild(this.chapterEl);
     }

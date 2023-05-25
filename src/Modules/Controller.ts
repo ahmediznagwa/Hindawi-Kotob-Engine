@@ -29,7 +29,7 @@ export class Controller {
     config?: IUserPreferencesState
   ) {
     try {
-      alert("Function Init");
+      // alert("Function Init");
       let {
         anchorWordIndex,
         currentChapter,
@@ -51,11 +51,8 @@ export class Controller {
       this.htmlExtractor = new HTMLExtractor(bookId);
       const parser = new DOMParser();
 
-      const chapters = json
-        .replace("[", "")
-        .replace("]", "")
-        .trim()
-        .split('<?xml version="1.0" encoding="UTF-8"?>');
+      const chapters = json.trim().split("$Newchapter");
+
       chapters.shift();
 
       this.htmlExtractor.chapters = chapters.map(
@@ -65,15 +62,12 @@ export class Controller {
             .querySelector("body").firstElementChild
       );
 
-      alert("Got Chapters");
+      // alert("Got Chapters");
 
-      this.htmlExtractor.cssFiles = css
-        .replace("['", "")
-        .replace("']", "")
-        .split('@charset "UTF-8";');
+      this.htmlExtractor.cssFiles = css.split('@charset "UTF-8";');
       this.htmlExtractor.cssFiles.shift();
 
-      alert("Got CSS");
+      // alert("Got CSS");
 
       this.detectUserPreferences(bookId);
       this.setupHandlers();
