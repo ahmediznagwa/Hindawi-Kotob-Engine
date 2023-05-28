@@ -274,3 +274,18 @@
     margin-inline-end: 10px;
   }
 }
+
+.dropdown--bookmark {
+  .dropdown-menu {
+    @media screen and (max-width: $mobileLarge) {
+      left: inherit;
+      right: -10px;
+    }
+    &:before{
+      @media screen and (max-width: $mobileLarge) {
+        left: inherit;
+        right:2rem;
+      }
+    }
+  }
+}

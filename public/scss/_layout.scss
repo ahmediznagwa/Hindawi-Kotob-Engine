@@ -8,7 +8,7 @@ h1,
 .book-container {
   padding: 6rem 0 8rem;
   @media screen and (max-width: $mobileLarge) {
-    padding:  2rem 0 4rem;
+    padding:  2rem 0;
   }
 }
 .book-wrapper {
@@ -46,5 +46,8 @@ h1,
   @media screen and (min-width: 1023px) {
     column-count: 2;
     column-width: inherit;
+  }
+  @media screen and (max-width: $mobileLarge) {
+    height: calc(100vh - 4rem);
   }
 }
