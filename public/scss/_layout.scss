@@ -7,11 +7,17 @@ h1,
 }
 .book-container {
   padding: 6rem 0 8rem;
+  @media screen and (max-width: $mobileLarge) {
+    padding:  2rem 0 4rem;
+  }
 }
 .book-wrapper {
   padding: 0 6rem 0;
   word-break: break-word;
   direction: rtl;
+  @media screen and (max-width: $mobileLarge) {
+    padding:  0 2rem 0;
+  }
 }
 
 .book-chapter > img:only-child {

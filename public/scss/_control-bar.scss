@@ -18,6 +18,10 @@
   & > div {
     display: flex;
     align-items: center;
+    @media screen and (max-width: $mobileLarge) {
+      flex-direction: column;
+      align-items: unset;
+    }
   }
 
   .btn-icon {
@@ -63,6 +67,9 @@
 .pagination-info {
   margin: 0 2rem;
   font-size: 1.8rem;
+  @media screen and (max-width: $mobileLarge) {
+    margin: 0 auto;
+  }
 }
 .bar-right {
   margin-left: auto;
@@ -70,16 +77,38 @@
   align-items: center;
   button {
     margin: 0 3px;
+    &:first-child {
+      @media screen and (max-width: $mobileLarge) {
+        margin-inline-start: 0;
+      }
+    }
+    &:last-child {
+      @media screen and (max-width: $mobileLarge) {
+        margin-inline-end: 0;
+      }
+    }
+  }
+  @media screen and (max-width: $mobileLarge) {
+    order: 1;
+    margin: 0;
+    margin-bottom: 1rem;
+    justify-content: center;
   }
 }
 
 .bar-left {
   display: flex;
   align-items: center;
+  @media screen and (max-width: $mobileLarge) {
+    order: 2;
+  }
   .dropdown {
     margin-inline-end: 6px;
     &:last-child {
       margin-inline-end: 0;
+      @media screen and (max-width: $mobileLarge) {
+        margin-left: auto;
+      }
     }
   }
 }
