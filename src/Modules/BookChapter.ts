@@ -248,23 +248,16 @@ export class BookChapter {
     section.classList.add("book-chapter");
 
     section.innerHTML = this.chapterEl?.innerHTML;
-    console.log(this.chapterEl);
-    
+
     if (!this.chapterEl?.innerHTML) {
       section.appendChild(this.chapterEl);
     }
     UTILS.DOM_ELS.book.innerHTML = "";
     UTILS.DOM_ELS.book.append(section);
     this.calcPagesContentRanges();
-    this.updateImagesPaths();
     this.bindClickEventOnAllWordsInChapter();
     // this.insertFullPageImage(); insert fullpage image after specific index
   }
-
-  /**
-    Update chapter images relative to selected book folder
-  */
-  updateImagesPaths() {}
 
   /**
     Highlight selected word

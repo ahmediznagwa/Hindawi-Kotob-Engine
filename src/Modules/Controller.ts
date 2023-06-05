@@ -25,7 +25,6 @@ export class Controller {
   async initWithChapters(
     bookId: string,
     json: string,
-    css: string,
     config?: IUserPreferencesState
   ) {
     try {
@@ -52,7 +51,6 @@ export class Controller {
       const parser = new DOMParser();
 
       const chapters = json.trim().split("$Newchapter");
-
       chapters.shift();
 
       this.htmlExtractor.chapters = chapters.map(
@@ -64,7 +62,7 @@ export class Controller {
 
       // alert("Got Chapters");
 
-      this.htmlExtractor.cssFiles = css.split('@charset "UTF-8";');
+      this.htmlExtractor.cssFiles = json.trim().split("$Newcss");
       this.htmlExtractor.cssFiles.shift();
 
       // alert("Got CSS");
