@@ -28,7 +28,7 @@ export class Controller {
     config?: IUserPreferencesState
   ) {
     try {
-      // alert("Function Init");
+      alert("Function Init");
       let {
         anchorWordIndex,
         currentChapter,
@@ -60,12 +60,12 @@ export class Controller {
             .querySelector("body").firstElementChild
       );
 
-      // alert("Got Chapters");
+      alert("Got Chapters");
 
       this.htmlExtractor.cssFiles = json.trim().split("$Newcss");
       this.htmlExtractor.cssFiles.shift();
 
-      // alert("Got CSS");
+      alert("Got CSS");
 
       this.detectUserPreferences(bookId);
       this.setupHandlers();
