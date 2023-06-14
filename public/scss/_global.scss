@@ -4,6 +4,7 @@
   --darkBg: 0, 0, 0;
   --greyBg: 245, 245, 245;
   --lightGreyBg: 255, 255, 255;
+  --bgHover: #4c4c4c;
 }
 
 *,
@@ -32,7 +33,6 @@ body {
     *:not(h1) {
       font-family: inherit;
     }
-  
   }
 
   .blockquote,
@@ -46,6 +46,7 @@ body {
     --darkBg: 255, 255, 255;
     --greyBg: 17, 17, 17;
     --lightGreyBg: 51, 51, 51;
+    --bgHover: #b2b3b3;
     .book-container {
       color: var(--textColorRgb);
       * {
@@ -70,7 +71,7 @@ body {
 
 .actions-menu {
   color: var(--bgColorRgb);
-  box-shadow: 2px 4px 8px rgba($color: #000000, $alpha: 0.1);
+  // box-shadow: 2px 4px 8px rgba($color: #000000, $alpha: 0.1);
   border-radius: 8px;
 
   &::after {
@@ -90,9 +91,12 @@ body {
 
   ul {
     display: flex;
+    padding: 0;
+    margin: 0;
   }
 
   li {
+    list-style: none;
     &:first-child a {
       border-radius: 8px 0 0 8px;
     }
@@ -114,9 +118,11 @@ body {
     padding: 5px 10px;
     display: flex;
     background-color: var(--textColorRgb);
+    text-decoration: none;
     transition: background-color 0.3s;
     &:hover {
-      background-color: rgba(var(--textColor), 0.7);
+      // background-color: rgba(var(--textColor), 0.7);
+      background-color: var(--bgHover);
       text-decoration: none;
     }
   }
