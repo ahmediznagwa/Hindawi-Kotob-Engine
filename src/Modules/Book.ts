@@ -64,9 +64,7 @@ export class Book {
     this.changeFontSize();
     this.changeColorMode(this.colorMode);
     this.changeFontFamily(this.fontFamily);
-    UTILS.DOM_ELS.book.classList.add("loading");
     setTimeout(() => {
-      UTILS.DOM_ELS.book.classList.remove("loading");
       this.currentChapter.calcPagesContentRanges();
       this.currentPage = this.calcAnchorWordPage();
       this.changePage();
@@ -438,7 +436,9 @@ export class Book {
   addBookStyles() {
     this.cssFiles.forEach((cssString) => {
       const style = document.createElement("style");
-      style.textContent = cssString.replaceAll('{', '\n{\n').replaceAll('}', '\n}\n');
+      style.textContent = cssString
+        .replaceAll("{", "\n{\n")
+        .replaceAll("}", "\n}\n");
       document.head.prepend(style);
     });
   }

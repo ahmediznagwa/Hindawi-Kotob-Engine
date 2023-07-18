@@ -39,10 +39,6 @@ h1,
   appearance: none;
   transition: 0.3s;
 
-  &.loading {
-    opacity: 0.3;
-  }
-
   @media screen and (min-width: 1023px) {
     column-count: 2;
     column-width: inherit;

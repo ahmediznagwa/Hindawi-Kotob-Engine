@@ -322,7 +322,7 @@ export class BookChapter {
     );
 
     UTILS.DOM_ELS.words?.forEach((word: HTMLElement) => {
-      word.addEventListener("click", this.wordEventHandler.bind(this));
+      $(word).on("taphold", this.wordEventHandler.bind(this));
       const wordIndex = word.getAttribute("n");
 
       // Checking if there was stored highlighted words
@@ -340,7 +340,7 @@ export class BookChapter {
   /**
     Handling dropdown that show on word click
   */
-  wordEventHandler(e: MouseEvent) {
+  wordEventHandler(e) {
     e.stopPropagation();
     const element = e.target as HTMLElement;
     $(".actions-menu").remove();

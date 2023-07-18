@@ -28,6 +28,7 @@ export class Controller {
     config?: IUserPreferencesState
   ) {
     try {
+      document.body.classList.add("loading");
       // alert("Function Init");
       let {
         anchorWordIndex,
@@ -70,6 +71,7 @@ export class Controller {
       this.detectUserPreferences(bookId);
       this.setupHandlers();
       this.setupEventListeners();
+      document.body.classList.remove("loading");
     } catch (error) {
       alert(error);
     }

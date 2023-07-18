@@ -1,0 +1,9 @@
+@mixin fontAwesomeIcon($icon-code) {
+  content: $icon-code;
+  font-family: $fAwsome;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "liga";
+  font-weight: 900;
+}
