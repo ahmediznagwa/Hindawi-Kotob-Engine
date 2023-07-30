@@ -195,3 +195,39 @@ body {
     margin-right: 0;
   }
 }
+
+.book-content-list {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--bgColorRgb);
+  padding: 2rem;
+  transform: translateX(-100%);
+  transition: all 0.3s;
+
+  ul {
+    margin: 0;
+    padding: 0;
+    padding-top: 1rem;
+  }
+  li {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 0;
+    font-size: 1.8rem;
+    span {
+      margin-inline-end: auto;
+    }
+  }
+  .action-button {
+    i {
+      color: gray;
+    }
+  }
+  &.book-content-list--show {
+    transform: translateX(0);
+  }
+}
