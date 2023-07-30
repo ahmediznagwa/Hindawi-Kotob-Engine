@@ -206,25 +206,38 @@ body {
   padding: 2rem;
   transform: translateX(-100%);
   transition: all 0.3s;
-
   ul {
     margin: 0;
     padding: 0;
     padding-top: 1rem;
   }
+
   li {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem 0;
-    font-size: 1.8rem;
+    list-style: none;
+    a {
+      color: var(--textColorRgb);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 0;
+      font-size: 1.8rem;
+      border-bottom: 1px solid var(--textColorRgb);
+      text-decoration: none
+      ;
+    }
     span {
       margin-inline-end: auto;
+    }
+    &:first-child {
+      padding-top: 1rem;
+    }
+    &:last-child {
+      border: 0;
     }
   }
   .action-button {
     i {
-      color: gray;
+      color: var(--textColorRgb);
     }
   }
   &.book-content-list--show {
