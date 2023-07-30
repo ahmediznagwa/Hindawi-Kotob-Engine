@@ -28,7 +28,6 @@ export class Controller {
     config?: IUserPreferencesState
   ) {
     try {
-      document.body.classList.add("loading");
       // alert("Function Init");
       let {
         anchorWordIndex,
@@ -71,7 +70,9 @@ export class Controller {
       this.detectUserPreferences(bookId);
       this.setupHandlers();
       this.setupEventListeners();
-      document.body.classList.remove("loading");
+
+      // Triggering click on body to show navigation bar at initial and hides it after 2s
+      $("body").trigger('click');
     } catch (error) {
       alert(error);
     }
@@ -318,6 +319,8 @@ export class Controller {
   */
   goToNextPage() {
     this.book.changePage("next");
+    console.log(this.book.chapters);
+    
     this.postNavigationHandler();
   }
 
