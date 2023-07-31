@@ -219,6 +219,12 @@ export class Controller {
     UTILS.DOM_ELS.bookmarksBtns?.forEach((btn) => {
       btn.addEventListener("click", this.goToBookmark.bind(this));
     });
+    UTILS.DOM_ELS.showTableOfContenBtn?.addEventListener("click", function(){
+      $(UTILS.DOM_ELS.tableOfContentWrapper).addClass('book-content-list--show')
+    });
+    UTILS.DOM_ELS.hideTableOfContenBtn?.addEventListener("click", function(){
+      $(UTILS.DOM_ELS.tableOfContentWrapper).removeClass('book-content-list--show')
+    });
     this.wordPositionChangeHandler();
     document.fonts.onloadingdone = () => {
       this.resizeEventHandler();

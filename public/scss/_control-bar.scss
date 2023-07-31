@@ -99,17 +99,22 @@
 .bar-left {
   display: flex;
   align-items: center;
-  @media screen and (max-width: $mobileLarge) {
-    order: 2;
+
+  * + * {
+    margin-inline-start: 6px;
   }
+
   .dropdown {
-    margin-inline-end: 6px;
     &:last-child {
-      margin-inline-end: 0;
+      margin-inline-start: 0;
       @media screen and (max-width: $mobileLarge) {
         margin-left: auto;
       }
     }
+  }
+
+  @media screen and (max-width: $mobileLarge) {
+    order: 2;
   }
 }
 .control-row {
@@ -281,10 +286,10 @@
       left: inherit;
       right: -10px;
     }
-    &:before{
+    &:before {
       @media screen and (max-width: $mobileLarge) {
         left: inherit;
-        right:2rem;
+        right: 2rem;
       }
     }
   }

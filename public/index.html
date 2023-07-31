@@ -17,6 +17,9 @@
     <div class="bottom-bar">
       <div class="book-pagination">
         <div class="bar-left">
+          <button class="btn-icon-outline-grey btn-icon btn dropdown-toggle show-book-content">
+            <i class="f-icon list-ul-icon"></i>
+          </button>
           <div class="dropdown">
             <button class="btn-icon-outline-grey btn-icon btn dropdown-toggle">
               <i class="f-icon cog-icon"></i>
@@ -88,9 +91,6 @@
               </button>
             </div>
           </div>
-          <button class="btn-icon-outline-grey btn-icon btn dropdown-toggle">
-            <i class="f-icon list-ul-icon"></i>
-          </button>
         </div>
 
         <div class="bar-right">
@@ -130,37 +130,14 @@
     </div>
 
     <!-- add book-content-list--show to show list content -->
-    <div class="book-content-list">
+    <div class="book-content">
       <div class="action-button">
-        <div class="btn">
+        <div class="btn hide-book-content">
           <i class="f-icon close-icon"> </i>
         </div>
       </div>
-      <ul>
-        <li>
-          <a href="#">
-            <span> ٥ </span>
-            <p>مقدمة</p>
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <span> ٧ </span>
-            <p>الفرق بين النفع المتعدي والنفع القاص</p>
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <span> ١٣ </span>
-            <p>الخاتمة</p>
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <span> ١٣ </span>
-            <p>المحتويات</p>
-          </a>
-        </li>
+      <ul class="book-content__list">
+        
       </ul>
     </div>
     <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>

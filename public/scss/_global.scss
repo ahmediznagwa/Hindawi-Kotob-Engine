@@ -200,7 +200,7 @@ body {
   display: none;
 }
 
-.book-content-list {
+.book-content {
   position: absolute;
   top: 0;
   left: 0;
@@ -218,18 +218,31 @@ body {
 
   li {
     list-style: none;
-    a {
-      color: var(--textColorRgb);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem 0;
-      font-size: 1.8rem;
-      border-bottom: 1px solid var(--textColorRgb);
-      text-decoration: none;
+    color: var(--textColorRgb);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem 0;
+    font-size: 1.8rem;
+    border-bottom: 1px solid rgba(var(--textColor), 0.2);
+    text-decoration: none;
+
+    h4 {
+      margin: 0;
+      font-size: 2.1rem;
+      max-width: 100%;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      min-width: 0;
+      overflow: hidden;
+      direction: rtl;
+      padding-inline-end: 1rem;
     }
+
     span {
+      color: rgba(var(--textColor), 0.5);
       margin-inline-end: auto;
+      font-size: 1.4rem;
     }
     &:first-child {
       padding-top: 1rem;

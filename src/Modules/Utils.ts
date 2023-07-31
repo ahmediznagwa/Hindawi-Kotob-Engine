@@ -66,6 +66,18 @@ export class UTILS {
     get bookmarksList(): HTMLElement {
       return document.querySelector(".bookmark-list");
     },
+    get tableOfContentWrapper(): HTMLElement {
+      return document.querySelector(".book-content");
+    },
+    get tableOfContentList(): HTMLElement {
+      return document.querySelector(".book-content__list");
+    },
+    get showTableOfContenBtn(): HTMLElement {
+      return document.querySelector(".show-book-content");
+    },
+    get hideTableOfContenBtn(): HTMLElement {
+      return document.querySelector(".hide-book-content");
+    },
     get words(): NodeListOf<HTMLElement> {
       return document.querySelectorAll("span[n]");
     },

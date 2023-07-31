@@ -539,6 +539,7 @@ export class Book {
     Generating book table of content
   */
   generateBookTableOfContent() {
+    // Getting chapters titles
     this.chapters.forEach((chapter, index) => {
       const title = chapter.querySelector("h1");
       const titleAnchorWord = +title
@@ -552,6 +553,32 @@ export class Book {
           chapterTitleAnchorWord: titleAnchorWord,
         });
       }
+    });
+
+    if(!this.tableOfContents.length) {
+      $(UTILS.DOM_ELS.showTableOfContenBtn).remove();
+      return;
+    }
+
+    // Filling table of content with list of chapters
+    this.tableOfContents.forEach((item) => {
+      $(UTILS.DOM_ELS.tableOfContentList).append(
+        ` <li data-chapter-index="${item.chapterIndex}">
+            <span> ${item.chapterIndex} </span>
+            <h4>${item.chapterTitle}</h4>
+          </li>
+        `
+      );
+    });
+
+    // Binding the click event on each row
+    UTILS.DOM_ELS.tableOfContentList.querySelectorAll("li")?.forEach((row) => {
+      const chapterIndex = +row.getAttribute("data-chapter-index");
+      row.addEventListener("click", (e) => {
+        e.stopPropagation();
+        this.renderChapter(chapterIndex);
+        $(UTILS.DOM_ELS.tableOfContentWrapper).removeClass('book-content-list--show')
+      });
     });
   }
 }
