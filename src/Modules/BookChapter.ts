@@ -255,8 +255,26 @@ export class BookChapter {
     UTILS.DOM_ELS.book.innerHTML = "";
     UTILS.DOM_ELS.book.append(section);
     this.calcPagesContentRanges();
-    this.bindClickEventOnAllWordsInChapter();
+    this.bindEventHandlersInChapter();
+    this.wrapWordsInAnchors();
     // this.insertFullPageImage(); insert fullpage image after specific index
+  }
+
+  /**
+    Wrap all words that contains link inside
+  */
+
+  wrapWordsInAnchors(): void {
+    UTILS.DOM_ELS.words.forEach((word) => {
+      if (word.textContent.includes("hindawi.org")) {
+
+        if(word.textContent.includes("@")) {
+          word.innerHTML = `<a class="regular-link" href="mailto:${word.textContent}" target="_blank">${word.textContent}</a>`
+          return;
+        }
+        word.innerHTML = `<a class="regular-link" href="${word.textContent}" target="_blank">${word.textContent}</a>`
+      }
+    });
   }
 
   /**
@@ -314,9 +332,10 @@ export class BookChapter {
   }
 
   /**
-    Binding click event for all words
+    Binding event handlers in chapter
   */
-  bindClickEventOnAllWordsInChapter() {
+  bindEventHandlersInChapter() {
+    // Bind click event in all words
     const highlightedWords = JSON.parse(
       localStorage.getItem("highlightedWords")
     );

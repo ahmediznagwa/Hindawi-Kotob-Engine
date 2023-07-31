@@ -50,7 +50,7 @@ export class Controller {
       this.htmlExtractor = new HTMLExtractor(bookId);
       const parser = new DOMParser();
 
-      const chapters = json.trim().split("$Newchapter");
+      const chapters = json.trim()?.split("$Newchapter");
       chapters.shift();
 
       this.htmlExtractor.chapters = chapters.map(
@@ -62,7 +62,7 @@ export class Controller {
 
       // alert("Got Chapters");
 
-      this.htmlExtractor.cssFiles = json.trim().split("$Newcss");
+      this.htmlExtractor.cssFiles = json.trim()?.split("$Newcss");
       this.htmlExtractor.cssFiles.shift();
 
       // alert("Got CSS");
@@ -71,8 +71,8 @@ export class Controller {
       this.setupHandlers();
       this.setupEventListeners();
 
-      // Triggering click on body to show navigation bar at initial and hides it after 2s
-      $("body").trigger('click');
+      // Triggering click on body to show navigation bar at initial
+      $("body").trigger("click");
     } catch (error) {
       alert(error);
     }
@@ -285,7 +285,6 @@ export class Controller {
     this.book.currentPage = Math.round(
       this.book.currentScrollPercentage * UTILS.calcPageCount()
     );
-
     this.book.changePage();
   }
 
@@ -302,6 +301,7 @@ export class Controller {
   */
   postNavigationHandler() {
     this.storeUserPreferences();
+    // document.body.scrollTop = 0;
   }
 
   /**
@@ -319,8 +319,6 @@ export class Controller {
   */
   goToNextPage() {
     this.book.changePage("next");
-    console.log(this.book.chapters);
-    
     this.postNavigationHandler();
   }
 
@@ -426,33 +424,13 @@ export class Controller {
   */
   goToBookmark(e) {
     const el = e.target.closest("li") as HTMLElement;
-    const chapterIndex = el.getAttribute("data-chapter-index");
+    const chapterIndex = +el.getAttribute("data-chapter-index");
     const anchorWordIndex = +el.getAttribute("data-anchor-word-index");
 
-    this.book.currentChapter = new BookChapter(
-      this.book.chapters[chapterIndex],
-      this.book.bookId,
-      this.book.currentChapterIndex
-    );
-    this.book.currentChapter.calcPagesContentRanges();
+    this.book.renderChapter(chapterIndex);
 
     // Detect anchor word page index
-    this.book.currentChapter.pagesContentRanges.forEach((page, pageIndex) => {
-      const min = Math.min(page[0], page[1]),
-        max = Math.max(page[0], page[1]);
-      if (
-        (anchorWordIndex > min && anchorWordIndex < max) ||
-        anchorWordIndex === min ||
-        anchorWordIndex === max
-      ) {
-        this.book.currentPage = pageIndex;
-        this.book.changePage();
-        setTimeout(() => {
-          this.book.currentChapter.calcPagesContentRanges();
-          this.book.changePage();
-        }, 1000);
-      }
-    });
+    this.book.goToPage(this.book.getWordPageNumber(anchorWordIndex));
   }
 
   /**

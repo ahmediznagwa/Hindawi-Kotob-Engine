@@ -2,6 +2,12 @@ import { IBookmark } from "../Models/IBookmark.model";
 import { BookChapter } from "./BookChapter";
 import { UTILS } from "./Utils";
 
+interface ITableOfContent {
+  chapterIndex: number;
+  chapterTitle: string;
+  chapterTitleAnchorWord: number;
+}
+
 export class Book {
   bookId: string;
   chapters: HTMLDivElement[];
@@ -27,6 +33,7 @@ export class Book {
   currentPageFirstWordIndex: number;
   currentPageLastWordIndex: number;
   anchorWordIndex: number;
+  tableOfContents: ITableOfContent[] = [];
 
   constructor(
     bookId,
@@ -71,6 +78,8 @@ export class Book {
     }, 1000);
     this.renderBookmarks();
     this.addBookStyles();
+    this.handleClickOnAnchors();
+    this.generateBookTableOfContent();
   }
 
   /**
@@ -221,6 +230,74 @@ export class Book {
         this.bookId,
         this.currentChapterIndex
       );
+    setTimeout(() => {
+      this.currentChapter.calcPagesContentRanges();
+      this.changePage();
+    }, 1000);
+
+    // Binding click event on anchors to go to specific element
+    this.handleClickOnAnchors();
+  }
+
+  /**
+    Go to element when click on anchor
+  */
+  goToElement(elementId: string, ev: any): void {
+    ev.stopPropagation();
+    ev.preventDefault();
+
+    this.chapters.forEach((chapter: HTMLElement, index: number) => {
+      if ($(chapter).find(`#${elementId}`).length) {
+        console.log($(chapter).find(`#${elementId}`));
+        this.renderChapter(index);
+        const firstWordInElementIndex = +$(chapter)
+          .find(`#${elementId} span:first-child`)
+          .attr("n");
+
+        this.goToPage(this.getWordPageNumber(firstWordInElementIndex));
+      }
+    });
+  }
+
+  /**
+    Render specific chapter with chapter index
+  */
+  getWordPageNumber(wordIndex: number): number {
+    let pageNo = 0;
+    this.currentChapter.pagesContentRanges.forEach((page, pageIndex) => {
+      const min = Math.min(page[0], page[1]),
+        max = Math.max(page[0], page[1]);
+      if (
+        (wordIndex > min && wordIndex < max) ||
+        wordIndex === min ||
+        wordIndex === max
+      ) {
+        pageNo = pageIndex;
+      }
+    });
+
+    return pageNo;
+  }
+
+  /**
+    Render specific chapter with chapter index
+  */
+  renderChapter(chapterIndex: number): void {
+    this.currentChapter = new BookChapter(
+      this.chapters[chapterIndex],
+      this.bookId,
+      this.currentChapterIndex
+    );
+    this.currentChapter.calcPagesContentRanges();
+    this.handleClickOnAnchors();
+  }
+
+  /**
+    Go to specific page
+  */
+  goToPage(pageIndex: number): void {
+    this.currentPage = pageIndex;
+    this.changePage();
     setTimeout(() => {
       this.currentChapter.calcPagesContentRanges();
       this.changePage();
@@ -440,6 +517,41 @@ export class Book {
         .replaceAll("{", "\n{\n")
         .replaceAll("}", "\n}\n");
       document.head.prepend(style);
+    });
+  }
+
+  /**
+    Handle click on footnotes or any link that target element inside the book
+  */
+  handleClickOnAnchors(): void {
+    document.querySelectorAll("a:not(.regular-link)").forEach((btn) => {
+      const value =
+        btn.getAttribute("href")?.split("#")[1] ||
+        btn.getAttribute("href")?.split("#")[0];
+
+      if (value) {
+        btn.addEventListener("click", this.goToElement.bind(this, value));
+      }
+    });
+  }
+
+  /**
+    Generating book table of content
+  */
+  generateBookTableOfContent() {
+    this.chapters.forEach((chapter, index) => {
+      const title = chapter.querySelector("h1");
+      const titleAnchorWord = +title
+        ?.querySelector("span:first-child")
+        ?.getAttribute("n");
+
+      if (title) {
+        this.tableOfContents.push({
+          chapterIndex: index,
+          chapterTitle: title.textContent,
+          chapterTitleAnchorWord: titleAnchorWord,
+        });
+      }
     });
   }
 }
