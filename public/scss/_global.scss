@@ -28,6 +28,7 @@ body {
   height: 100%;
   -epub-writing-mode: inherit;
   user-select: none;
+  direction: rtl;
 
   .book-container {
     background-color: var(--bgColorRgb);
@@ -203,17 +204,20 @@ body {
 .book-content {
   position: absolute;
   top: 0;
-  left: 0;
+  width: 100%;
   right: 0;
   bottom: 0;
   background-color: var(--bgColorRgb);
-  padding: 2rem;
-  transform: translateX(-100%);
-  transition: all 0.3s;
+  transform: translateX(100%);
+  transition: 0.3s;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
   ul {
     margin: 0;
-    padding: 0;
-    padding-top: 1rem;
+    padding: 1rem 2rem 2rem;
+    overflow: auto;
+    height: 100%;
   }
 
   li {
@@ -235,23 +239,29 @@ body {
       white-space: nowrap;
       min-width: 0;
       overflow: hidden;
-      direction: rtl;
       padding-inline-end: 1rem;
     }
 
     span {
       color: rgba(var(--textColor), 0.5);
-      margin-inline-end: auto;
+      margin-inline-start: auto;
       font-size: 1.4rem;
     }
     &:first-child {
-      padding-top: 1rem;
+      padding-top: 0;
     }
     &:last-child {
       border: 0;
+      padding-bottom: 0;
     }
   }
   .action-button {
+    padding-inline-start: 2rem;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    .btn {
+      display: flex;
+    }
     i {
       color: var(--textColorRgb);
     }

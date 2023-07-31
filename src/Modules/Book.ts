@@ -555,7 +555,7 @@ export class Book {
       }
     });
 
-    if(!this.tableOfContents.length) {
+    if (!this.tableOfContents.length) {
       $(UTILS.DOM_ELS.showTableOfContenBtn).remove();
       return;
     }
@@ -564,8 +564,8 @@ export class Book {
     this.tableOfContents.forEach((item) => {
       $(UTILS.DOM_ELS.tableOfContentList).append(
         ` <li data-chapter-index="${item.chapterIndex}">
-            <span> ${item.chapterIndex} </span>
             <h4>${item.chapterTitle}</h4>
+            <span> ${item.chapterIndex} </span>
           </li>
         `
       );
@@ -577,7 +577,9 @@ export class Book {
       row.addEventListener("click", (e) => {
         e.stopPropagation();
         this.renderChapter(chapterIndex);
-        $(UTILS.DOM_ELS.tableOfContentWrapper).removeClass('book-content-list--show')
+        $(UTILS.DOM_ELS.tableOfContentWrapper).removeClass(
+          "book-content-list--show"
+        );
       });
     });
   }

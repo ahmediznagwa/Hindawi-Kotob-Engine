@@ -108,7 +108,7 @@
     &:last-child {
       margin-inline-start: 0;
       @media screen and (max-width: $mobileLarge) {
-        margin-left: auto;
+        margin-inline-start: auto;
       }
     }
   }
