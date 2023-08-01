@@ -136,6 +136,7 @@ export class BookChapter {
           if (this.isInOtherPage(nextParent)) {
             this.pagesContentRanges[this.page][1] = +wordEl?.getAttribute("n");
             this.page++;
+
             this.pagesContentRanges[this.page][0] = +this.getSpan(
               nextParent,
               "first"
@@ -189,6 +190,7 @@ export class BookChapter {
             // paragraph split into two pages
             this.loopOverWords(child);
           }
+
           this.pagesContentRanges[this.page][1] = +this.getSpan(
             element,
             "last"
@@ -206,6 +208,9 @@ export class BookChapter {
             return;
           }
 
+          //***** Here is the problem */
+          console.log(element);
+          
           this.pagesContentRanges[this.page][0] = +this.getSpan(
             element,
             "first"
@@ -267,12 +272,11 @@ export class BookChapter {
   wrapWordsInAnchors(): void {
     UTILS.DOM_ELS.words.forEach((word) => {
       if (word.textContent.includes("hindawi.org")) {
-
-        if(word.textContent.includes("@")) {
-          word.innerHTML = `<a class="regular-link" href="mailto:${word.textContent}" target="_blank">${word.textContent}</a>`
+        if (word.textContent.includes("@")) {
+          word.innerHTML = `<a class="regular-link" href="mailto:${word.textContent}" target="_blank">${word.textContent}</a>`;
           return;
         }
-        word.innerHTML = `<a class="regular-link" href="${word.textContent}" target="_blank">${word.textContent}</a>`
+        word.innerHTML = `<a class="regular-link" href="${word.textContent}" target="_blank">${word.textContent}</a>`;
       }
     });
   }
