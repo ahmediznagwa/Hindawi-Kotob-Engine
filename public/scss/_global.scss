@@ -213,6 +213,7 @@ body {
   z-index: 9999;
   display: flex;
   flex-direction: column;
+  font-family: "NotoNaskhArabic", sans-serif;
   ul {
     margin: 0;
     padding: 1rem 2rem 2rem;
@@ -233,13 +234,14 @@ body {
 
     h4 {
       margin: 0;
-      font-size: 2.1rem;
+      font-size: 1.8rem;
       max-width: 100%;
       text-overflow: ellipsis;
       white-space: nowrap;
       min-width: 0;
       overflow: hidden;
       padding-inline-end: 1rem;
+      font-weight: 700;
     }
 
     span {

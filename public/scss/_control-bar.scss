@@ -4,7 +4,7 @@
 }
 
 .bottom-bar {
-  font-family: "Noto Sans", sans-serif;
+  font-family: "NotoNaskhArabic", sans-serif;
   position: fixed;
   left: 0;
   width: 100%;
@@ -136,6 +136,7 @@
   h5 {
     font-size: 1.8rem;
     margin: 0;
+    font-weight: normal;
     margin-inline-end: auto;
   }
 }
@@ -222,10 +223,12 @@
   color: rgba(var(--textColor), $alpha: 0.5);
   text-transform: capitalize;
   font-size: 1.6rem;
+  display: flex;
+    align-items: center;
   &::after {
-    content: "\f054";
+    content: "\f053";
     font-family: $fAwsome;
-    margin-left: 5px;
+    margin-inline-start: 5px;
   }
 }
 
@@ -247,7 +250,7 @@
     &::after {
       content: "\f00c";
       font-family: $fAwsome;
-      margin-left: auto;
+      margin-inline-start: auto;
     }
   }
 }
@@ -271,6 +274,7 @@
     font-size: 1.8rem;
     line-height: 1.4;
     margin-right: auto;
+    font-weight: 700;
   }
 
   p {

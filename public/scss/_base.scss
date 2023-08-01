@@ -1,4 +1,19 @@
 @font-face {
+  font-family: "NotoNaskhArabic";
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url("./fonts/NotoNaskhArabic.woff2") format("woff2");
+}
+@font-face {
+  font-family: "NotoNaskhArabic";
+  font-style: normal;
+  font-weight: 700;
+  font-display: block;
+  src: url("./fonts/NotoNaskhArabic-Bold.woff2") format("woff2");
+}
+
+@font-face {
   font-family: "Noto Sans";
   font-style: normal;
   font-weight: 400;
