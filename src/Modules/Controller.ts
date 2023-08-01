@@ -166,8 +166,8 @@ export class Controller {
       setTimeout(this.resizeEventHandler.bind(this), 0);
 
     // Mobile Event Listeners
-    jQuery(window).on("swipeleft", this.goToNextPage.bind(this));
-    jQuery(window).on("swiperight", this.goToPrevPage.bind(this));
+    jQuery(window).on("swiperight", this.goToNextPage.bind(this));
+    jQuery(window).on("swipeleft", this.goToPrevPage.bind(this));
     //DOM Elements event listeners
     UTILS.DOM_ELS.nextPageBtn?.addEventListener(
       "click",
