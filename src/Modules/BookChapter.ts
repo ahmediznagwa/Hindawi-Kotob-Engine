@@ -38,14 +38,14 @@ export class BookChapter {
   */
   getSpan(el: HTMLElement, order: "first" | "last"): HTMLElement {
     if (order === "first") {
-      let span = el.querySelector("span:first-child") as HTMLElement;
+      let span = el?.querySelector("span:first-child") as HTMLElement;
       if (!span?.getAttribute("n")) {
         span = span?.querySelector("span[n]");
       }
       return span;
     } else if (order === "last") {
       return Array.from(
-        el.querySelectorAll("span:last-child")
+        el?.querySelectorAll("span:last-child") || []
       ).pop() as HTMLElement;
     }
   }
@@ -207,9 +207,6 @@ export class BookChapter {
             this.loopOverWords(element);
             return;
           }
-
-          //***** Here is the problem */
-          console.log(element);
           
           this.pagesContentRanges[this.page][0] = +this.getSpan(
             element,
