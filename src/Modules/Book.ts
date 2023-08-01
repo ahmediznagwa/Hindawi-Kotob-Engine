@@ -181,7 +181,8 @@ export class Book {
             this.currentPageFirstWordIndex +
             1)) /
       this.bookWordsCount;
-    this.currentProgressPercent = (percentage || 0) * 100;
+    this.currentProgressPercent =
+      (percentage || this.currentProgressPercent / 100) * 100;
 
     if (UTILS.DOM_ELS.percent) {
       UTILS.DOM_ELS.percent.innerText =
