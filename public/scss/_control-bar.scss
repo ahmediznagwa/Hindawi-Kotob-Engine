@@ -2,6 +2,7 @@
   pointer-events: none;
   opacity: 0.5;
 }
+
 .bottom-bar {
   font-family: "Noto Sans", sans-serif;
   position: fixed;
@@ -33,37 +34,42 @@
   display: flex;
   align-items: center;
   justify-content: center;
-
   .btn {
     display: flex;
     align-items: center;
     justify-content: center;
     flex: 1;
     text-align: center;
-    border-right: 0.01rem solid rgba(var(--textColor), 0.2);
+    border-left: 0.01rem solid rgba(var(--textColor), 0.2);
     border-radius: 0;
     border-bottom: 0.01rem solid rgba(var(--textColor), 0.2);
     padding: 20px;
     height: 60px;
+    margin: 0;
     &:last-child {
-      border-right: 0;
+      border-left: 0;
     }
 
     &.disabled {
       opacity: 1;
+
       color: #999;
     }
   }
+
   #pagination-font-smaller {
     font-size: 15px;
   }
+
   #pagination-font-bigger {
     font-size: 25px;
   }
+
   #pagination-font-reset {
     font-size: 20px;
   }
 }
+
 .pagination-info {
   margin: 0 2rem;
   font-size: 1.8rem;
@@ -71,8 +77,9 @@
     margin: 0 auto;
   }
 }
+
 .bar-right {
-  margin-left: auto;
+  margin-inline-start: auto;
   display: flex;
   align-items: center;
   button {
@@ -82,12 +89,14 @@
         margin-inline-start: 0;
       }
     }
+
     &:last-child {
       @media screen and (max-width: $mobileLarge) {
         margin-inline-end: 0;
       }
     }
   }
+
   @media screen and (max-width: $mobileLarge) {
     order: 1;
     margin: 0;
@@ -99,14 +108,14 @@
 .bar-left {
   display: flex;
   align-items: center;
-
   * + * {
     margin-inline-start: 6px;
   }
 
   .dropdown {
     &:last-child {
-      margin-inline-start: 0;
+      // margin-inline-start: 0;
+
       @media screen and (max-width: $mobileLarge) {
         margin-inline-start: auto;
       }
@@ -117,15 +126,17 @@
     order: 2;
   }
 }
+
 .control-row {
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 15px 10px;
-
+  margin: 0;
   h5 {
     font-size: 1.8rem;
-    margin-right: auto;
+    margin: 0;
+    margin-inline-end: auto;
   }
 }
 
@@ -137,7 +148,6 @@
   text-align: center;
   font-size: 1.4rem;
   font-weight: bold;
-
   > span {
     position: absolute;
     right: 0;
@@ -156,7 +166,6 @@
     border-radius: 50%;
     border: 2px solid #ddd;
     cursor: pointer;
-
     &[data-value="white"] {
       background-color: white;
       border-color: white;
@@ -164,6 +173,7 @@
         border-color: black;
       }
     }
+
     &[data-value="dark"] {
       background-color: black;
       border-color: black;
@@ -171,6 +181,7 @@
         border-color: white;
       }
     }
+
     &[data-value="warm"] {
       background-color: #f6efdf;
       border-color: #f6efdf;
@@ -195,7 +206,6 @@
     cursor: pointer;
     padding: 1.5rem;
     transition: 0.3s;
-
     &:hover {
       background-color: rgba(var(--textColor), $alpha: 0.1);
     }
@@ -212,7 +222,6 @@
   color: rgba(var(--textColor), $alpha: 0.5);
   text-transform: capitalize;
   font-size: 1.6rem;
-
   &::after {
     content: "\f054";
     font-family: $fAwsome;
@@ -229,9 +238,11 @@
   line-height: 1.4;
   display: flex;
   align-items: center;
+
   &:last-child {
     border-bottom: 0;
   }
+
   &.selected {
     &::after {
       content: "\f00c";
@@ -245,6 +256,7 @@
   list-style: none;
   padding: 0;
   margin: 0;
+
   li {
     border-bottom: 1px solid rgba(var(--textColor), 0.2);
     padding: 1.5rem;
@@ -253,12 +265,14 @@
     align-items: center;
     justify-content: space-between;
   }
+
   h4 {
     margin: 0;
     font-size: 1.8rem;
     line-height: 1.4;
     margin-right: auto;
   }
+
   p {
     font-size: 1.6rem;
     margin: 0;
@@ -282,14 +296,14 @@
 
 .dropdown--bookmark {
   .dropdown-menu {
-    @media screen and (max-width: $mobileLarge) {
-      left: inherit;
-      right: -10px;
+    @media screen and (max-width: $mobilexLarge) {
+      left: -10px;
+      right: inherit;
     }
     &:before {
-      @media screen and (max-width: $mobileLarge) {
-        left: inherit;
-        right: 2rem;
+      @media screen and (max-width: $mobilexLarge) {
+        left: 2rem;
+        right: inherit;
       }
     }
   }

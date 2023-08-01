@@ -29,7 +29,7 @@ body {
   -epub-writing-mode: inherit;
   user-select: none;
   direction: rtl;
-
+  margin: 0;
   .book-container {
     background-color: var(--bgColorRgb);
     *:not(h1) {

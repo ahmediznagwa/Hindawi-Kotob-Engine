@@ -7,10 +7,11 @@
     }
   }
 }
+
 .dropdown-menu {
   position: absolute;
   bottom: 5rem;
-  left: -10px;
+  right: -10px;
   display: none;
   min-width: 34.9rem;
   background-color: var(--lightGreyBgRgb);
@@ -18,15 +19,27 @@
   border-radius: 1.4rem;
   box-shadow: 0 0 30px rgba($color: #000000, $alpha: 0.2);
   z-index: 999;
+  margin: 0;
   &:before {
     content: "\f0d7";
     position: absolute;
     font-family: $fAwsome;
     color: var(--lightGreyBgRgb);
     bottom: -22px;
-    left: 2rem;
+    right: 1.8rem;
     z-index: 1;
     font-weight: bold;
     font-size: 4rem;
+  }
+  @media screen and (max-width: $mobilexLarge) {
+    left: inherit;
+    right: -5.5rem;
+  }
+
+  &:before {
+    @media screen and (max-width: $mobilexLarge) {
+      left: inherit;
+      right: 6.3rem;
+    }
   }
 }
