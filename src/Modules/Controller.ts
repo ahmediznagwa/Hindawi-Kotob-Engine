@@ -164,6 +164,10 @@ export class Controller {
     ); //The only jQuery line
     document.onfullscreenchange = () =>
       setTimeout(this.resizeEventHandler.bind(this), 0);
+
+    // Mobile Event Listeners
+    jQuery(window).on("swipeleft", this.goToNextPage.bind(this));
+    jQuery(window).on("swiperight", this.goToPrevPage.bind(this));
     //DOM Elements event listeners
     UTILS.DOM_ELS.nextPageBtn?.addEventListener(
       "click",
@@ -219,11 +223,15 @@ export class Controller {
     UTILS.DOM_ELS.bookmarksBtns?.forEach((btn) => {
       btn.addEventListener("click", this.goToBookmark.bind(this));
     });
-    UTILS.DOM_ELS.showTableOfContenBtn?.addEventListener("click", function(){
-      $(UTILS.DOM_ELS.tableOfContentWrapper).addClass('book-content-list--show')
+    UTILS.DOM_ELS.showTableOfContenBtn?.addEventListener("click", function () {
+      $(UTILS.DOM_ELS.tableOfContentWrapper).addClass(
+        "book-content-list--show"
+      );
     });
-    UTILS.DOM_ELS.hideTableOfContenBtn?.addEventListener("click", function(){
-      $(UTILS.DOM_ELS.tableOfContentWrapper).removeClass('book-content-list--show')
+    UTILS.DOM_ELS.hideTableOfContenBtn?.addEventListener("click", function () {
+      $(UTILS.DOM_ELS.tableOfContentWrapper).removeClass(
+        "book-content-list--show"
+      );
     });
     this.wordPositionChangeHandler();
     document.fonts.onloadingdone = () => {
