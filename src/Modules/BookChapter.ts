@@ -116,7 +116,7 @@ export class BookChapter {
   isInOtherPage(el: HTMLElement): boolean {
     let language = "ar";
 
-    if (el?.textContent?.match(/^[A-Za-z_.]*$/)) {
+    if (el?.textContent?.match(/^[(_A-Za-z_._)]*$/)) {
       language = "en";
     }
 
@@ -141,9 +141,11 @@ export class BookChapter {
       (wordEl: HTMLElement, i: number, wordArr: HTMLElement[]) => {
         if (this.isInOtherPage(wordEl)) {
           // word is in another page
+
           this.pagesContentRanges[this.page][1] =
             +wordArr[i - 1]?.getAttribute("n");
           this.page++;
+
           this.pagesContentRanges[this.page][0] = +wordEl?.getAttribute("n");
         }
         if (i === wordArr.length - 1) {
@@ -267,11 +269,14 @@ export class BookChapter {
     const section = document.createElement("section");
     section.classList.add("book-chapter");
 
-    section.innerHTML = this.chapterEl?.innerHTML;
+    section.innerHTML = this.chapterEl.innerHTML;
 
-    if (!this.chapterEl?.innerHTML) {
+    // Some wrapper contain class controll the style so I added the whole thing if they
+    if (this.chapterEl.hasAttribute("class")) {
+      section.innerHTML = "";
       section.appendChild(this.chapterEl);
     }
+
     UTILS.DOM_ELS.book.innerHTML = "";
     UTILS.DOM_ELS.book.append(section);
     this.calcPagesContentRanges();

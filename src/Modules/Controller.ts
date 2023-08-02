@@ -139,7 +139,7 @@ export class Controller {
       anchorWordIndex: this.book.anchorWordIndex,
     };
     this.postMessage("pageUpdated", messageObj);
-    console.log("POSTED PAGE UPDATED MESSAGE");
+    // console.log("POSTED PAGE UPDATED MESSAGE");
   }
 
   /**

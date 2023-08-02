@@ -182,7 +182,9 @@ export class Book {
             1)) /
       this.bookWordsCount;
     this.currentProgressPercent =
-      (percentage || this.currentProgressPercent / 100) * 100;
+      (percentage || percentage === 0
+        ? percentage
+        : this.currentProgressPercent / 100) * 100;
 
     if (UTILS.DOM_ELS.percent) {
       UTILS.DOM_ELS.percent.innerText =
@@ -241,6 +243,7 @@ export class Book {
     this.chapters.forEach((chapter: HTMLElement, index: number) => {
       if ($(chapter).find(`#${elementId}`).length) {
         this.renderChapter(index);
+
         const firstWordInElementIndex = +$(chapter)
           .find(`#${elementId} span:first-child`)
           .attr("n");
