@@ -91,11 +91,16 @@ export class BookChapter {
   /**
     Calculates the left edge position of the page in the rendered HTML
   */
-  getPageLeft(): number {
-    return Math.round(
-      this.bookContainerPadding -
-        this.page * (this.exactColumnWidth + this.exactColumnsGap)
-    );
+  getPageLeft(language = "ar"): number {
+    return language === "ar"
+      ? Math.round(
+          this.bookContainerPadding -
+            this.page * (this.exactColumnWidth + this.exactColumnsGap)
+        )
+      : Math.round(
+          this.page * (this.exactColumnWidth + this.exactColumnsGap) +
+            this.bookContainerPadding
+        );
   }
 
   /**
@@ -109,10 +114,22 @@ export class BookChapter {
     Checks whether an element is or is not in the current page
   */
   isInOtherPage(el: HTMLElement): boolean {
+    let language = "ar";
+
+    if (el?.textContent?.match(/^[A-Za-z_.]*$/)) {
+      language = "en";
+    }
+
+    if (language === "ar") {
+      return (
+        this.getPageRight() -
+          (el?.offsetLeft + Math.min(el?.offsetWidth, this.columnWidth)) >=
+        this.columnWidth - this.ROUNDING_TOLERANCE
+      );
+    }
     return (
-      this.getPageRight() -
-        (el?.offsetLeft + Math.min(el?.offsetWidth, this.columnWidth)) >=
-      this.columnWidth + this.ROUNDING_TOLERANCE
+      el?.offsetLeft - this.getPageLeft() >=
+      this.columnWidth - this.ROUNDING_TOLERANCE
     );
   }
 
@@ -131,6 +148,7 @@ export class BookChapter {
         }
         if (i === wordArr.length - 1) {
           // last word in paragraph
+
           const nextParent = this.getHighestParent(wordEl)
             ?.nextElementSibling as HTMLElement;
           if (this.isInOtherPage(nextParent)) {
@@ -207,7 +225,7 @@ export class BookChapter {
             this.loopOverWords(element);
             return;
           }
-          
+
           this.pagesContentRanges[this.page][0] = +this.getSpan(
             element,
             "first"

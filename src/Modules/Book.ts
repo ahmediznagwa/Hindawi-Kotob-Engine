@@ -223,18 +223,9 @@ export class Book {
         break;
     }
     //render the new chapter
-    if (oldChapterIndex !== this.currentChapterIndex)
-      this.currentChapter = new BookChapter(
-        this.chapters[
-          Math.min(this.currentChapterIndex, this.chapters.length - 1)
-        ],
-        this.bookId,
-        this.currentChapterIndex
-      );
-    setTimeout(() => {
-      this.currentChapter.calcPagesContentRanges();
-      this.changePage();
-    }, 1000);
+    if (oldChapterIndex !== this.currentChapterIndex) {
+      this.renderChapter(this.currentChapterIndex);
+    }
 
     // Binding click event on anchors to go to specific element
     this.handleClickOnAnchors();
@@ -249,7 +240,6 @@ export class Book {
 
     this.chapters.forEach((chapter: HTMLElement, index: number) => {
       if ($(chapter).find(`#${elementId}`).length) {
-        console.log($(chapter).find(`#${elementId}`));
         this.renderChapter(index);
         const firstWordInElementIndex = +$(chapter)
           .find(`#${elementId} span:first-child`)
@@ -284,12 +274,19 @@ export class Book {
     Render specific chapter with chapter index
   */
   renderChapter(chapterIndex: number): void {
+    this.currentChapterIndex = Math.min(
+      chapterIndex || 0,
+      this.chapters.length - 1
+    );
     this.currentChapter = new BookChapter(
-      this.chapters[chapterIndex],
+      this.chapters[this.currentChapterIndex],
       this.bookId,
       this.currentChapterIndex
     );
     this.currentChapter.calcPagesContentRanges();
+    setTimeout(() => {
+      this.currentChapter.calcPagesContentRanges();
+    }, 1000);
     this.handleClickOnAnchors();
   }
 
@@ -299,10 +296,6 @@ export class Book {
   goToPage(pageIndex: number): void {
     this.currentPage = pageIndex;
     this.changePage();
-    setTimeout(() => {
-      this.currentChapter.calcPagesContentRanges();
-      this.changePage();
-    }, 1000);
   }
 
   /**

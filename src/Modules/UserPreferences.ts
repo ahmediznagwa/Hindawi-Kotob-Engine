@@ -42,7 +42,7 @@ export class UserPreferences {
     bookmarks: IBookmark[],
     saveToLocalStorage = true
   ) {
-    this.anchorWordIndex = anchorWordIndex || this.anchorWordIndex;
+    this.anchorWordIndex = anchorWordIndex;
     this.chapter = currentChapter;
     this.fontSize = fontSize;
     this.colorMode = colorMode;
