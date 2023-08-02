@@ -100,10 +100,10 @@ body {
   li {
     list-style: none;
     &:first-child a {
-      border-radius: 8px 0 0 8px;
+      border-radius: 0 8px 8px 0;
     }
     &:last-child a {
-      border-radius: 0 8px 8px 0;
+      border-radius: 8px 0 0 8px;
     }
 
     &.unhighlight {
@@ -276,4 +276,17 @@ body {
 .view-config,
 .fonts {
   font-family: "Noto Sans";
+}
+
+.highlight-element {
+  animation: highlight 1s linear 1;
+}
+
+@keyframes highlight {
+  from {
+    background-color: #fff200ad;
+  }
+  to {
+    background-color: transparent;
+  }
 }

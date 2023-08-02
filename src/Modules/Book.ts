@@ -209,9 +209,11 @@ export class Book {
         }
         break;
       case "prev":
-        if (!this.isFirstChapter && this.isFirstPage)
+        if (!this.isFirstChapter && this.isFirstPage) {
           this.currentChapterIndex--;
-        else if (!this.isFirstPage) this.currentPage = 0;
+        } else if (!this.isFirstPage) {
+          this.currentPage = 0;
+        }
         break;
       case "first":
         this.currentChapterIndex = 0;
@@ -224,6 +226,7 @@ export class Book {
       default:
         break;
     }
+    this.changePage();
     //render the new chapter
     if (oldChapterIndex !== this.currentChapterIndex) {
       this.renderChapter(this.currentChapterIndex);
@@ -249,6 +252,9 @@ export class Book {
           .attr("n");
 
         this.goToPage(this.getWordPageNumber(firstWordInElementIndex));
+
+        // Highlight element after render page
+        $(`#${elementId}`).addClass("highlight-element");
       }
     });
   }
