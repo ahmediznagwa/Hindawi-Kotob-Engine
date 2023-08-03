@@ -5,8 +5,9 @@ declare global {
     hindawiReaders: any;
   }
 }
+let controller = new Controller();
 export const hindawiReaders = (function () {
-  const controller = new Controller();
+  controller = new Controller();
   // for demo only
   // window.addEventListener("load", () => {
   //   controller.initWithChapters("packages/life_prison", json3);
@@ -42,16 +43,16 @@ function _showDropdownMenu(dropdownContainer) {
 $(document).on("keydown", function (e: any) {
   if (e.key === "Escape") {
     $(".dropdown").removeClass("show");
-    $(".actions-menu").remove();
     $(".bottom-bar").slideUp();
     $(".hide-fonts").trigger("click");
+    controller.book.currentChapter.hideActionsMenu();
   }
 });
 $("body").on("click", function () {
-  $(".actions-menu").remove();
   $(".dropdown").removeClass("show");
   $(".bottom-bar").slideToggle();
   $(".hide-fonts").trigger("click");
+  controller.book.currentChapter.hideActionsMenu();
 });
 $(".dropdown, .bottom-bar").on("click", function (e) {
   e.stopPropagation();

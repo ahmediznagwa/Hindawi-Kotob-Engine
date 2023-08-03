@@ -30,6 +30,7 @@ body {
   user-select: none;
   direction: rtl;
   margin: 0;
+  overflow: hidden;
   .book-container {
     background-color: var(--bgColorRgb);
     *:not(h1) {
@@ -99,19 +100,25 @@ body {
 
   li {
     list-style: none;
-    &:first-child a {
-      border-radius: 0 8px 8px 0;
+    a {
+      border-radius: 8px;
     }
-    &:last-child a {
-      border-radius: 8px 0 0 8px;
-    }
+    // &:first-child a {
+    //   border-radius: 0 8px 8px 0;
+    // }
+    // &:last-child a {
+    //   border-radius: 8px 0 0 8px;
+    // }
+    // &:only-child a {
+    //   border-radius: 8px;
+    // }
 
     &.unhighlight {
       display: none;
     }
 
     & + li a {
-      border-left: 1px solid rgba(var(--bgColor), 0.2);
+      border-inline-start: 1px solid rgba(var(--bgColor), 0.2);
     }
   }
   a {
@@ -141,6 +148,11 @@ body {
 
 .highlighted {
   background-color: #fff200ad;
+  transition: background-color 0.3s;
+}
+
+.selected {
+  background-color: #009dff4d;
   transition: background-color 0.3s;
 }
 

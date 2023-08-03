@@ -307,7 +307,7 @@ export class BookChapter {
   highlightWord(target: HTMLElement) {
     $(target).closest(".actions-menu").addClass("has-highlight");
     $(target).addClass("highlighted");
-    $(".actions-menu").remove();
+    this.hideActionsMenu();
     this.saveHighlightedWords(target);
   }
 
@@ -317,7 +317,7 @@ export class BookChapter {
   unhighlightWord(target: HTMLElement) {
     $(target).closest(".actions-menu").removeClass("has-highlight");
     $(target).removeClass("highlighted");
-    $(".actions-menu").remove();
+    this.hideActionsMenu();
     this.saveHighlightedWords(target);
   }
 
@@ -352,7 +352,7 @@ export class BookChapter {
   */
   copyText(target: HTMLElement) {
     navigator.clipboard.writeText(target.textContent);
-    $(".actions-menu").remove();
+    this.hideActionsMenu();
   }
 
   /**
@@ -386,7 +386,7 @@ export class BookChapter {
   wordEventHandler(e) {
     e.stopPropagation();
     const element = e.target as HTMLElement;
-    $(".actions-menu").remove();
+    this.hideActionsMenu();
     const top = $(element).offset().top;
     const left = $(element).offset().left;
     const menu = document.createElement("div");
@@ -395,12 +395,14 @@ export class BookChapter {
       <ul>
         <li class="highlight"><a href="#">تلوين</a></li>
         <li class="unhighlight"><a href="#">الغاء التلوين</a></li>
-        <li class="copy"><a href="#">نسخ</a></li>
       </ul>
-    `;
+      `;
+    // <li class="copy"><a href="#">نسخ</a></li>
 
     menu.innerHTML = actionsMenu;
     document.body.appendChild(menu);
+
+    $(element).addClass("selected");
 
     if ($(element).hasClass("highlighted")) {
       $(menu).addClass("has-highlight");
@@ -410,16 +412,16 @@ export class BookChapter {
     // Positioning the appended menu according to word
     $(menu).css({
       position: "absolute",
-      left: left + element.clientWidth / 2,
+      left: left + $(element).width() / 2,
       transform: "translate(-50%,-120%)",
       top,
     });
 
-    $(window).on("resize", function () {
-      $(".actions-menu").remove();
+    $(window).on("resize", () => {
+      this.hideActionsMenu();
     });
 
-    // Binding click events on menu
+    // Binding click events on menu items
     $(menu).on("click", function (e: any) {
       e.stopPropagation();
     });
@@ -434,9 +436,17 @@ export class BookChapter {
         .addEventListener("click", this.unhighlightWord.bind(this, element));
     }
 
-    menu
-      .querySelector(".copy")
-      .addEventListener("click", this.copyText.bind(this, element));
+    // menu
+    //   .querySelector(".copy")
+    //   .addEventListener("click", this.copyText.bind(this, element));
+  }
+
+  /**
+    Removing actions menu
+  */
+  hideActionsMenu(): void {
+    $(".actions-menu").remove();
+    $("span").removeClass("selected");
   }
 
   insertFullPageImage(wordIndex: number = 533) {

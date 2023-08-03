@@ -326,7 +326,7 @@ export class Controller {
     this.book.currentChapter.calcPagesContentRanges();
     this.changePageToAnchorWordLocation();
     this.storeUserPreferences();
-    $(".actions-menu").remove();
+    this.book.currentChapter.hideActionsMenu();
   }
 
   /**
@@ -445,7 +445,7 @@ export class Controller {
     this.book.renderChapter(chapterIndex);
 
     // Detect anchor word page index
-    this.book.goToPage(this.book.getWordPageNumber(anchorWordIndex));
+    this.book.goToPage(this.book.getPageNumberByWordIndex(anchorWordIndex));
   }
 
   /**

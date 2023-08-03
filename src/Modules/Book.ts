@@ -251,7 +251,7 @@ export class Book {
           .find(`#${elementId} span:first-child`)
           .attr("n");
 
-        this.goToPage(this.getWordPageNumber(firstWordInElementIndex));
+        this.goToPage(this.getPageNumberByWordIndex(firstWordInElementIndex));
 
         // Highlight element after render page
         $(`#${elementId}`).addClass("highlight-element");
@@ -262,7 +262,7 @@ export class Book {
   /**
     Render specific chapter with chapter index
   */
-  getWordPageNumber(wordIndex: number): number {
+  getPageNumberByWordIndex(wordIndex: number): number {
     let pageNo = 0;
     this.currentChapter.pagesContentRanges.forEach((page, pageIndex) => {
       const min = Math.min(page[0], page[1]),
