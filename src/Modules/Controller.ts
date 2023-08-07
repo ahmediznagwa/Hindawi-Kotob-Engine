@@ -2,7 +2,6 @@ import { IBookmark } from "../Models/IBookmark.model";
 import { PageUpdatedMessage } from "../Models/IPostMessage.model";
 import { IUserPreferencesState } from "../Models/IUserPreferencesState.model";
 import { Book } from "./Book";
-import { BookChapter } from "./BookChapter";
 import { HTMLExtractor } from "./HTMLExtractor";
 import { UserPreferences } from "./UserPreferences";
 import { UTILS } from "./Utils";
@@ -49,7 +48,7 @@ export class Controller {
       );
       this.htmlExtractor = new HTMLExtractor(bookId);
       const parser = new DOMParser();
-
+      
       const chapters = json.trim()?.split("$Newchapter");
 
       chapters.shift();

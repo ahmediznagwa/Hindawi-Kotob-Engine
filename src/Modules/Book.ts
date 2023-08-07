@@ -173,6 +173,7 @@ export class Book {
     const lastWordProgress =
       this.currentPageLastWordIndex / this.bookWordsCount;
     const t = isInFirstHalf ? firstWordProgress : lastWordProgress;
+
     const percentage =
       (this.currentPageFirstWordIndex -
         1 +
@@ -201,6 +202,7 @@ export class Book {
     */
   changeChapter(mode: "next" | "prev" | "first" | "last") {
     const oldChapterIndex = this.currentChapterIndex;
+
     switch (mode) {
       case "next":
         if (!this.isLastChapter) {
@@ -293,6 +295,7 @@ export class Book {
       this.currentChapterIndex
     );
     this.currentChapter.calcPagesContentRanges();
+
     setTimeout(() => {
       this.currentChapter.calcPagesContentRanges();
     }, 1000);
@@ -390,6 +393,7 @@ export class Book {
   updateStartEndWordID() {
     this.currentPageFirstWordIndex =
       this.currentChapter.pagesContentRanges[this.currentPage][0];
+
     this.currentPageLastWordIndex =
       this.currentChapter.pagesContentRanges[this.currentPage][1];
 
@@ -543,6 +547,13 @@ export class Book {
   */
   generateBookTableOfContent() {
     // Getting chapters titles
+
+    // Adding Homepage as static
+    this.tableOfContents.push({
+      chapterIndex: 0,
+      chapterTitle: "الصفحة الرئيسية",
+      chapterTitleAnchorWord: null,
+    });
     this.chapters.forEach((chapter, index) => {
       const title = chapter.querySelector("h1");
       const titleAnchorWord = +title
