@@ -121,19 +121,8 @@ export class Book {
     Calculating book words count to use in scroll percentage
   */
   calculateBookWordsCount() {
-    const section = document.createElement("section") as HTMLElement;
-    section.classList.add("book");
-    section.classList.add("demo");
-    section.innerHTML = "";
-    this.chapters.forEach((chapter: HTMLDivElement) => {
-      section.innerHTML = section.innerHTML += chapter?.innerHTML
-        ? chapter?.innerHTML
-        : chapter;
-    });
     const lastChapter = this.chapters[this.chapters.length - 1];
-
     const lastChapterAllSpans = lastChapter.querySelectorAll("span[n]");
-
     this.bookWordsCount =
       +lastChapterAllSpans[lastChapterAllSpans.length - 1].getAttribute("n");
   }
@@ -182,6 +171,7 @@ export class Book {
             this.currentPageFirstWordIndex +
             1)) /
       this.bookWordsCount;
+
     this.currentProgressPercent =
       (percentage || percentage === 0
         ? percentage
@@ -244,14 +234,14 @@ export class Book {
   goToElement(elementId: string, ev: any): void {
     ev.stopPropagation();
     ev.preventDefault();
-
+    console.log($(document).find(`#${elementId}`));
     this.chapters.forEach((chapter: HTMLElement, index: number) => {
       if ($(chapter).find(`#${elementId}`).length) {
         this.renderChapter(index);
-
-        const firstWordInElementIndex = +$(chapter)
-          .find(`#${elementId} span:first-child`)
-          .attr("n");
+        const targetEl = $(chapter).find(`#${elementId}`);
+        const firstWordInElementIndex = targetEl.find(`span:first-child`)
+          ? +targetEl.find(`span:first-child`).attr("n")
+          : +targetEl.next("span").attr("n");
 
         this.goToPage(this.getPageNumberByWordIndex(firstWordInElementIndex));
 

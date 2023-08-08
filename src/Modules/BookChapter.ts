@@ -141,15 +141,24 @@ export class BookChapter {
     Loops over all the words in a given element and updates the pagesContentRanges according to words locations
   */
   loopOverWords(el: HTMLElement) {
-    Array.from(el?.querySelectorAll("span[n]") || []).forEach(
+    if (!el?.querySelectorAll("span[n]").length) {
+      return;
+    }
+    Array.from(el?.querySelectorAll("span[n]")).forEach(
       (wordEl: HTMLElement, i: number, wordArr: HTMLElement[]) => {
         if (this.isInOtherPage(wordEl)) {
           // word is in another page
+          if (!this.pagesContentRanges[this.page]) {
+            return;
+          }
 
           this.pagesContentRanges[this.page][1] =
             +wordArr[i - 1]?.getAttribute("n");
           this.page++;
 
+          if (!this.pagesContentRanges[this.page]) {
+            return;
+          }
           this.pagesContentRanges[this.page][0] = +wordEl?.getAttribute("n");
         }
         if (i === wordArr.length - 1) {
@@ -158,9 +167,11 @@ export class BookChapter {
           const nextParent = this.getHighestParent(wordEl)
             ?.nextElementSibling as HTMLElement;
           if (this.isInOtherPage(nextParent)) {
+            if (!this.pagesContentRanges[this.page]) {
+              return;
+            }
             this.pagesContentRanges[this.page][1] = +wordEl?.getAttribute("n");
             this.page++;
-
             this.pagesContentRanges[this.page][0] = +this.getSpan(
               nextParent,
               "first"
@@ -198,7 +209,9 @@ export class BookChapter {
     );
 
     //loop over the children of the rendered chapter
-    Array.from(UTILS.DOM_ELS.book.firstElementChild.children).forEach(
+    const bookChapter = UTILS.DOM_ELS.bookChapter;
+
+    Array.from(bookChapter.children).forEach(
       (child: HTMLElement, i: number, childrenArr: HTMLElement[]) => {
         //if there's only one child in the chapter
         if (childrenArr.length === 1) {
@@ -210,15 +223,17 @@ export class BookChapter {
         // last element in chapter
         if (i === childrenArr.length - 1) {
           const element = this.getElement(child, "prev");
+
           if (this.isInOtherPage(this.getSpan(child, "last"))) {
             // paragraph split into two pages
             this.loopOverWords(child);
           }
-
-          this.pagesContentRanges[this.page][1] = +this.getSpan(
-            element,
-            "last"
-          )?.getAttribute("n");
+          if(this.pagesContentRanges[this.page]) {
+            this.pagesContentRanges[this.page][1] = +this.getSpan(
+              element,
+              "last"
+            )?.getAttribute("n");
+          }
         }
         // first element in chapter
         if (i === 0) {
@@ -246,26 +261,25 @@ export class BookChapter {
               this.loopOverWords(child); // paragraph split into two pages
             } else {
               // paragraph didn't split into two pages
-
-              this.pagesContentRanges[this.page][1] = +this.getSpan(
-                this.getElement(child, "prev"),
-                "last"
-              )?.getAttribute("n");
-              this.page++;
-              this.pagesContentRanges[this.page][0] = +this.getSpan(
-                this.getElement(
-                  child?.nextElementSibling as HTMLElement,
-                  "prev"
-                ),
-                "first"
-              )?.getAttribute("n");
+              if (this.pagesContentRanges[this.page]) {
+                this.pagesContentRanges[this.page][1] = +this.getSpan(
+                  this.getElement(child, "prev"),
+                  "last"
+                )?.getAttribute("n");
+                this.page++;
+                this.pagesContentRanges[this.page][0] = +this.getSpan(
+                  this.getElement(
+                    child?.nextElementSibling as HTMLElement,
+                    "prev"
+                  ),
+                  "first"
+                )?.getAttribute("n");
+              }
             }
           }
         }
       }
     );
-
-    console.log(this.pagesContentRanges);
   }
 
   /**

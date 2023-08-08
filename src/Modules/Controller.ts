@@ -48,17 +48,20 @@ export class Controller {
       );
       this.htmlExtractor = new HTMLExtractor(bookId);
       const parser = new DOMParser();
-      
+
       const chapters = json.trim()?.split("$Newchapter");
 
       chapters.shift();
 
-      this.htmlExtractor.chapters = chapters.map(
-        (chapterString) =>
-          parser
-            .parseFromString(chapterString, "text/html")
-            .querySelector("body").firstElementChild
-      );
+      this.htmlExtractor.chapters = chapters.map((chapterString) => {
+        const chapterHTML = parser.parseFromString(chapterString, "text/html");
+        if (chapterHTML.querySelector("body")) {
+          return chapterHTML.querySelector("body").firstElementChild;
+        }
+        return chapterHTML.firstElementChild.children.length <= 0
+          ? chapterHTML.firstElementChild.firstElementChild
+          : chapterHTML.firstElementChild;
+      });
 
       // alert("Got Chapters");
 
@@ -82,6 +85,7 @@ export class Controller {
     Instantiates all the handlers required for the app to run
   */
   setupHandlers() {
+    // alert("Book Init");
     this.book = new Book(
       this.htmlExtractor.bookId,
       this.htmlExtractor.chapters,
@@ -93,6 +97,7 @@ export class Controller {
       this?.userPreferences?.fontFamily,
       this?.userPreferences?.bookmarks
     );
+    // alert("Book Done");
   }
 
   /**
@@ -101,6 +106,7 @@ export class Controller {
   detectUserPreferences(bookId: string) {
     this.userPreferences = new UserPreferences(bookId);
     this.userPreferences.load();
+    // alert("detecting User Prefrences Done");
   }
 
   /**
@@ -237,6 +243,8 @@ export class Controller {
     document.fonts.onloadingdone = () => {
       this.resizeEventHandler();
     };
+
+    // alert("Setup Event Listeners Done");
   }
 
   /**
@@ -255,9 +263,12 @@ export class Controller {
     setInterval(() => {
       const pagesContentRanges = this.book.currentChapter.pagesContentRanges;
       const lastWordIndexInChapter =
+        pagesContentRanges[pagesContentRanges.length - 1] &&
         pagesContentRanges[pagesContentRanges.length - 1][1];
-      const firstWordIndexInChapter = pagesContentRanges[0][0];
-      const lastWordIndexInFirstPage = pagesContentRanges[0][1];
+      const firstWordIndexInChapter =
+        pagesContentRanges[0] && pagesContentRanges[0][0];
+      const lastWordIndexInFirstPage =
+        pagesContentRanges[0] && pagesContentRanges[0][1];
       const middleWordIndexInFirstPage = Math.floor(
         (lastWordIndexInFirstPage - firstWordIndexInChapter) / 2
       );
