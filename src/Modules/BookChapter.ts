@@ -68,16 +68,20 @@ export class BookChapter {
   */
   getElement(el: HTMLElement, direction: "next" | "prev"): HTMLElement {
     let child = el;
+
+    if (!child) {
+      return;
+    }
     if (child?.querySelector("span[n]")) {
       return child;
     }
-    if (child.parentNode?.children.length === 1) {
+    if (child?.parentNode?.children.length === 1) {
       return child;
     }
     const nextChild =
       direction === "next"
-        ? (child.nextElementSibling as HTMLElement)
-        : (child.previousElementSibling as HTMLElement);
+        ? (child?.nextElementSibling as HTMLElement)
+        : (child?.previousElementSibling as HTMLElement);
     child = nextChild;
 
     if (!child?.querySelector("span[n]")) {
@@ -116,7 +120,7 @@ export class BookChapter {
   isInOtherPage(el: HTMLElement): boolean {
     let language = "ar";
 
-    if (el?.textContent?.match(/^[(_A-Za-z_._)]*$/)) {
+    if (el?.textContent?.match(/^[a-zA-Z0-9?><;,{}[\]\-_+=!@#$%\^&*|']*$/)) {
       language = "en";
     }
 
@@ -137,7 +141,7 @@ export class BookChapter {
     Loops over all the words in a given element and updates the pagesContentRanges according to words locations
   */
   loopOverWords(el: HTMLElement) {
-    Array.from(el.querySelectorAll("span[n]")).forEach(
+    Array.from(el?.querySelectorAll("span[n]") || []).forEach(
       (wordEl: HTMLElement, i: number, wordArr: HTMLElement[]) => {
         if (this.isInOtherPage(wordEl)) {
           // word is in another page
@@ -260,6 +264,8 @@ export class BookChapter {
         }
       }
     );
+
+    console.log(this.pagesContentRanges);
   }
 
   /**
