@@ -229,12 +229,20 @@ export class Book {
   }
 
   /**
-    Go to element when click on anchor
+    Go to element when click on anchor by id
   */
   goToElement(elementId: string, ev: any): void {
-    ev.stopPropagation();
-    ev.preventDefault();
-    console.log($(document).find(`#${elementId}`));
+    ev?.stopPropagation();
+    ev?.preventDefault();
+    const footnote = $(ev?.target).closest(".footnote");
+
+    if (footnote.length) {
+      const id = $(ev?.target).closest("a").attr("id");
+      const element = this.getElement(`[href="#${id}"]`);
+      this.goToElement(element.getAttribute("id"), null);
+      return;
+    }
+
     this.chapters.forEach((chapter: HTMLElement, index: number) => {
       if ($(chapter).find(`#${elementId}`).length) {
         this.renderChapter(index);
@@ -252,6 +260,20 @@ export class Book {
   }
 
   /**
+    Get element by id
+  */
+  getElement(selector: string): HTMLElement {
+    let el: HTMLElement = null;
+    this.chapters.forEach((chapter: HTMLElement, index: number) => {
+      if ($(chapter).find(selector).length) {
+        el = $(chapter).find(selector)[0];
+      }
+    });
+
+    return el;
+  }
+
+  /**
     Render specific chapter with chapter index
   */
   getPageNumberByWordIndex(wordIndex: number): number {
@@ -259,11 +281,7 @@ export class Book {
     this.currentChapter.pagesContentRanges.forEach((page, pageIndex) => {
       const min = Math.min(page[0], page[1]),
         max = Math.max(page[0], page[1]);
-      if (
-        (wordIndex > min && wordIndex < max) ||
-        wordIndex === min ||
-        wordIndex === max
-      ) {
+      if (wordIndex >= min || wordIndex <= max) {
         pageNo = pageIndex;
       }
     });
@@ -285,7 +303,7 @@ export class Book {
       this.currentChapterIndex
     );
     this.currentChapter.calcPagesContentRanges();
-
+    
     setTimeout(() => {
       this.currentChapter.calcPagesContentRanges();
     }, 1000);
@@ -340,6 +358,8 @@ export class Book {
       Changes the current viewed page into a different one depending on the inputted mode
     */
   async changePage(mode?: "next" | "prev" | "first" | "last") {
+    console.log('asd');
+    
     switch (mode) {
       case "next":
         if (!this.isLastPage) this.currentPage++;
@@ -398,11 +418,7 @@ export class Book {
     this.currentChapter.pagesContentRanges.forEach((page, pageIndex) => {
       const min = Math.min(page[0], page[1]),
         max = Math.max(page[0], page[1]);
-      if (
-        (this.anchorWordIndex > min && this.anchorWordIndex < max) ||
-        this.anchorWordIndex === min ||
-        this.anchorWordIndex === max
-      ) {
+      if (this.anchorWordIndex >= min || this.anchorWordIndex <= max) {
         pageNo = pageIndex;
       }
     });
