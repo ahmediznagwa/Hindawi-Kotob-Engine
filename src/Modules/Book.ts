@@ -560,25 +560,20 @@ export class Book {
   generateBookTableOfContent() {
     // Getting chapters titles
 
-    // Adding Homepage as static
-    this.tableOfContents.push({
-      chapterIndex: 0,
-      chapterTitle: "الصفحة الرئيسية",
-      chapterTitleAnchorWord: null,
-    });
     this.chapters.forEach((chapter, index) => {
       const title = chapter.querySelector("h1");
       const titleAnchorWord = +title
         ?.querySelector("span:first-child")
         ?.getAttribute("n");
 
-      if (title) {
-        this.tableOfContents.push({
-          chapterIndex: index,
-          chapterTitle: title.textContent,
-          chapterTitleAnchorWord: titleAnchorWord,
-        });
-      }
+      this.tableOfContents.push({
+        chapterIndex: index,
+        chapterTitle:
+          index === 0
+            ? "الصفحة الرئيسية"
+            : title?.textContent || `الفصل ${index}`,
+        chapterTitleAnchorWord: titleAnchorWord || null,
+      });
     });
 
     if (!this.tableOfContents.length) {

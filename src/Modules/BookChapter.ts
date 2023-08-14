@@ -45,7 +45,7 @@ export class BookChapter {
       return span;
     } else if (order === "last") {
       return Array.from(
-        el?.querySelectorAll("span:last-child") || []
+        el?.querySelectorAll("span[n]") || []
       ).pop() as HTMLElement;
     }
   }
@@ -163,11 +163,11 @@ export class BookChapter {
         if (!this.pagesContentRanges[this.page]) {
           return;
         }
+
         this.pagesContentRanges[this.page][0] = +wordEl?.getAttribute("n");
       }
       if (i === wordArr.length - 1) {
         // last word in paragraph
-
         const nextParent = this.getHighestParent(wordEl)
           ?.nextElementSibling as HTMLElement;
         if (this.isInOtherPage(nextParent)) {
@@ -225,12 +225,14 @@ export class BookChapter {
         }
         // last element in chapter
         if (i === childrenArr.length - 1) {
-          const element = this.getElement(child, "prev");
-
           if (this.isInOtherPage(this.getSpan(child, "last"))) {
             // paragraph split into two pages
             this.loopOverWords(child);
           }
+          const element = this.getElement(child, "prev");
+          console.log(element);
+          
+
           if (this.pagesContentRanges[this.page]) {
             this.pagesContentRanges[this.page][1] = +this.getSpan(
               element,
@@ -298,7 +300,10 @@ export class BookChapter {
     section.innerHTML = this.chapterEl.innerHTML;
 
     // Some wrapper contain class controll the style so I added the whole thing if they
-    if (this.chapterEl.hasAttribute("class")) {
+    if (
+      this.chapterEl.hasAttribute("class") &&
+      this.chapterEl.classList.contains("center")
+    ) {
       section.innerHTML = "";
       section.appendChild(this.chapterEl);
     }

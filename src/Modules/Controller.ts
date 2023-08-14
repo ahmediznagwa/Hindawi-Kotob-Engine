@@ -55,8 +55,14 @@ export class Controller {
 
       this.htmlExtractor.chapters = chapters.map((chapterString) => {
         const chapterHTML = parser.parseFromString(chapterString, "text/html");
-        if (chapterHTML.querySelector("body")) {
-          return chapterHTML.querySelector("body").firstElementChild;
+        const bodyEl = chapterHTML.querySelector("body");
+
+        if (bodyEl) {
+          // checking if there is only one child for the whole book
+          if (bodyEl.firstElementChild.children.length === 1) {
+            return bodyEl.firstElementChild.children[0];
+          }
+          return bodyEl.firstElementChild;
         }
         return chapterHTML.firstElementChild.children.length <= 0
           ? chapterHTML.firstElementChild.firstElementChild
@@ -76,6 +82,13 @@ export class Controller {
 
       // Triggering click on body to show navigation bar at initial
       $("body").trigger("click");
+    } catch (error) {
+      alert(error);
+    }
+  }
+  async initWithPath(path: string) {
+    try {
+      fetch(path).then((res) => alert(res));
     } catch (error) {
       alert(error);
     }
