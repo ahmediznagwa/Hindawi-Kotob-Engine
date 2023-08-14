@@ -1,5 +1,5 @@
 import { Controller } from "./Modules/Controller";
-import { json4 } from "./Modules/constants";
+import { json, json2, json4 } from "./Modules/constants";
 declare global {
   interface Window {
     hindawiReaders: any;
@@ -9,9 +9,9 @@ let controller = new Controller();
 export const hindawiReaders = (function () {
   controller = new Controller();
   // for demo only
-  // window.addEventListener("load", () => {
-  //   controller.initWithChapters("packages/life_prison", json4);
-  // });
+  window.addEventListener("load", () => {
+    controller.initWithChapters("packages/life_prison", json4);
+  });
   return {
     init: controller.initWithChapters.bind(controller),
   };

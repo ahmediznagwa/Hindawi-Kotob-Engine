@@ -144,40 +144,63 @@ export class BookChapter {
     if (!el?.querySelectorAll("span[n]").length) {
       return;
     }
+
     Array.from(el?.querySelectorAll("span[n]")).forEach(
       (wordEl: HTMLElement, i: number, wordArr: HTMLElement[]) => {
-        if (this.isInOtherPage(wordEl)) {
-          // word is in another page
-          if (!this.pagesContentRanges[this.page]) {
-            return;
-          }
+        const wordIndex = +wordEl?.getAttribute("n");
 
-          this.pagesContentRanges[this.page][1] =
-            +wordArr[i - 1]?.getAttribute("n");
-          this.page++;
-
-          if (!this.pagesContentRanges[this.page]) {
-            return;
-          }
-          this.pagesContentRanges[this.page][0] = +wordEl?.getAttribute("n");
+        // First word in chapter
+        if (i === 0) {
+          this.pagesContentRanges[this.page][0] = wordIndex;
         }
+
+        // Last word in chapter
         if (i === wordArr.length - 1) {
-          // last word in paragraph
-
-          const nextParent = this.getHighestParent(wordEl)
-            ?.nextElementSibling as HTMLElement;
-          if (this.isInOtherPage(nextParent)) {
-            if (!this.pagesContentRanges[this.page]) {
-              return;
-            }
-            this.pagesContentRanges[this.page][1] = +wordEl?.getAttribute("n");
-            this.page++;
-            this.pagesContentRanges[this.page][0] = +this.getSpan(
-              nextParent,
-              "first"
-            )?.getAttribute("n");
-          }
+          this.pagesContentRanges[this.pagesContentRanges.length - 1][1] =
+            wordIndex;
         }
+
+        // Other words
+        if (this.isInOtherPage(wordEl)) {
+          this.pagesContentRanges[this.page][1] = wordIndex - 1;
+          this.page++;
+          this.pagesContentRanges[this.page][0] = wordIndex;
+        }
+        // if (this.isInOtherPage(wordEl)) {
+        //   // word is in another page
+
+        //   if (!this.pagesContentRanges[this.page]) {
+        //     return;
+        //   }
+
+        //   this.pagesContentRanges[this.page][1] =
+        //     +wordArr[i - 1]?.getAttribute("n");
+        //   this.page++;
+
+        //   if (!this.pagesContentRanges[this.page]) {
+        //     return;
+        //   }
+        //   this.pagesContentRanges[this.page][0] = +wordEl?.getAttribute("n");
+
+        //   console.log(wordEl?.getAttribute("n"));
+
+        // }
+        // if (i === wordArr.length - 1) {
+        //   // last word in paragraph
+        //   const nextParent = this.getHighestParent(wordEl)
+        //     ?.nextElementSibling as HTMLElement;
+        //   if (this.isInOtherPage(nextParent)) {
+        //     if (!this.pagesContentRanges[this.page]) {
+        //       return;
+        //     }
+        //     this.pagesContentRanges[this.page][1] = +wordEl?.getAttribute("n");
+        //     this.page++;
+        //     this.pagesContentRanges[this.page][0] = +this.getSpan(
+        //       nextParent,
+        //       "first"
+        //     )?.getAttribute("n");
+        //   }
+        // }
       }
     );
   }
@@ -211,75 +234,78 @@ export class BookChapter {
     //loop over the children of the rendered chapter
     const bookChapter = UTILS.DOM_ELS.bookChapter;
 
-    Array.from(bookChapter.children).forEach(
-      (child: HTMLElement, i: number, childrenArr: HTMLElement[]) => {
-        //if there's only one child in the chapter
-        if (childrenArr.length === 1) {
-          this.pagesContentRanges[this.page][0] = +this.getSpan(
-            child,
-            "first"
-          )?.getAttribute("n");
-        }
-        // last element in chapter
-        if (i === childrenArr.length - 1) {
-          const element = this.getElement(child, "prev");
+    this.loopOverWords(bookChapter);
+    console.log(this.pagesContentRanges);
 
-          if (this.isInOtherPage(this.getSpan(child, "last"))) {
-            // paragraph split into two pages
-            this.loopOverWords(child);
-          }
-          if(this.pagesContentRanges[this.page]) {
-            this.pagesContentRanges[this.page][1] = +this.getSpan(
-              element,
-              "last"
-            )?.getAttribute("n");
-          }
-        }
-        // first element in chapter
-        if (i === 0) {
-          const element = this.getElement(child, "next");
-          if (!child.querySelector("span[n]")) {
-            this.pagesContentRanges[this.page][0] = +this.getSpan(
-              element,
-              "first"
-            )?.getAttribute("n");
-            this.loopOverWords(element);
-            return;
-          }
+    // Array.from(bookChapter.children).forEach(
+    //   (child: HTMLElement, i: number, childrenArr: HTMLElement[]) => {
+    //     //if there's only one child in the chapter
+    //     if (childrenArr.length === 1) {
+    //       this.pagesContentRanges[this.page][0] = +this.getSpan(
+    //         child,
+    //         "first"
+    //       )?.getAttribute("n");
+    //     }
+    //     // last element in chapter
+    //     if (i === childrenArr.length - 1) {
+    //       const element = this.getElement(child, "prev");
 
-          this.pagesContentRanges[this.page][0] = +this.getSpan(
-            element,
-            "first"
-          )?.getAttribute("n");
-          this.loopOverWords(child);
-        }
-        //any other element
-        else {
-          if (this.isInOtherPage(child?.nextElementSibling as HTMLElement)) {
-            // paragraph at the end of the page
-            if (this.isInOtherPage(this.getSpan(child, "last"))) {
-              this.loopOverWords(child); // paragraph split into two pages
-            } else {
-              // paragraph didn't split into two pages
-              if (this.pagesContentRanges[this.page]) {
-                this.pagesContentRanges[this.page][1] = +this.getSpan(
-                  this.getElement(child, "prev"),
-                  "last"
-                )?.getAttribute("n");
-                this.page++;
-                this.pagesContentRanges[this.page][0] = +this.getSpan(
-                  this.getElement(
-                    child?.nextElementSibling as HTMLElement,
-                    "prev"
-                  ),
-                  "first"
-                )?.getAttribute("n");
-              }
-            }
-          }
-        }
-      }
-    );
+    //       if (this.isInOtherPage(this.getSpan(child, "last"))) {
+    //         // paragraph split into two pages
+    //         this.loopOverWords(child);
+    //       }
+    //       if (this.pagesContentRanges[this.page]) {
+    //         this.pagesContentRanges[this.page][1] = +this.getSpan(
+    //           element,
+    //           "last"
+    //         )?.getAttribute("n");
+    //       }
+    //     }
+    //     // first element in chapter
+    //     if (i === 0) {
+    //       const element = this.getElement(child, "next");
+    //       if (!child.querySelector("span[n]")) {
+    //         this.pagesContentRanges[this.page][0] = +this.getSpan(
+    //           element,
+    //           "first"
+    //         )?.getAttribute("n");
+    //         this.loopOverWords(element);
+    //         return;
+    //       }
+
+    //       this.pagesContentRanges[this.page][0] = +this.getSpan(
+    //         element,
+    //         "first"
+    //       )?.getAttribute("n");
+    //       this.loopOverWords(child);
+    //     }
+    //     //any other element
+    //     else {
+    //       if (this.isInOtherPage(child?.nextElementSibling as HTMLElement)) {
+    //         // paragraph at the end of the page
+    //         if (this.isInOtherPage(this.getSpan(child, "last"))) {
+    //           this.loopOverWords(child); // paragraph split into two pages
+    //         } else {
+    //           // paragraph didn't split into two pages
+    //           if (this.pagesContentRanges[this.page]) {
+    //             this.pagesContentRanges[this.page][1] = +this.getSpan(
+    //               this.getElement(child, "prev"),
+    //               "last"
+    //             )?.getAttribute("n");
+    //             this.page++;
+    //             this.pagesContentRanges[this.page][0] = +this.getSpan(
+    //               this.getElement(
+    //                 child?.nextElementSibling as HTMLElement,
+    //                 "prev"
+    //               ),
+    //               "first"
+    //             )?.getAttribute("n");
+    //           }
+    //         }
+    //       }
+    //     }
+    //   }
+    // );
   }
 
   /**
