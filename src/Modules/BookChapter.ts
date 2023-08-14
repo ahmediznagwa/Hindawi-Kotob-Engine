@@ -110,8 +110,8 @@ export class BookChapter {
   /**
     Calculates the right edge position of the page in the rendered HTML
   */
-  getPageRight(): number {
-    return this.getPageLeft() + this.exactColumnWidth;
+  getPageRight(language = "ar"): number {
+    return this.getPageLeft(language) + this.exactColumnWidth;
   }
 
   /**
@@ -126,13 +126,13 @@ export class BookChapter {
 
     if (language === "ar") {
       return (
-        this.getPageRight() -
+        this.getPageRight(language) -
           (el?.offsetLeft + Math.min(el?.offsetWidth, this.columnWidth)) >=
         this.columnWidth - this.ROUNDING_TOLERANCE
       );
     }
     return (
-      el?.offsetLeft - this.getPageLeft() >=
+      el?.offsetLeft - this.getPageLeft(language) >=
       this.columnWidth - this.ROUNDING_TOLERANCE
     );
   }
@@ -144,42 +144,45 @@ export class BookChapter {
     if (!el?.querySelectorAll("span[n]").length) {
       return;
     }
-    Array.from(el?.querySelectorAll("span[n]")).forEach(
-      (wordEl: HTMLElement, i: number, wordArr: HTMLElement[]) => {
-        if (this.isInOtherPage(wordEl)) {
-          // word is in another page
-          if (!this.pagesContentRanges[this.page]) {
-            return;
-          }
-
-          this.pagesContentRanges[this.page][1] =
-            +wordArr[i - 1]?.getAttribute("n");
-          this.page++;
-
-          if (!this.pagesContentRanges[this.page]) {
-            return;
-          }
-          this.pagesContentRanges[this.page][0] = +wordEl?.getAttribute("n");
+    Array.from(
+      el?.querySelectorAll("span[n]") as NodeListOf<HTMLElement>
+    ).forEach((wordEl: HTMLElement, i: number, wordArr: HTMLElement[]) => {
+      if ($(wordEl).closest("sup").length) {
+        return;
+      }
+      if (this.isInOtherPage(wordEl)) {
+        // word is in another page
+        if (!this.pagesContentRanges[this.page]) {
+          return;
         }
-        if (i === wordArr.length - 1) {
-          // last word in paragraph
 
-          const nextParent = this.getHighestParent(wordEl)
-            ?.nextElementSibling as HTMLElement;
-          if (this.isInOtherPage(nextParent)) {
-            if (!this.pagesContentRanges[this.page]) {
-              return;
-            }
-            this.pagesContentRanges[this.page][1] = +wordEl?.getAttribute("n");
-            this.page++;
-            this.pagesContentRanges[this.page][0] = +this.getSpan(
-              nextParent,
-              "first"
-            )?.getAttribute("n");
+        this.pagesContentRanges[this.page][1] =
+          +wordArr[i - 1]?.getAttribute("n");
+        this.page++;
+
+        if (!this.pagesContentRanges[this.page]) {
+          return;
+        }
+        this.pagesContentRanges[this.page][0] = +wordEl?.getAttribute("n");
+      }
+      if (i === wordArr.length - 1) {
+        // last word in paragraph
+
+        const nextParent = this.getHighestParent(wordEl)
+          ?.nextElementSibling as HTMLElement;
+        if (this.isInOtherPage(nextParent)) {
+          if (!this.pagesContentRanges[this.page]) {
+            return;
           }
+          this.pagesContentRanges[this.page][1] = +wordEl?.getAttribute("n");
+          this.page++;
+          this.pagesContentRanges[this.page][0] = +this.getSpan(
+            nextParent,
+            "first"
+          )?.getAttribute("n");
         }
       }
-    );
+    });
   }
 
   /**
@@ -228,7 +231,7 @@ export class BookChapter {
             // paragraph split into two pages
             this.loopOverWords(child);
           }
-          if(this.pagesContentRanges[this.page]) {
+          if (this.pagesContentRanges[this.page]) {
             this.pagesContentRanges[this.page][1] = +this.getSpan(
               element,
               "last"
@@ -261,6 +264,7 @@ export class BookChapter {
               this.loopOverWords(child); // paragraph split into two pages
             } else {
               // paragraph didn't split into two pages
+
               if (this.pagesContentRanges[this.page]) {
                 this.pagesContentRanges[this.page][1] = +this.getSpan(
                   this.getElement(child, "prev"),
@@ -280,6 +284,8 @@ export class BookChapter {
         }
       }
     );
+
+    console.log(this.pagesContentRanges);
   }
 
   /**

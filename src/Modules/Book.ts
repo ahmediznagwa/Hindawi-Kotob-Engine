@@ -281,7 +281,11 @@ export class Book {
     this.currentChapter.pagesContentRanges.forEach((page, pageIndex) => {
       const min = Math.min(page[0], page[1]),
         max = Math.max(page[0], page[1]);
-      if (wordIndex >= min || wordIndex <= max) {
+      if (
+        (wordIndex > min && wordIndex < max) ||
+        wordIndex === min ||
+        wordIndex === max
+      ) {
         pageNo = pageIndex;
       }
     });
@@ -303,7 +307,7 @@ export class Book {
       this.currentChapterIndex
     );
     this.currentChapter.calcPagesContentRanges();
-    
+
     setTimeout(() => {
       this.currentChapter.calcPagesContentRanges();
     }, 1000);
@@ -358,8 +362,6 @@ export class Book {
       Changes the current viewed page into a different one depending on the inputted mode
     */
   async changePage(mode?: "next" | "prev" | "first" | "last") {
-    console.log('asd');
-    
     switch (mode) {
       case "next":
         if (!this.isLastPage) this.currentPage++;
@@ -418,7 +420,11 @@ export class Book {
     this.currentChapter.pagesContentRanges.forEach((page, pageIndex) => {
       const min = Math.min(page[0], page[1]),
         max = Math.max(page[0], page[1]);
-      if (this.anchorWordIndex >= min || this.anchorWordIndex <= max) {
+      if (
+        (this.anchorWordIndex > min && this.anchorWordIndex < max) ||
+        this.anchorWordIndex === min ||
+        this.anchorWordIndex === max
+      ) {
         pageNo = pageIndex;
       }
     });
