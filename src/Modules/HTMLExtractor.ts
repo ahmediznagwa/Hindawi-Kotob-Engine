@@ -3,9 +3,11 @@ export class HTMLExtractor {
   cssFiles: string[] = [];
   chapters: any[];
   rootFolder: string;
-  constructor(bookId: string, rootFolder: string) {
+  tableOfContents: string[];
+  constructor(bookId: string, rootFolder: string, tableOfContents: string[]) {
     this.bookId = bookId;
     this.chapters = [];
     this.rootFolder = rootFolder;
+    this.tableOfContents = tableOfContents;
   }
 }

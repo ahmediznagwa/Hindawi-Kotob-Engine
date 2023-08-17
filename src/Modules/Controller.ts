@@ -25,6 +25,7 @@ export class Controller {
     bookId: string,
     json: string,
     rootFolder: string,
+    tableOfContent: string,
     config?: IUserPreferencesState
   ) {
     try {
@@ -47,20 +48,28 @@ export class Controller {
         bookmarks,
         false
       );
-      this.htmlExtractor = new HTMLExtractor(bookId, rootFolder);
       const parser = new DOMParser();
 
+      // Getting table of content
+      const toc = parser.parseFromString(tableOfContent, "text/xml");
+      const tableOfContents = [];
+      Array.from(toc.querySelectorAll("string")).forEach((title, index) => {
+        tableOfContents.push(title.textContent);
+      });
+
+      this.htmlExtractor = new HTMLExtractor(
+        bookId,
+        rootFolder,
+        tableOfContents
+      );
+
+      // Getting Chapters
       const chapters = json.trim()?.split("$Newchapter");
-
       chapters.shift();
-
       this.htmlExtractor.chapters = chapters.map((chapterString) => {
-
-        console.log(chapterString);
-        
         const chapterHTML = parser.parseFromString(chapterString, "text/html");
         const bodyEl = chapterHTML.querySelector("body");
-        
+
         if (bodyEl) {
           // Hindawi books first pages
           if (
@@ -121,6 +130,7 @@ export class Controller {
       this.htmlExtractor.chapters,
       this.htmlExtractor.cssFiles,
       this.htmlExtractor.rootFolder,
+      this.htmlExtractor.tableOfContents,
       this?.userPreferences?.fontSize,
       this?.userPreferences?.chapter,
       this?.userPreferences?.anchorWordIndex,

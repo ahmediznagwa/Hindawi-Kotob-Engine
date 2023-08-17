@@ -11,12 +11,13 @@ export const hindawiReaders = (function () {
   // for demo only
   // window.addEventListener("load", async () => {
   //   // const bookId = '13020206' // publisher;
-  //   const bookId = "64837505"; // hindawi;
+  //   const bookId = "79191640"; // hindawi;
   //   // const bookId = '79191640' // hindawi;
   //   Promise.all([
   //     fetch(`/books/${bookId}/Content.hfbc`).then((res) => res.text()),
-  //   ]).then((res) => {
-  //     controller.initWithChapters(bookId, res[0], `/books/${bookId}`);
+  //     fetch(`/books/${bookId}/toc.nav`).then((res) => res.text()),
+  //   ]).then(([res1, res2]) => {
+  //     controller.initWithChapters(bookId, res1, `/books/${bookId}`, res2);
   //   });
   // });
   return {

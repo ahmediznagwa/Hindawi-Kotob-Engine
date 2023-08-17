@@ -41,6 +41,7 @@ export class Book {
     chapters,
     cssFiles,
     rootFolder,
+    tableOfContents,
     fontSize = 18,
     currentChapterIndex = 0,
     anchorWordIndex,
@@ -50,6 +51,7 @@ export class Book {
   ) {
     this.bookId = bookId;
     this.rootFolder = rootFolder;
+    this.tableOfContents = tableOfContents;
     this.bookWordsCount = null;
     this.chapters = chapters;
     this.cssFiles = cssFiles;
@@ -567,22 +569,22 @@ export class Book {
   */
   generateBookTableOfContent() {
     // Getting chapters titles
-    this.tableOfContents = [];
-    this.chapters.forEach((chapter, index) => {
-      const title = chapter.querySelector("h1");
-      const titleAnchorWord = +title
-        ?.querySelector("span:first-child")
-        ?.getAttribute("n");
+    // this.tableOfContents = [];
+    // this.chapters.forEach((chapter, index) => {
+    //   const title = chapter.querySelector("h1");
+    //   const titleAnchorWord = +title
+    //     ?.querySelector("span:first-child")
+    //     ?.getAttribute("n");
 
-      this.tableOfContents.push({
-        chapterIndex: index,
-        chapterTitle:
-          index === 0
-            ? "الصفحة الرئيسية"
-            : title?.textContent || `الفصل ${index}`,
-        chapterTitleAnchorWord: titleAnchorWord || null,
-      });
-    });
+    //   this.tableOfContents.push({
+    //     chapterIndex: index,
+    //     chapterTitle:
+    //       index === 0
+    //         ? "الصفحة الرئيسية"
+    //         : title?.textContent || `الفصل ${index}`,
+    //     chapterTitleAnchorWord: titleAnchorWord || null,
+    //   });
+    // });
 
     if (!this.tableOfContents.length) {
       $(UTILS.DOM_ELS.showTableOfContenBtn).remove();
@@ -590,11 +592,12 @@ export class Book {
     }
 
     // Filling table of content with list of chapters
-    this.tableOfContents.forEach((item) => {
+    $(UTILS.DOM_ELS.tableOfContentList).html("");
+    this.tableOfContents.forEach((item, index) => {
       $(UTILS.DOM_ELS.tableOfContentList).append(
-        ` <li data-chapter-index="${item.chapterIndex}">
-            <h4>${item.chapterTitle}</h4>
-            <span> ${item.chapterIndex} </span>
+        ` <li data-chapter-index="${index + 1}">
+            <h4>${item}</h4>
+            <span> ${index + 1} </span>
           </li>
         `
       );
