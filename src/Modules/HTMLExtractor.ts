@@ -2,8 +2,10 @@ export class HTMLExtractor {
   bookId: string;
   cssFiles: string[] = [];
   chapters: any[];
-  constructor(bookId: string) {
+  rootFolder: string;
+  constructor(bookId: string, rootFolder: string) {
     this.bookId = bookId;
     this.chapters = [];
+    this.rootFolder = rootFolder;
   }
 }

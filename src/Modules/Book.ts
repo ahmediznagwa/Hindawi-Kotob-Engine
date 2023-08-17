@@ -12,6 +12,7 @@ export class Book {
   bookId: string;
   chapters: HTMLDivElement[];
   cssFiles: string[];
+  rootFolder: string;
   fontSize: number;
   currentChapterIndex: number;
   currentPage: number;
@@ -39,6 +40,7 @@ export class Book {
     bookId,
     chapters,
     cssFiles,
+    rootFolder,
     fontSize = 18,
     currentChapterIndex = 0,
     anchorWordIndex,
@@ -47,6 +49,7 @@ export class Book {
     bookmarks = []
   ) {
     this.bookId = bookId;
+    this.rootFolder = rootFolder;
     this.bookWordsCount = null;
     this.chapters = chapters;
     this.cssFiles = cssFiles;
@@ -57,7 +60,8 @@ export class Book {
     this.currentChapter = new BookChapter(
       this.chapters[this.currentChapterIndex],
       this.bookId,
-      this.currentChapterIndex
+      this.currentChapterIndex,
+      this.rootFolder
     );
     this.calculateBookWordsCount();
     this.anchorWordIndex = Math.min(anchorWordIndex || 0, this.bookWordsCount);
@@ -239,14 +243,17 @@ export class Book {
     if (footnote.length) {
       const id = $(ev?.target).closest("a").attr("id");
       const element = this.getElement(`[href="#${id}"]`);
-      this.goToElement(element.getAttribute("id"), null);
+      console.log(element);
+
+      this.goToElement(element?.getAttribute("id"), null);
       return;
     }
 
     this.chapters.forEach((chapter: HTMLElement, index: number) => {
-      if ($(chapter).find(`#${elementId}`).length) {
+      const targetEl = $(chapter).find(`#${elementId}`);
+
+      if (targetEl.length) {
         this.renderChapter(index);
-        const targetEl = $(chapter).find(`#${elementId}`);
         const firstWordInElementIndex = targetEl.find(`span:first-child`)
           ? +targetEl.find(`span:first-child`).attr("n")
           : +targetEl.next("span").attr("n");
@@ -304,7 +311,8 @@ export class Book {
     this.currentChapter = new BookChapter(
       this.chapters[this.currentChapterIndex],
       this.bookId,
-      this.currentChapterIndex
+      this.currentChapterIndex,
+      this.rootFolder
     );
     this.currentChapter.calcPagesContentRanges();
 
@@ -559,7 +567,7 @@ export class Book {
   */
   generateBookTableOfContent() {
     // Getting chapters titles
-
+    this.tableOfContents = [];
     this.chapters.forEach((chapter, index) => {
       const title = chapter.querySelector("h1");
       const titleAnchorWord = +title

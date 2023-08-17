@@ -35,6 +35,7 @@ body {
     background-color: var(--bgColorRgb);
     *:not(h1) {
       font-family: inherit;
+      text-indent: 0;
     }
   }
 

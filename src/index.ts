@@ -9,12 +9,18 @@ let controller = new Controller();
 export const hindawiReaders = (function () {
   controller = new Controller();
   // for demo only
-  // window.addEventListener("load", () => {
-  //   controller.initWithChapters("packages/life_prison", json);
+  // window.addEventListener("load", async () => {
+  //   // const bookId = '13020206' // publisher;
+  //   const bookId = "64837505"; // hindawi;
+  //   // const bookId = '79191640' // hindawi;
+  //   Promise.all([
+  //     fetch(`/books/${bookId}/Content.hfbc`).then((res) => res.text()),
+  //   ]).then((res) => {
+  //     controller.initWithChapters(bookId, res[0], `/books/${bookId}`);
+  //   });
   // });
   return {
     init: controller.initWithChapters.bind(controller),
-    initHTML: controller.initWithPath.bind(controller),
   };
 })();
 

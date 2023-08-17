@@ -24,6 +24,7 @@ export class Controller {
   async initWithChapters(
     bookId: string,
     json: string,
+    rootFolder: string,
     config?: IUserPreferencesState
   ) {
     try {
@@ -46,7 +47,7 @@ export class Controller {
         bookmarks,
         false
       );
-      this.htmlExtractor = new HTMLExtractor(bookId);
+      this.htmlExtractor = new HTMLExtractor(bookId, rootFolder);
       const parser = new DOMParser();
 
       const chapters = json.trim()?.split("$Newchapter");
@@ -54,10 +55,20 @@ export class Controller {
       chapters.shift();
 
       this.htmlExtractor.chapters = chapters.map((chapterString) => {
+
+        console.log(chapterString);
+        
         const chapterHTML = parser.parseFromString(chapterString, "text/html");
         const bodyEl = chapterHTML.querySelector("body");
-
+        
         if (bodyEl) {
+          // Hindawi books first pages
+          if (
+            bodyEl.firstElementChild.classList.contains("cover-page") ||
+            bodyEl.firstElementChild.classList.contains("center")
+          ) {
+            return bodyEl;
+          }
           // checking if there is only one child for the whole book
           if (bodyEl.firstElementChild.children.length === 1) {
             return bodyEl.firstElementChild.children[0];
@@ -74,6 +85,19 @@ export class Controller {
       this.htmlExtractor.cssFiles = json.trim()?.split("$Newcss");
       this.htmlExtractor.cssFiles.shift();
 
+      // Update fonts path
+      this.htmlExtractor.cssFiles = this.htmlExtractor.cssFiles.map((file) =>
+        file.replaceAll("../Fonts", `${this.htmlExtractor.rootFolder}/Fonts`)
+      );
+
+      // Update images path
+      this.htmlExtractor.cssFiles = this.htmlExtractor.cssFiles.map((file) =>
+        file.replaceAll(
+          "hindawi_logo.svg",
+          `${this.htmlExtractor.rootFolder}/Images/hindawi_logo.svg`
+        )
+      );
+
       // alert("Got CSS");
 
       this.detectUserPreferences(bookId);
@@ -82,13 +106,6 @@ export class Controller {
 
       // Triggering click on body to show navigation bar at initial
       $("body").trigger("click");
-    } catch (error) {
-      alert(error);
-    }
-  }
-  async initWithPath(path: string) {
-    try {
-      fetch(path).then((res) => alert(res));
     } catch (error) {
       alert(error);
     }
@@ -103,6 +120,7 @@ export class Controller {
       this.htmlExtractor.bookId,
       this.htmlExtractor.chapters,
       this.htmlExtractor.cssFiles,
+      this.htmlExtractor.rootFolder,
       this?.userPreferences?.fontSize,
       this?.userPreferences?.chapter,
       this?.userPreferences?.anchorWordIndex,

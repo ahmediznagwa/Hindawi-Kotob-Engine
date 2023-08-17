@@ -11,14 +11,17 @@ export class BookChapter {
   exactColumnWidth: number;
   columnWidth: number;
   currentChapterIndex: number;
+  rootFolder: string;
   constructor(
     chapterEl: HTMLElement,
     bookId: string,
-    currentChapterIndex: number
+    currentChapterIndex: number,
+    rootFolder: string
   ) {
     this.bookId = bookId;
     this.chapterEl = chapterEl;
     this.currentChapterIndex = currentChapterIndex;
+    this.rootFolder = rootFolder;
 
     /**
      * An array of arrays containing the index of the starting and ending words of each page for the current rendered chapter
@@ -31,6 +34,18 @@ export class BookChapter {
     this.exactColumnWidth = 0;
     this.columnWidth = 0;
     this.renderChapter();
+  }
+
+  /**
+    Replace image paths
+  */
+  updateImagePaths(): void {
+    const images = UTILS.DOM_ELS.book.querySelectorAll("img");
+    images.forEach((img: HTMLImageElement) => {
+      const imgSrc = img.getAttribute("src").split("/");
+      const imgName = imgSrc[imgSrc.length - 1];
+      img.src = `${this.rootFolder}/Images/${imgName}`;
+    });
   }
 
   /**
@@ -144,45 +159,45 @@ export class BookChapter {
     if (!el?.querySelectorAll("span[n]").length) {
       return;
     }
-    Array.from(
-      el?.querySelectorAll("span[n]") as NodeListOf<HTMLElement>
-    ).forEach((wordEl: HTMLElement, i: number, wordArr: HTMLElement[]) => {
-      if ($(wordEl).closest("sup").length) {
-        return;
-      }
-      if (this.isInOtherPage(wordEl)) {
-        // word is in another page
-        if (!this.pagesContentRanges[this.page]) {
+
+    Array.from(el?.querySelectorAll("span[n]")).forEach(
+      (wordEl: HTMLElement, i: number, wordArr: HTMLElement[]) => {
+        if ($(wordEl).closest("sup").length) {
           return;
         }
-
-        this.pagesContentRanges[this.page][1] =
-          +wordArr[i - 1]?.getAttribute("n");
-        this.page++;
-
-        if (!this.pagesContentRanges[this.page]) {
-          return;
-        }
-
-        this.pagesContentRanges[this.page][0] = +wordEl?.getAttribute("n");
-      }
-      if (i === wordArr.length - 1) {
-        // last word in paragraph
-        const nextParent = this.getHighestParent(wordEl)
-          ?.nextElementSibling as HTMLElement;
-        if (this.isInOtherPage(nextParent)) {
+        if (this.isInOtherPage(wordEl)) {
+          // word is in another page
           if (!this.pagesContentRanges[this.page]) {
             return;
           }
-          this.pagesContentRanges[this.page][1] = +wordEl?.getAttribute("n");
+          this.pagesContentRanges[this.page][1] =
+            +wordArr[i - 1]?.getAttribute("n");
           this.page++;
-          this.pagesContentRanges[this.page][0] = +this.getSpan(
-            nextParent,
-            "first"
-          )?.getAttribute("n");
+
+          if (!this.pagesContentRanges[this.page]) {
+            return;
+          }
+
+          this.pagesContentRanges[this.page][0] = +wordEl?.getAttribute("n");
+        }
+        if (i === wordArr.length - 1) {
+          // last word in paragraph
+          const nextParent = this.getHighestParent(wordEl)
+            ?.nextElementSibling as HTMLElement;
+          if (this.isInOtherPage(nextParent)) {
+            if (!this.pagesContentRanges[this.page]) {
+              return;
+            }
+            this.pagesContentRanges[this.page][1] = +wordEl?.getAttribute("n");
+            this.page++;
+            this.pagesContentRanges[this.page][0] = +this.getSpan(
+              nextParent,
+              "first"
+            )?.getAttribute("n");
+          }
         }
       }
-    });
+    );
   }
 
   /**
@@ -230,8 +245,6 @@ export class BookChapter {
             this.loopOverWords(child);
           }
           const element = this.getElement(child, "prev");
-          console.log(element);
-          
 
           if (this.pagesContentRanges[this.page]) {
             this.pagesContentRanges[this.page][1] = +this.getSpan(
@@ -286,8 +299,6 @@ export class BookChapter {
         }
       }
     );
-
-    console.log(this.pagesContentRanges);
   }
 
   /**
@@ -301,8 +312,8 @@ export class BookChapter {
 
     // Some wrapper contain class controll the style so I added the whole thing if they
     if (
-      this.chapterEl.hasAttribute("class") &&
-      this.chapterEl.classList.contains("center")
+      this.chapterEl.classList.contains("center") ||
+      this.chapterEl.classList.contains("copyright")
     ) {
       section.innerHTML = "";
       section.appendChild(this.chapterEl);
@@ -313,6 +324,7 @@ export class BookChapter {
     this.calcPagesContentRanges();
     this.bindEventHandlersInChapter();
     this.wrapWordsInAnchors();
+    this.updateImagePaths();
     // this.insertFullPageImage(); insert fullpage image after specific index
   }
 
