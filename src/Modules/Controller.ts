@@ -52,9 +52,17 @@ export class Controller {
 
       // Getting table of content
       const toc = parser.parseFromString(tableOfContent, "text/xml");
+
       const tableOfContents = [];
-      Array.from(toc.querySelectorAll("string")).forEach((title, index) => {
-        tableOfContents.push(title.textContent);
+      tableOfContents.push({
+        chapterIndex: 0,
+        chapterTitle: "الصفحة الرئيسية",
+      });
+      Array.from(toc.querySelectorAll("TOCItem")).forEach((item) => {
+        tableOfContents.push({
+          chapterTitle: item.querySelector("Title").textContent,
+          chapterIndex: item.querySelector("ChapterIndex").textContent,
+        });
       });
 
       this.htmlExtractor = new HTMLExtractor(

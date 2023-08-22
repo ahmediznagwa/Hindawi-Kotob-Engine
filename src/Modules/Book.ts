@@ -169,7 +169,7 @@ export class Book {
       this.currentPageLastWordIndex / this.bookWordsCount;
     const t = isInFirstHalf ? firstWordProgress : lastWordProgress;
 
-    const percentage =
+    const percentage = this.currentChapterIndex === 0 ? 0 :
       (this.currentPageFirstWordIndex -
         1 +
         t *
@@ -568,24 +568,6 @@ export class Book {
     Generating book table of content
   */
   generateBookTableOfContent() {
-    // Getting chapters titles
-    // this.tableOfContents = [];
-    // this.chapters.forEach((chapter, index) => {
-    //   const title = chapter.querySelector("h1");
-    //   const titleAnchorWord = +title
-    //     ?.querySelector("span:first-child")
-    //     ?.getAttribute("n");
-
-    //   this.tableOfContents.push({
-    //     chapterIndex: index,
-    //     chapterTitle:
-    //       index === 0
-    //         ? "الصفحة الرئيسية"
-    //         : title?.textContent || `الفصل ${index}`,
-    //     chapterTitleAnchorWord: titleAnchorWord || null,
-    //   });
-    // });
-
     if (!this.tableOfContents.length) {
       $(UTILS.DOM_ELS.showTableOfContenBtn).remove();
       return;
@@ -595,8 +577,8 @@ export class Book {
     $(UTILS.DOM_ELS.tableOfContentList).html("");
     this.tableOfContents.forEach((item, index) => {
       $(UTILS.DOM_ELS.tableOfContentList).append(
-        ` <li data-chapter-index="${index + 1}">
-            <h4>${item}</h4>
+        ` <li data-chapter-index="${item.chapterIndex}">
+            <h4>${item.chapterTitle}</h4>
             <span> ${index + 1} </span>
           </li>
         `
