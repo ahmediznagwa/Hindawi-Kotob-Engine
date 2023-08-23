@@ -169,14 +169,16 @@ export class Book {
       this.currentPageLastWordIndex / this.bookWordsCount;
     const t = isInFirstHalf ? firstWordProgress : lastWordProgress;
 
-    const percentage = this.currentChapterIndex === 0 ? 0 :
-      (this.currentPageFirstWordIndex -
-        1 +
-        t *
-          (this.currentPageLastWordIndex -
-            this.currentPageFirstWordIndex +
-            1)) /
-      this.bookWordsCount;
+    const percentage =
+      this.currentChapterIndex === 0
+        ? 0
+        : (this.currentPageFirstWordIndex -
+            1 +
+            t *
+              (this.currentPageLastWordIndex -
+                this.currentPageFirstWordIndex +
+                1)) /
+          this.bookWordsCount;
 
     this.currentProgressPercent =
       (percentage || percentage === 0
@@ -235,37 +237,76 @@ export class Book {
   }
 
   /**
-    Go to element when click on anchor by id
+    Go to element when click on anchor by id (figures or footnotes)
   */
   goToElement(elementId: string, ev: any): void {
     ev?.stopPropagation();
     ev?.preventDefault();
+
+    // Checking if clicked element inside footnote
     const footnote = $(ev?.target).closest(".footnote");
 
     if (footnote.length) {
-      const id = $(ev?.target).closest("a").attr("id");
-      const element = this.getElement(`[href="#${id}"]`);
-      console.log(element);
+      const elementHasId = $(ev?.target).closest("a").attr("id") ? true : false;
+      const id =
+        $(ev?.target).closest("a").attr("id") ||
+        $(ev?.target).closest("a").attr("href").split("#")[1];
+      const element = elementHasId
+        ? this.getElement(`#${id}`)
+        : this.getElement(`[href="#${id}"]`);
 
-      this.goToElement(element?.getAttribute("id"), null);
+      this.goToElement(id, null);
       return;
     }
 
-    this.chapters.forEach((chapter: HTMLElement, index: number) => {
-      const targetEl = $(chapter).find(`#${elementId}`);
+    const elementSelector = `#${
+      elementId?.includes(".") ? elementId?.replace(".", "\\.") : elementId
+    }`;
+    // Check if it is in the same chapter (mainly user in footnotes)
+    let targetEl;
+    if ($(this.currentChapter.chapterEl).find(elementSelector).length) {
+      targetEl = $(this.currentChapter.chapterEl).find(elementSelector);
+      const firstWordInElementIndex = targetEl.find(`span:first-child`).length
+        ? +targetEl.find(`span:first-child`).attr("n")
+        : +targetEl.next("span[n]").attr("n") ||
+          +targetEl.parent().find("span[n]:last-child").attr("n");
 
+      this.goToPage(this.getPageNumberByWordIndex(firstWordInElementIndex));
+
+      // Highlight element after render page.
+      this.highlightSelectedElement($(elementSelector).parent()[0]);
+      return;
+    }
+
+    // Looping in other chapters (mainly used in figures)
+    $(UTILS.DOM_ELS.book).addClass("loading");
+    this.chapters.forEach((chapter: HTMLElement, index: number) => {
+      targetEl = $(chapter).find(elementSelector);
       if (targetEl.length) {
         this.renderChapter(index);
-        const firstWordInElementIndex = targetEl.find(`span:first-child`)
+
+        const firstWordInElementIndex = targetEl.find(`span:first-child`).length
           ? +targetEl.find(`span:first-child`).attr("n")
-          : +targetEl.next("span").attr("n");
+          : +targetEl.next("span[n]").attr("n") ||
+            +targetEl.parent().find("span[n]:last-child").attr("n");
 
         this.goToPage(this.getPageNumberByWordIndex(firstWordInElementIndex));
 
         // Highlight element after render page
-        $(`#${elementId}`).addClass("highlight-element");
+        this.highlightSelectedElement($(elementSelector)[0]);
       }
     });
+    $(UTILS.DOM_ELS.book).removeClass("loading");
+  }
+
+  /**
+    Get element by id
+  */
+  highlightSelectedElement(el: HTMLElement): void {
+    $(el).addClass("highlight-element");
+    setTimeout(() => {
+      $(el).removeClass("highlight-element");
+    }, 1000);
   }
 
   /**
@@ -273,6 +314,12 @@ export class Book {
   */
   getElement(selector: string): HTMLElement {
     let el: HTMLElement = null;
+    selector = selector.includes(".") ? selector.replace(".", "\\.") : selector;
+    // check if it is in the same chapter
+
+    if ($(this.currentChapter.chapterEl).find(selector).length) {
+      return $(this.currentChapter.chapterEl).find(selector)[0];
+    }
     this.chapters.forEach((chapter: HTMLElement, index: number) => {
       if ($(chapter).find(selector).length) {
         el = $(chapter).find(selector)[0];
@@ -310,6 +357,7 @@ export class Book {
       chapterIndex || 0,
       this.chapters.length - 1
     );
+
     this.currentChapter = new BookChapter(
       this.chapters[this.currentChapterIndex],
       this.bookId,
@@ -317,6 +365,7 @@ export class Book {
       this.rootFolder
     );
     this.currentChapter.calcPagesContentRanges();
+    this.updateProgressPercentage();
 
     setTimeout(() => {
       this.currentChapter.calcPagesContentRanges();

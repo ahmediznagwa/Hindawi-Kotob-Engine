@@ -305,6 +305,7 @@ export class BookChapter {
     Render selected chapter
   */
   renderChapter() {
+    $('body').addClass('loading');
     const section = document.createElement("section");
     section.classList.add("book-chapter");
 
@@ -325,6 +326,7 @@ export class BookChapter {
     this.bindEventHandlersInChapter();
     this.wrapWordsInAnchors();
     this.updateImagePaths();
+    $('body').removeClass('loading');
     // this.insertFullPageImage(); insert fullpage image after specific index
   }
 
@@ -334,11 +336,11 @@ export class BookChapter {
 
   wrapWordsInAnchors(): void {
     UTILS.DOM_ELS.words.forEach((word) => {
-      if (word.textContent.includes("hindawi.org")) {
-        if (word.textContent.includes("@")) {
-          word.innerHTML = `<a class="regular-link" href="mailto:${word.textContent}" target="_blank">${word.textContent}</a>`;
-          return;
-        }
+      if (word.textContent.includes("@hindawi.org")) {
+        word.innerHTML = `<a class="regular-link" href="mailto:${word.textContent}" target="_blank">${word.textContent}</a>`;
+        return;
+      }
+      if (word.textContent.includes("http")) {
         word.innerHTML = `<a class="regular-link" href="${word.textContent}" target="_blank">${word.textContent}</a>`;
       }
     });
