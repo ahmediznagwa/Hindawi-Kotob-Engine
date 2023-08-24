@@ -34,7 +34,7 @@ body {
   .book-container {
     background-color: var(--bgColorRgb);
     *:not(h1) {
-      font-family: inherit;
+      // font-family: inherit;
       // text-indent: 0;
     }
   }
