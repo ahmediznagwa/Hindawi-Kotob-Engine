@@ -247,18 +247,15 @@ export class Book {
     const footnote = $(ev?.target).closest(".footnote");
 
     if (footnote.length) {
-      const elementHasId = $(ev?.target).closest("a").attr("id") ? true : false;
       const id =
         $(ev?.target).closest("a").attr("id") ||
         $(ev?.target).closest("a").attr("href").split("#")[1];
-      const element = elementHasId
-        ? this.getElement(`#${id}`)
-        : this.getElement(`[href="#${id}"]`);
 
       this.goToElement(id, null);
       return;
     }
-
+    // console.log(elementSelector);
+    
     const elementSelector = `#${
       elementId?.includes(".") ? elementId?.replace(".", "\\.") : elementId
     }`;
@@ -365,7 +362,7 @@ export class Book {
       this.rootFolder
     );
     this.currentChapter.calcPagesContentRanges();
-    this.updateProgressPercentage();
+    this.changePage();
 
     setTimeout(() => {
       this.currentChapter.calcPagesContentRanges();
@@ -638,6 +635,8 @@ export class Book {
     UTILS.DOM_ELS.tableOfContentList.querySelectorAll("li")?.forEach((row) => {
       const chapterIndex = +row.getAttribute("data-chapter-index");
       row.addEventListener("click", (e) => {
+        console.log(chapterIndex);
+        
         e.stopPropagation();
         this.renderChapter(chapterIndex);
         $(UTILS.DOM_ELS.tableOfContentWrapper).removeClass(

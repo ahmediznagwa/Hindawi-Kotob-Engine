@@ -74,6 +74,9 @@ export class Controller {
       // Getting Chapters
       const chapters = json.trim()?.split("$Newchapter");
       chapters.shift();
+
+      console.log(chapters);
+      
       this.htmlExtractor.chapters = chapters.map((chapterString) => {
         const chapterHTML = parser.parseFromString(chapterString, "text/html");
         const bodyEl = chapterHTML.querySelector("body");
@@ -103,9 +106,12 @@ export class Controller {
       this.htmlExtractor.cssFiles.shift();
 
       // Update fonts path
-      this.htmlExtractor.cssFiles = this.htmlExtractor.cssFiles.map((file) =>
-        file.replaceAll("../Fonts", `${this.htmlExtractor.rootFolder}/Fonts`)
-      );
+      this.htmlExtractor.cssFiles = this.htmlExtractor.cssFiles.map((file) => {
+        if(file.includes('../font')) {
+          return file.replaceAll("../font", `${this.htmlExtractor.rootFolder}/Fonts`);
+        }
+        return file.replaceAll("../Fonts", `${this.htmlExtractor.rootFolder}/Fonts`);
+      });
 
       // Update images path
       this.htmlExtractor.cssFiles = this.htmlExtractor.cssFiles.map((file) =>

@@ -39,6 +39,11 @@ body {
     }
   }
 
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
   .blockquote,
   .epigraph {
     background-color: var(--greyBgRgb);
