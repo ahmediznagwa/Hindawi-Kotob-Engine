@@ -273,7 +273,11 @@ export class BookChapter {
         }
         //any other element
         else {
-          if (this.isInOtherPage(child?.nextElementSibling as HTMLElement)) {
+          if (
+            this.isInOtherPage(
+              this.getElement(child?.nextElementSibling as HTMLElement, "next")
+            )
+          ) {
             // paragraph at the end of the page
             if (this.isInOtherPage(this.getSpan(child, "last"))) {
               this.loopOverWords(child); // paragraph split into two pages
@@ -299,13 +303,15 @@ export class BookChapter {
         }
       }
     );
+
+    console.log(this.pagesContentRanges);
   }
 
   /**
     Render selected chapter
   */
   renderChapter() {
-    $('body').addClass('loading');
+    $("body").addClass("loading");
     const section = document.createElement("section");
     section.classList.add("book-chapter");
 
@@ -326,7 +332,7 @@ export class BookChapter {
     this.bindEventHandlersInChapter();
     this.wrapWordsInAnchors();
     this.updateImagePaths();
-    $('body').removeClass('loading');
+    $("body").removeClass("loading");
     // this.insertFullPageImage(); insert fullpage image after specific index
   }
 
