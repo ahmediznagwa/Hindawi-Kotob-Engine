@@ -255,7 +255,7 @@ export class Book {
       return;
     }
     // console.log(elementSelector);
-    
+
     const elementSelector = `#${
       elementId?.includes(".") ? elementId?.replace(".", "\\.") : elementId
     }`;
@@ -362,7 +362,7 @@ export class Book {
       this.rootFolder
     );
     this.currentChapter.calcPagesContentRanges();
-    this.changePage();
+    this.changePage('first');
 
     setTimeout(() => {
       this.currentChapter.calcPagesContentRanges();
@@ -635,8 +635,6 @@ export class Book {
     UTILS.DOM_ELS.tableOfContentList.querySelectorAll("li")?.forEach((row) => {
       const chapterIndex = +row.getAttribute("data-chapter-index");
       row.addEventListener("click", (e) => {
-        console.log(chapterIndex);
-        
         e.stopPropagation();
         this.renderChapter(chapterIndex);
         $(UTILS.DOM_ELS.tableOfContentWrapper).removeClass(
