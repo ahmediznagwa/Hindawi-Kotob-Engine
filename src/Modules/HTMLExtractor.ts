@@ -1,6 +1,5 @@
 export class HTMLExtractor {
   bookId: string;
-  cssFiles: string[] = [];
   chapters: any[];
   rootFolder: string;
   tableOfContents: string[];

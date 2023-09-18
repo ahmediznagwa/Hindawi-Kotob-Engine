@@ -100,33 +100,6 @@ export class Controller {
 
       // alert("Got Chapters");
 
-      this.htmlExtractor.cssFiles = json.trim()?.split("$Newcss");
-      this.htmlExtractor.cssFiles.shift();
-
-      // Update fonts path
-      this.htmlExtractor.cssFiles = this.htmlExtractor.cssFiles.map((file) => {
-        if (file.includes("../font")) {
-          return file.replaceAll(
-            "../font",
-            `${this.htmlExtractor.rootFolder}/Fonts`
-          );
-        }
-        return file.replaceAll(
-          "../Fonts",
-          `${this.htmlExtractor.rootFolder}/Fonts`
-        );
-      });
-
-      // Update images path
-      this.htmlExtractor.cssFiles = this.htmlExtractor.cssFiles.map((file) =>
-        file.replaceAll(
-          "hindawi_logo.svg",
-          `${this.htmlExtractor.rootFolder}/Images/hindawi_logo.svg`
-        )
-      );
-
-      // alert("Got CSS");
-
       this.detectUserPreferences(bookId);
       this.setupHandlers();
       this.setupEventListeners();
@@ -146,7 +119,6 @@ export class Controller {
     this.book = new Book(
       this.htmlExtractor.bookId,
       this.htmlExtractor.chapters,
-      this.htmlExtractor.cssFiles,
       this.htmlExtractor.rootFolder,
       this.htmlExtractor.tableOfContents,
       this?.userPreferences?.fontSize,
@@ -190,6 +162,7 @@ export class Controller {
     const messageObj: PageUpdatedMessage = {
       isFirstPage: this.book.isFirstPage,
       isLastPage: this.book.isLastPage,
+      colorMode: this.book.colorMode,
       chapterMaxPages: UTILS.calcPageCount(),
       maxChapters: this.book.chapters.length - 1,
       percentage: Math.round(this.book.currentProgressPercent),

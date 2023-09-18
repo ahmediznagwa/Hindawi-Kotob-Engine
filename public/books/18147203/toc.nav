@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfTOCItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TOCItem>
+    <Title>تمهيد</Title>
+    <ChapterIndex>4</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>مقدمة</Title>
+    <ChapterIndex>5</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>المساهمون</Title>
+    <ChapterIndex>6</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>الجزء الأول: من الأساسيات النظرية إلى التطبيقات العملية</Title>
+    <ChapterIndex>7</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>تطبيق العلم على أرض الواقع</Title>
+    <ChapterIndex>8</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>استخدام الكمبيوتر: أسلوبٌ بديل في الكيمياء والأحياء</Title>
+    <ChapterIndex>9</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>الكوكب الأرجواني: جولة قصيرة في عالم البورفيرينات
+                والجزيئات الحلقية الكبيرة ذات الصلة</Title>
+    <ChapterIndex>10</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>التخدير: لا تنسَي الكيمياء التي تعلمتِها</Title>
+    <ChapterIndex>11</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>التطور الأخضر</Title>
+    <ChapterIndex>12</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>الجزء الثاني: الكيمياء وعلوم الحياة</Title>
+    <ChapterIndex>13</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>التفكير بطريقة الإنزيم</Title>
+    <ChapterIndex>14</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>استشعار الأكسجين</Title>
+    <ChapterIndex>15</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>لنجعلْ علم الأحياء مصورًا: الكيمياء والتصوير
+                الخلوي</Title>
+    <ChapterIndex>16</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>الكيمياء الحيوية غير العضوية: الحماس تجاه التَّلاعُب
+                بالفلزات</Title>
+    <ChapterIndex>17</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>اكتشافات مُذهِلة</Title>
+    <ChapterIndex>18</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>الحمض النووي الراقص</Title>
+    <ChapterIndex>19</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>الجزء الثالث: المواد الوظيفية</Title>
+    <ChapterIndex>20</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>الجزيئات الضخمة تنقذ الموقف</Title>
+    <ChapterIndex>21</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>المواد الحيوية البحرية: كيف يَستخدِم علم الأحياء البحرية الكيمياء في صُنع
+                المواد</Title>
+    <ChapterIndex>22</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>ميزة صِغر الحجم: تكنولوجيا النانو</Title>
+    <ChapterIndex>23</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>الجزء الرابع: الكيمياء والطاقة</Title>
+    <ChapterIndex>24</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>حلول الكيميائيين لمشكلات الطاقة</Title>
+    <ChapterIndex>25</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>الدور المرتقب للإلكترونات والجُزيئات في إنقاذ
+                العالَم</Title>
+    <ChapterIndex>26</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>الفلزات والميكروبات والوقود الشمسي</Title>
+    <ChapterIndex>27</ChapterIndex>
+  </TOCItem>
+</ArrayOfTOCItem>

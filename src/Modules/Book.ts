@@ -11,7 +11,6 @@ interface ITableOfContent {
 export class Book {
   bookId: string;
   chapters: HTMLDivElement[];
-  cssFiles: string[];
   rootFolder: string;
   fontSize: number;
   currentChapterIndex: number;
@@ -39,7 +38,6 @@ export class Book {
   constructor(
     bookId,
     chapters,
-    cssFiles,
     rootFolder,
     tableOfContents,
     fontSize = 18,
@@ -54,7 +52,6 @@ export class Book {
     this.tableOfContents = tableOfContents;
     this.bookWordsCount = null;
     this.chapters = chapters;
-    this.cssFiles = cssFiles;
     this.currentChapterIndex = Math.min(
       currentChapterIndex || 0,
       this.chapters.length - 1
@@ -586,13 +583,10 @@ export class Book {
     Add book styles to the index.html head
   */
   addBookStyles() {
-    this.cssFiles.forEach((cssString) => {
-      const style = document.createElement("style");
-      style.textContent = cssString
-        .replaceAll("{", "\n{\n")
-        .replaceAll("}", "\n}\n");
-      document.head.prepend(style);
-    });
+    const style = document.createElement("link");
+    style.rel = 'stylesheet'
+    style.href = `${this.rootFolder}/Book.css`
+    document.head.prepend(style);
   }
 
   /**

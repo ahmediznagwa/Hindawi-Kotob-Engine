@@ -303,8 +303,6 @@ export class BookChapter {
         }
       }
     );
-
-    console.log(this.pagesContentRanges);
   }
 
   /**

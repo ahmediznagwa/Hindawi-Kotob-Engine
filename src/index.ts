@@ -10,15 +10,12 @@ export const hindawiReaders = (function () {
   controller = new Controller();
   // for demo only
   // window.addEventListener("load", async () => {
-  //   // const bookId = '13020208' // publisher;
-  //   // const bookId = "30314251"; // hindawi;
-  //   // const bookId = "79191640"; // hindawi;
-  //   const bookId = "84026414"; // hindawi;
+  //   const bookId = "18147203"; // hindawi;
   //   Promise.all([
-  //     fetch(`/books/${bookId}/Content.hfbc`).then((res) => res.text()),
-  //     fetch(`/books/${bookId}/toc.nav`).then((res) => res.text()),
+  //     fetch(`./books/${bookId}/Content.hfbc`).then((res) => res.text()),
+  //     fetch(`./books/${bookId}/toc.nav`).then((res) => res.text()),
   //   ]).then(([res1, res2]) => {
-  //     controller.initWithChapters(bookId, res1, `/books/${bookId}`, res2);
+  //     controller.initWithChapters(bookId, res1, `./books/${bookId}`, res2);
   //   });
   // });
   return {
