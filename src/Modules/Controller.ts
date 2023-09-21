@@ -26,7 +26,6 @@ export class Controller {
     json: string,
     rootFolder: string,
     tableOfContent: string,
-    bookCss: string,
     config?: IUserPreferencesState
   ) {
     try {
@@ -69,8 +68,7 @@ export class Controller {
       this.htmlExtractor = new HTMLExtractor(
         bookId,
         rootFolder,
-        tableOfContents,
-        bookCss
+        tableOfContents
       );
 
       // Getting Chapters
@@ -123,7 +121,6 @@ export class Controller {
       this.htmlExtractor.chapters,
       this.htmlExtractor.rootFolder,
       this.htmlExtractor.tableOfContents,
-      this.htmlExtractor.bookCss,
       this?.userPreferences?.fontSize,
       this?.userPreferences?.chapter,
       this?.userPreferences?.anchorWordIndex,
