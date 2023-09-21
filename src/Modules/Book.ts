@@ -34,12 +34,13 @@ export class Book {
   currentPageLastWordIndex: number;
   anchorWordIndex: number;
   tableOfContents: ITableOfContent[] = [];
-
+  bookCss: string;
   constructor(
     bookId,
     chapters,
     rootFolder,
     tableOfContents,
+    bookCss,
     fontSize = 18,
     currentChapterIndex = 0,
     anchorWordIndex,
@@ -50,6 +51,7 @@ export class Book {
     this.bookId = bookId;
     this.rootFolder = rootFolder;
     this.tableOfContents = tableOfContents;
+    this.bookCss = bookCss;
     this.bookWordsCount = null;
     this.chapters = chapters;
     this.currentChapterIndex = Math.min(
@@ -359,7 +361,7 @@ export class Book {
       this.rootFolder
     );
     this.currentChapter.calcPagesContentRanges();
-    this.changePage('first');
+    this.changePage("first");
 
     setTimeout(() => {
       this.currentChapter.calcPagesContentRanges();
@@ -583,9 +585,10 @@ export class Book {
     Add book styles to the index.html head
   */
   addBookStyles() {
-    const style = document.createElement("link");
-    style.rel = 'stylesheet'
-    style.href = `${this.rootFolder}/Book.css`
+    const style = document.createElement("style");
+    style.textContent = this.bookCss
+      .replaceAll("{", "\n{\n")
+      .replaceAll("}", "\n}\n");
     document.head.prepend(style);
   }
 

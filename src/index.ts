@@ -1,5 +1,5 @@
 import { Controller } from "./Modules/Controller";
-import { json, json4 } from "./Modules/constants";
+import { book18147203CSS } from "./Modules/constants";
 declare global {
   interface Window {
     hindawiReaders: any;
@@ -15,7 +15,7 @@ export const hindawiReaders = (function () {
   //     fetch(`./books/${bookId}/Content.hfbc`).then((res) => res.text()),
   //     fetch(`./books/${bookId}/toc.nav`).then((res) => res.text()),
   //   ]).then(([res1, res2]) => {
-  //     controller.initWithChapters(bookId, res1, `./books/${bookId}`, res2);
+  //     controller.initWithChapters(bookId, res1, `./books/${bookId}`, res2, book18147203CSS);
   //   });
   // });
   return {
