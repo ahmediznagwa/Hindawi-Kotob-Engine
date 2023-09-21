@@ -586,9 +586,10 @@ export class Book {
   */
   addBookStyles() {
     const style = document.createElement("style");
-    style.textContent = this.bookCss
-      .replaceAll("{", "\n{\n")
-      .replaceAll("}", "\n}\n");
+    // style.textContent = this.bookCss
+    //   .replaceAll("{", "\n{\n")
+    //   .replaceAll("}", "\n}\n");
+    style.textContent = this.bookCss;
     document.head.prepend(style);
   }
 
