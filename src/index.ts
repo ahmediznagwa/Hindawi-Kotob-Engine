@@ -10,6 +10,7 @@ export const hindawiReaders = (function () {
   // for demo only
   // window.addEventListener("load", async () => {
   //   const bookId = "18147203"; // hindawi;
+  //   const bookId = "69058261"; // publisher;
   //   Promise.all([
   //     fetch(`./books/${bookId}/Content.hfbc`).then((res) => res.text()),
   //     fetch(`./books/${bookId}/toc.nav`).then((res) => res.text()),
