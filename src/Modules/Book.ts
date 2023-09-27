@@ -629,6 +629,7 @@ export class Book {
       const chapterIndex = +row.getAttribute("data-chapter-index");
       row.addEventListener("click", (e) => {
         e.stopPropagation();
+
         this.renderChapter(chapterIndex);
         $(UTILS.DOM_ELS.tableOfContentWrapper).removeClass(
           "book-content-list--show"

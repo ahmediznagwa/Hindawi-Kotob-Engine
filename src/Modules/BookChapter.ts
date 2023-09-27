@@ -42,7 +42,7 @@ export class BookChapter {
   updateImagePaths(): void {
     const images = UTILS.DOM_ELS.book.querySelectorAll("img");
     images.forEach((img: HTMLImageElement) => {
-      const imgSrc = img.getAttribute("src").split("/");
+      const imgSrc = img.getAttribute("src")?.split("/") || img.getAttribute("xlink:href")?.split("/");
       const imgName = imgSrc[imgSrc.length - 1];
       img.src = `${this.rootFolder}/Images/${imgName}`;
     });
@@ -312,9 +312,9 @@ export class BookChapter {
     $("body").addClass("loading");
     const section = document.createElement("section");
     section.classList.add("book-chapter");
-
-    section.innerHTML = this.chapterEl.innerHTML;
-
+    
+    section.innerHTML = this.chapterEl?.innerHTML;
+    
     // Some wrapper contain class controll the style so I added the whole thing if they
     if (
       this.chapterEl.classList.contains("center") ||
