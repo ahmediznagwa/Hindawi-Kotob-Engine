@@ -43,6 +43,7 @@ export class BookChapter {
     const images = UTILS.DOM_ELS.book.querySelectorAll("img");
     images.forEach((img: HTMLImageElement) => {
       const imgSrc = img.getAttribute("src")?.split("/") || img.getAttribute("xlink:href")?.split("/");
+      
       const imgName = imgSrc[imgSrc.length - 1];
       img.src = `${this.rootFolder}/Images/${imgName}`;
     });

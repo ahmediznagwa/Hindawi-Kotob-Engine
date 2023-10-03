@@ -75,6 +75,8 @@ export class Controller {
 
       const chapters = json.trim()?.split("$Newchapter");
       chapters.shift();
+      console.log(chapters);
+      
       
 
       this.htmlExtractor.chapters = chapters.map((chapterString) => {
@@ -83,9 +85,11 @@ export class Controller {
 
         if (bodyEl) {
           // Hindawi books first pages
+          
           if (
             bodyEl.firstElementChild.classList.contains("cover-page") ||
-            bodyEl.firstElementChild.classList.contains("center")
+            bodyEl.firstElementChild.classList.contains("center") || 
+            bodyEl.firstElementChild.classList.contains("body") 
           ) {
             return bodyEl;
           }

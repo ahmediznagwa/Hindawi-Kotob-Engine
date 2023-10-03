@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfTOCItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TOCItem>
+    <Title>تصدير</Title>
+    <ChapterIndex>4</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>مقدمة</Title>
+    <ChapterIndex>5</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>الطب والسحر والأدوية السحرية</Title>
+    <ChapterIndex>6</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>الصيدلة في سومر وبابل وآشور</Title>
+    <ChapterIndex>7</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>الصيدلة في مصر القديمة</Title>
+    <ChapterIndex>8</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>أبقراط والمدرسة الأبقراطية١</Title>
+    <ChapterIndex>9</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>ديسقوريدس</Title>
+    <ChapterIndex>10</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>جالينوس</Title>
+    <ChapterIndex>11</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>الصيدلة عند العرب</Title>
+    <ChapterIndex>12</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>أبو بكر الرازي</Title>
+    <ChapterIndex>13</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>علي بن عباس المجوسي</Title>
+    <ChapterIndex>14</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>ابن سينا</Title>
+    <ChapterIndex>15</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>ابن ميمون، ابن البيطار، كوهين العطار، داود الأنطاكي</Title>
+    <ChapterIndex>16</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>نظام الحِسْبة ومراقبة الأدوية عند العرب</Title>
+    <ChapterIndex>17</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>المصادر</Title>
+    <ChapterIndex>18</ChapterIndex>
+  </TOCItem>
+</ArrayOfTOCItem>
