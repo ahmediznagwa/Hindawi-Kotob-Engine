@@ -40,12 +40,21 @@ export class BookChapter {
     Replace image paths
   */
   updateImagePaths(): void {
-    const images = UTILS.DOM_ELS.book.querySelectorAll("img");
-    images.forEach((img: HTMLImageElement) => {
-      const imgSrc = img.getAttribute("src")?.split("/") || img.getAttribute("xlink:href")?.split("/");
-      
+    const images =
+      Array.from(UTILS.DOM_ELS.book.querySelectorAll("img")).length > 0
+        ? UTILS.DOM_ELS.book.querySelectorAll("img")
+        : UTILS.DOM_ELS.book.querySelectorAll("image");
+
+    images.forEach((img: HTMLImageElement | SVGImageElement) => {
+      const imgSrc =
+        img.getAttribute("src")?.split("/") ||
+        img.getAttribute("xlink:href")?.split("/");
       const imgName = imgSrc[imgSrc.length - 1];
-      img.src = `${this.rootFolder}/Images/${imgName}`;
+      if (img instanceof HTMLImageElement) {
+        img.src = `${this.rootFolder}/Images/${imgName}`;
+        return;
+      }
+      img.setAttribute("xlink:href", `${this.rootFolder}/Images/${imgName}`);
     });
   }
 
@@ -313,9 +322,9 @@ export class BookChapter {
     $("body").addClass("loading");
     const section = document.createElement("section");
     section.classList.add("book-chapter");
-    
+
     section.innerHTML = this.chapterEl?.innerHTML;
-    
+
     // Some wrapper contain class controll the style so I added the whole thing if they
     if (
       this.chapterEl.classList.contains("center") ||

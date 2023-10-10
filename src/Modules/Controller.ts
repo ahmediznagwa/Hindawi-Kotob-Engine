@@ -75,34 +75,36 @@ export class Controller {
 
       const chapters = json.trim()?.split("$Newchapter");
       chapters.shift();
-      console.log(chapters);
-      
-      
 
-      this.htmlExtractor.chapters = chapters.map((chapterString) => {
-        const chapterHTML = parser.parseFromString(chapterString, "text/html");
-        const bodyEl = chapterHTML.querySelector("body");
-
-        if (bodyEl) {
-          // Hindawi books first pages
-          
-          if (
-            bodyEl.firstElementChild.classList.contains("cover-page") ||
-            bodyEl.firstElementChild.classList.contains("center") || 
-            bodyEl.firstElementChild.classList.contains("body") 
-          ) {
+      this.htmlExtractor.chapters = chapters.map(
+        (chapterString: string, index: number) => {
+          const chapterHTML = parser.parseFromString(
+            chapterString,
+            "text/html"
+          );
+          const bodyEl = chapterHTML.querySelector("body");
+          if (index === 0) {
             return bodyEl;
           }
-          // checking if there is only one child for the whole book
-          if (bodyEl.firstElementChild.children.length === 1) {
-            return bodyEl.firstElementChild.children[0];
+
+          if (bodyEl) {
+            // Hindawi books first pages
+
+            if (bodyEl.firstElementChild.classList.contains("center")) {
+              return bodyEl;
+            }
+            // checking if there is only one child for the whole book
+            if (bodyEl.firstElementChild.children.length === 1) {
+              return bodyEl.firstElementChild.children[0];
+            }
+            return bodyEl.firstElementChild;
           }
-          return bodyEl.firstElementChild;
+
+          return chapterHTML.firstElementChild.children.length <= 0
+            ? chapterHTML.firstElementChild.firstElementChild
+            : chapterHTML.firstElementChild;
         }
-        return chapterHTML.firstElementChild.children.length <= 0
-          ? chapterHTML.firstElementChild.firstElementChild
-          : chapterHTML.firstElementChild;
-      });
+      );
 
       // alert("Got Chapters");
 
