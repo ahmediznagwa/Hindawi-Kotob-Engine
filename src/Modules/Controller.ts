@@ -76,6 +76,8 @@ export class Controller {
       const chapters = json.trim()?.split("$Newchapter");
       chapters.shift();
 
+      console.log(chapters[3]);
+
       this.htmlExtractor.chapters = chapters.map(
         (chapterString: string, index: number) => {
           const chapterHTML = parser.parseFromString(
@@ -90,7 +92,10 @@ export class Controller {
           if (bodyEl) {
             // Hindawi books first pages
 
-            if (bodyEl.firstElementChild.classList.contains("center")) {
+            if (
+              bodyEl.firstElementChild.classList.contains("center") ||
+              bodyEl.children.length > 1
+            ) {
               return bodyEl;
             }
             // checking if there is only one child for the whole book
