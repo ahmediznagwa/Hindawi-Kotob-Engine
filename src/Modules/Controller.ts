@@ -280,9 +280,9 @@ export class Controller {
       );
     });
     this.wordPositionChangeHandler();
-    document.fonts.onloadingdone = () => {
-      this.resizeEventHandler();
-    };
+    // document.fonts.onloadingdone = () => {
+    //   this.resizeEventHandler();
+    // };
 
     // alert("Setup Event Listeners Done");
   }

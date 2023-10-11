@@ -1,0 +1,772 @@
+@font-face {
+	font-family:"Adobe Arabic";
+	font-style:normal;
+	font-weight:bold;
+	src : url("../font/AdobeArabic-Bold.otf");
+}
+@font-face {
+	font-family:"Adobe Arabic";
+	font-style:italic;
+	font-weight:bold;
+	src : url("../font/AdobeArabic-BoldItalic.otf");
+}
+@font-face {
+	font-family:"Adobe Arabic";
+	font-style:oblique;
+	font-weight:bold;
+	src : url("../font/AdobeArabic-BoldItalic.otf");
+}
+@font-face {
+	font-family:"Bahij Lotus";
+	font-style:normal;
+	font-weight:300;
+	src : url("$AppPath/Fonts/BahijLotus.ttf");
+}
+@font-face {
+	font-family:"Bahij Lotus";
+	font-style:normal;
+	font-weight:bold;
+	src : url("$AppPath/Fonts/BahijLotus-Bold.ttf");
+}
+@font-face {
+	font-family:"Simplified Arabic";
+	font-style:normal;
+	font-weight:normal;
+	src : url("$AppPath/Fonts/SimplifiedArabic.ttf");
+}
+@font-face {
+	font-family:"Times New Roman";
+	font-style:normal;
+	font-weight:bold;
+	src : url("$AppPath/Fonts/TimesNewRomanPS-BoldMT.ttf");
+}
+@font-face {
+	font-family:"Times New Roman";
+	font-style:italic;
+	font-weight:normal;
+	src : url("$AppPath/Fonts/TimesNewRomanPS-ItalicMT.ttf");
+}
+@font-face {
+	font-family:"Times New Roman";
+	font-style:oblique;
+	font-weight:normal;
+	src : url("$AppPath/Fonts/TimesNewRomanPS-ItalicMT.ttf");
+}
+@font-face {
+	font-family:"Times New Roman";
+	font-style:normal;
+	font-weight:normal;
+	src : url("$AppPath/Fonts/TimesNewRomanPSMT.ttf");
+}
+body, div, dl, dt, dd, h1, h2, h3, h4, h5, h6, p, pre, code, blockquote {
+	margin:0;
+	padding:0;
+	border-width:0;
+}
+body {
+	-epub-hyphens:auto;
+}
+@page {
+	margin : 0px 0px 0px 0px;
+}
+a._idGenColorInherit {
+	color:inherit;
+}
+div.Basic-Graphics-Frame {
+	border-color:#000000;
+	border-width:1px;
+	border-style:solid;
+}
+div.Basic-Text-Frame {
+	border-style:solid;
+}
+table.No-Table-Style {
+	border-collapse:collapse;
+	border-color:#000000;
+	border-style:solid;
+	border-width:1px;
+	margin-bottom:-4px;
+	margin-top:4px;
+}
+td.No-Table-Style {
+	border-left-width:1px;
+	border-left-style:solid;
+	border-left-color:#000000;
+	border-top-width:1px;
+	border-top-style:solid;
+	border-top-color:#000000;
+	border-right-width:1px;
+	border-right-style:solid;
+	border-right-color:#000000;
+	border-bottom-width:1px;
+	border-bottom-style:solid;
+	border-bottom-color:#000000;
+	padding-top:4px;
+	padding-bottom:4px;
+	padding-left:4px;
+	padding-right:4px;
+	vertical-align:top;
+}
+tr.No-Table-Style {
+	page-break-after:auto;
+	page-break-before:auto;
+}
+p.Body-Text {
+	color:#000000;
+	font-family:"Times New Roman", serif;
+	font-size: 1em;
+	font-style:normal;
+	font-variant:normal;
+	font-weight:normal;
+	line-height:1.357;
+	margin-bottom:6px;
+	margin-left:0;
+	margin-right:0;
+	margin-top:0;
+	orphans:1;
+	page-break-after:auto;
+	page-break-before:auto;
+	text-align:right;
+	text-decoration:none;
+	text-indent:17px;
+	text-transform:none;
+	widows:1;
+}
+p.Normal, li.Normal {
+	-epub-text-align-last:right;
+	color:#000000;
+	font-family:"Bahij Lotus", serif;
+	font-size: 1em;
+	font-style:normal;
+	font-variant:normal;
+	font-weight:300;
+	line-height:1.462;
+	margin-bottom:4px;
+	margin-left:0;
+	margin-right:0;
+	margin-top:0;
+	orphans:1;
+	page-break-after:auto;
+	page-break-before:auto;
+	text-align:justify;
+	text-decoration:none;
+	text-indent:17px;
+	text-transform:none;
+	widows:1;
+}
+p.Normal--Web- {
+	-epub-text-align-last:right;
+	color:#000000;
+	font-family:"Times New Roman", serif;
+	font-size: 1em;
+	font-style:normal;
+	font-variant:normal;
+	font-weight:normal;
+	line-height:1.583;
+	margin-bottom:5px;
+	margin-left:0;
+	margin-right:0;
+	margin-top:5px;
+	orphans:1;
+	page-break-after:auto;
+	page-break-before:auto;
+	text-align:justify;
+	text-decoration:none;
+	text-indent:17px;
+	text-transform:none;
+	widows:1;
+}
+p.Basic-Paragraph {
+	-epub-text-align-last:right;
+	color:#000000;
+	font-family:"Bahij Lotus", serif;
+	font-size: 1em;
+	font-style:normal;
+	font-variant:normal;
+	font-weight:300;
+	line-height:1.364;
+	margin-bottom:0;
+	margin-left:0;
+	margin-right:0;
+	margin-top:0;
+	orphans:1;
+	page-break-after:auto;
+	page-break-before:auto;
+	text-align:justify;
+	text-decoration:none;
+	text-indent:17px;
+	text-transform:none;
+	widows:1;
+}
+p.b15 {
+	-epub-hyphens:none;
+	-epub-text-align-last:right;
+	color:#000000;
+	font-family:"Bahij Lotus", serif;
+	font-size: 1em;
+	font-style:normal;
+	font-variant:normal;
+	font-weight:bold;
+	line-height:1.571;
+	margin-bottom:6px;
+	margin-left:0;
+	margin-right:0;
+	margin-top:9px;
+	orphans:1;
+	page-break-after:auto;
+	page-break-before:auto;
+	text-align:justify;
+	text-decoration:none;
+	text-indent:0;
+	text-transform:none;
+	widows:1;
+}
+p.b16 {
+	-epub-hyphens:none;
+	color:#000000;
+	font-family:"Bahij Lotus", serif;
+	font-size: 1em;
+	font-style:normal;
+	font-variant:normal;
+	font-weight:bold;
+	line-height:1.333;
+	margin-bottom:3px;
+	margin-left:0;
+	margin-right:0;
+	margin-top:9px;
+	orphans:1;
+	page-break-after:auto;
+	page-break-before:auto;
+	text-align:center;
+	text-decoration:none;
+	text-indent:0;
+	text-transform:none;
+	widows:1;
+}
+p.bup {
+	-epub-text-align-last:right;
+	font-family:"Simplified Arabic", sans-serif;
+	font-size: 1em;
+	font-style:normal;
+	font-variant:normal;
+	font-weight:normal;
+	line-height:0;
+	margin-bottom:0;
+	margin-left:0;
+	margin-right:23px;
+	margin-top:0;
+	orphans:1;
+	page-break-after:auto;
+	page-break-before:auto;
+	text-align:justify;
+	text-decoration:none;
+	text-indent:-23px;
+	text-transform:none;
+	widows:1;
+}
+p.fasel {
+	color:#000000;
+	font-family:"Bahij Muna ZSH150927", serif;
+	font-size: 1.4em;
+	font-style:normal;
+	font-variant:normal;
+	font-weight:bold;
+	line-height:1.5;
+	margin-bottom:14px;
+	margin-left:0;
+	margin-right:0;
+	margin-top:0;
+	orphans:1;
+	page-break-after:auto;
+	page-break-before:auto;
+	text-align:center;
+	text-decoration:none;
+	text-indent:0;
+	text-transform:none;
+	widows:1;
+}
+p.footnote-e {
+	color:#000000;
+	font-family:"Times New Roman", serif;
+	font-size: 1em;
+	font-style:normal;
+	font-variant:normal;
+	font-weight:normal;
+	line-height:1.625;
+	margin-bottom:0;
+	margin-right:10;
+	margin-left:0;
+	margin-top:0;
+	direction: ltr;
+	orphans:1;
+	page-break-after:auto;
+	page-break-before:auto;
+	text-align:left;
+	
+	text-decoration:none;
+	text-indent:0px;
+	text-transform:none;
+	widows:1;
+}
+p.footnote-A {
+	color:#000000;
+	font-family:"Times New Roman", serif;
+	font-size: 1em;
+	font-style:normal;
+	font-variant:normal;
+	font-weight:normal;
+	line-height:1.625;
+	margin-bottom:0;
+	margin-left:0;
+	margin-right:10px;
+	margin-top:0;
+	orphans:1;
+	page-break-after:auto;
+	page-break-before:auto;
+	text-align:justify;
+	text-decoration:none;
+	text-indent:0px;
+	text-transform:none;
+	widows:1;
+}
+p.table {
+	-epub-hyphens:none;
+	color:#000000;
+	font-family:"Bahij Lotus", serif;
+	font-size: 1em;
+	font-style:normal;
+	font-variant:normal;
+	font-weight:300;
+	line-height:1.364;
+	margin-bottom:0;
+	margin-left:0;
+	margin-right:0;
+	margin-top:0;
+	orphans:1;
+	page-break-after:auto;
+	page-break-before:auto;
+	text-align:right;
+	text-decoration:none;
+	text-indent:3px;
+	text-transform:none;
+	widows:1;
+}
+span.Footnote-reference {
+	font-family:"Bahij Lotus", serif;
+	font-size: 1em;
+	font-style:normal;
+	font-weight:300;
+	vertical-align:super;
+}
+span.Hyperlink {
+	color:#0563c1;
+	font-style:normal;
+	font-weight:normal;
+	text-decoration:underline;
+}
+table.TableOverride-1 {
+	border-collapse:collapse;
+	margin-left:auto;
+	margin-right:auto;
+}
+td.CellOverride-1 {
+	border-bottom-width:1px;
+	border-left-width:1px;
+	border-top-width:1px;
+	padding-bottom:4px;
+	padding-left:4px;
+	padding-right:4px;
+	padding-top:4px;
+	vertical-align:middle;
+}
+td.CellOverride-2 {
+	border-left-width:1px;
+	border-right-width:1px;
+	border-top-width:1px;
+	padding-bottom:4px;
+	padding-left:4px;
+	padding-right:4px;
+	padding-top:4px;
+	vertical-align:bottom;
+}
+td.CellOverride-3 {
+	border-left-width:1px;
+	border-right-width:1px;
+	border-top-width:1px;
+	padding-bottom:4px;
+	padding-left:4px;
+	padding-right:4px;
+	padding-top:4px;
+}
+td.CellOverride-4 {
+	border-bottom-style:none;
+	border-bottom-width:1px;
+	border-left-width:1px;
+	border-right-width:1px;
+	border-top-width:1px;
+	padding-bottom:4px;
+	padding-left:4px;
+	padding-right:4px;
+	padding-top:4px;
+}
+td.CellOverride-5 {
+	border-bottom-color:#000000;
+	border-bottom-style:solid;
+	border-bottom-width:1px;
+	border-left-width:1px;
+	border-right-width:1px;
+	border-top-width:1px;
+	padding-bottom:4px;
+	padding-left:4px;
+	padding-right:4px;
+	padding-top:4px;
+}
+td.CellOverride-6 {
+	border-bottom-style:none;
+	border-bottom-width:1px;
+	border-left-width:1px;
+	border-right-width:1px;
+	border-top-style:none;
+	border-top-width:1px;
+	padding-bottom:4px;
+	padding-left:4px;
+	padding-right:4px;
+	padding-top:4px;
+}
+td.CellOverride-7 {
+	border-left-width:1px;
+	border-right-width:1px;
+	border-top-color:#000000;
+	border-top-style:solid;
+	border-top-width:1px;
+	padding-bottom:4px;
+	padding-left:4px;
+	padding-right:4px;
+	padding-top:4px;
+}
+td.CellOverride-8 {
+	border-bottom-color:#000000;
+	border-bottom-style:solid;
+	border-bottom-width:1px;
+	border-left-width:1px;
+	border-right-width:1px;
+	border-top-style:none;
+	border-top-width:1px;
+	padding-bottom:4px;
+	padding-left:4px;
+	padding-right:4px;
+	padding-top:4px;
+}
+td.CellOverride-9 {
+	border-bottom-color:#000000;
+	border-bottom-style:solid;
+	border-bottom-width:1px;
+	border-left-width:1px;
+	border-right-width:1px;
+	border-top-color:#000000;
+	border-top-style:solid;
+	border-top-width:1px;
+	padding-bottom:4px;
+	padding-left:4px;
+	padding-right:4px;
+	padding-top:4px;
+}
+p.ParaOverride-1 {
+	text-align:center;
+	text-indent:0px;
+}
+p.ParaOverride-2 {
+	page-break-after:always;
+	text-align:center;
+	text-indent:0px;
+}
+p.ParaOverride-3 {
+	margin-bottom:3px;
+	text-align:left;
+	text-indent:0px;
+}
+p.ParaOverride-4 {
+	margin-bottom:3px;
+	page-break-after:always;
+	text-align:left;
+	text-indent:0px;
+}
+p.ParaOverride-5 {
+	margin-bottom:6px;
+}
+p.ParaOverride-6 {
+	page-break-after:always;
+}
+p.ParaOverride-7 {
+	margin-left:43px;
+	margin-right:43px;
+}
+p.ParaOverride-8 {
+	margin-top:3px;
+}
+p.ParaOverride-9 {
+	margin-bottom:3px;
+}
+p.ParaOverride-10 {
+	margin-bottom:3px;
+	margin-top:3px;
+}
+li.ParaOverride-11 {
+	list-style-position:outside;
+	margin-bottom:3px;
+	margin-right:28px;
+	text-indent:0px;
+}
+p.ParaOverride-12 {
+	font-size: 1em;
+	margin-bottom:6px;
+}
+p.ParaOverride-13 {
+	font-size: 1em;
+	margin-bottom:3px;
+	margin-top:3px;
+}
+p.ParaOverride-14 {
+	font-size: 1em;
+	margin-bottom:6px;
+	page-break-after:always;
+}
+p.ParaOverride-15 {
+	font-size: 1em;
+}
+p.ParaOverride-16 {
+	font-size: 1em;
+	text-align:right;
+}
+p.ParaOverride-17 {
+	font-size: 1em;
+	margin-bottom:3px;
+}
+p.ParaOverride-18 {
+	font-size: 1em;
+	margin-top:8px;
+}
+p.ParaOverride-19 {
+	-epub-text-align-last:right;
+	font-size: 1em;
+	margin-top:6px;
+	text-align:justify;
+}
+p.ParaOverride-20 {
+	font-size: 1em;
+	margin-bottom:3px;
+}
+li.ParaOverride-21 {
+	list-style-position:outside;
+	margin-right:14px;
+	text-indent:0px;
+}
+p.ParaOverride-22 {
+	font-size: 1em;
+	page-break-after:always;
+}
+p.ParaOverride-23 {
+	font-size: 1em;
+	text-align:center;
+}
+p.ParaOverride-24 {
+	font-size: 1em;
+	text-align:center;
+}
+p.ParaOverride-25 {
+	font-size: 1em;
+	margin-bottom:14px;
+}
+p.ParaOverride-26 {
+	text-indent:9px;
+}
+p.ParaOverride-27 {
+	text-align:right;
+}
+p.ParaOverride-28 {
+	margin-bottom:0px;
+	margin-top:3px;
+}
+p.ParaOverride-29 {
+	-epub-text-align-last:right;
+	margin-right:23px;
+	text-align:justify;
+	text-indent:-23px;
+}
+span.CharOverride-1 {
+	font-family:"Adobe Arabic", serif;
+	font-size: 1em;
+	font-style:normal;
+	font-weight:bold;
+}
+span.CharOverride-2 {
+	font-family:"Adobe Arabic", serif;
+	font-size: 1em;
+	font-style:italic;
+	font-weight:bold;
+}
+span.CharOverride-3 {
+	font-family:"Adobe Arabic", serif;
+	font-style:normal;
+	font-weight:bold;
+}
+span.CharOverride-4 {
+	color:#000000;
+}
+span.CharOverride-5 {
+	font-family:"Bahij Lotus";
+	font-style:normal;
+	font-weight:bold;
+}
+span.CharOverride-6 {
+	font-family:"Bahij Lotus";
+	font-size: 1em;
+	font-style:normal;
+	font-weight:bold;
+}
+span.CharOverride-7 {
+	font-size: 1em;
+}
+span.CharOverride-8 {
+	font-size: 1em;
+}
+span.CharOverride-9 {
+	font-family:"Times New Roman", serif;
+	font-style:normal;
+	font-weight:bold;
+}
+span.CharOverride-10 {
+	font-size: 1em;
+}
+span.CharOverride-11 {
+	font-family:"Bahij Lotus";
+	font-size: 1em;
+	font-style:normal;
+	font-weight:300;
+}
+span.CharOverride-12 {
+	font-family:"Bahij Lotus";
+	font-size: 1em;
+	font-style:normal;
+	font-weight:300;
+}
+span.CharOverride-13 {
+	font-size: 1em;
+	vertical-align:super;
+}
+span.CharOverride-14 {
+	font-family:"Times New Roman", serif;
+	font-size: 1em;
+	font-style:normal;
+	font-weight:normal;
+	
+}
+span.CharOverride-15 {
+	font-family:"Times New Roman";
+	font-size: 1em;
+	font-style:normal;
+	font-weight:normal;
+}
+span.CharOverride-16 {
+	font-family:"Times New Roman";
+	font-style:italic;
+	font-weight:normal;
+}
+span.CharOverride-17 {
+	color:#000000;
+	font-family:"Times New Roman";
+	font-style:normal;
+	font-weight:normal;
+}
+span.CharOverride-18 {
+	font-size: 1em;
+}
+span.CharOverride-19 {
+	color:#000000;
+	font-family:"Times New Roman";
+	font-size: 1em;
+	font-style:normal;
+	font-weight:normal;
+}
+span.CharOverride-20 {
+	font-size: 1em;
+}
+span.CharOverride-21 {
+	font-family:"Times New Roman";
+	font-style:normal;
+	font-weight:normal;
+}
+span.CharOverride-22 {
+	font-family:"Simplified Arabic";
+	font-size: 1em;
+	font-style:normal;
+	font-weight:normal;
+}
+span.CharOverride-23 {
+	font-family:"Times New Roman";
+	font-size: 1em;
+	font-style:normal;
+	font-weight:normal;
+}
+span.CharOverride-24 {
+	font-family:"Times New Roman";
+	font-size: 1em;
+	font-style:normal;
+	font-weight:normal;
+}
+p._idGenParaOverride-1 {
+	font-size: 1em;
+}
+p._idGenParaOverride-2 {
+	font-size: 1em;
+}
+p._idGenParaOverride-3 {
+	font-size: 1em;
+}
+span._idGenCharOverride-1 {
+	font-size: 1em;
+}
+span._idGenCharOverride-2 {
+	font-size: 1em;
+}
+td._idGenCellOverride-1 {
+	border-right-color:#000000;
+	border-right-style:solid;
+	border-right-width:1px;
+}
+td._idGenCellOverride-2 {
+	border-bottom-color:#000000;
+	border-bottom-style:solid;
+	border-bottom-width:1px;
+}
+#_idContainer002, #_idContainer003 {
+	display:inline-block;
+	height:484px;
+	width:300px;
+}
+#_idContainer004 {
+	display:inline-block;
+	height:0px;
+	position:relative;
+	width:79px;
+}
+img._idGenObjectAttribute-1 {
+	height:100.00%;
+	min-width:100%;
+	width:100.00%;
+}
+div._idGenObjectStyleOverride-1 {
+	border-width:0px;
+}
+div._idGenObjectStyleOverride-2 {
+	border-width:1px;
+}
+hr.HorizontalRule-1 {
+	border-bottom:none;
+	border-left:none;
+	border-right:none;
+	border-top:solid #000000 1px;
+}
+div._idGenObjectLayout-1 {
+	text-align:center;
+}
