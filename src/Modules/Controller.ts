@@ -76,8 +76,6 @@ export class Controller {
       const chapters = json.trim()?.split("$Newchapter");
       chapters.shift();
 
-      console.log(chapters[3]);
-
       this.htmlExtractor.chapters = chapters.map(
         (chapterString: string, index: number) => {
           const chapterHTML = parser.parseFromString(
