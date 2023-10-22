@@ -8,17 +8,15 @@ let controller = new Controller();
 export const hindawiReaders = (function () {
   controller = new Controller();
   // for demo only
-  // window.addEventListener("load", async () => {
-  //   const bookId = "40262648"; // hindawi;
-  //   // const bookId = "16264295"; // hindawi;
-  //   // const bookId = "69058261"; // publisher;
-  //   Promise.all([
-  //     fetch(`./books/${bookId}/Content.main`).then((res) => res.text()),
-  //     fetch(`./books/${bookId}/toc.nav`).then((res) => res.text()),
-  //   ]).then(([res1, res2]) => {
-  //     controller.initWithChapters(bookId, res1, `./books/${bookId}`, res2);
-  //   });
-  // });
+  window.addEventListener("load", async () => {
+    const bookId = window.prompt("Please enter book ID");
+    Promise.all([
+      fetch(`./books/${bookId}/Content.main`).then((res) => res.text()),
+      fetch(`./books/${bookId}/toc.nav`).then((res) => res.text()),
+    ]).then(([res1, res2]) => {
+      controller.initWithChapters(bookId, res1, `./books/${bookId}`, res2);
+    });
+  });
   return {
     init: controller.initWithChapters.bind(controller),
   };
