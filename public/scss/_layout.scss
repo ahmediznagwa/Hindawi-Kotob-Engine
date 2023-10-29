@@ -6,12 +6,14 @@ h1,
   break-before: avoid;
 }
 .book-container {
-  padding: 4rem 0 2rem;
+  padding: 6rem 0 0;
+  height: 100vh;
 }
 .book-wrapper {
-  padding: 0 6rem 0;
+  padding: 0 8rem 0;
   word-break: break-word;
   direction: rtl;
+  height: 100%;
   @media screen and (max-width: $mobilexLarge) {
     padding: 0 2rem 0;
   }
@@ -25,7 +27,7 @@ h1,
   break-before: avoid;
 }
 .book {
-  height: calc(100vh - 4rem);
+  height: calc(100vh - 8rem);
   width: 100%;
   overflow: hidden;
   outline: none;
@@ -37,8 +39,8 @@ h1,
   appearance: none;
   transition: 0.3s;
 
-  @media screen and (min-width: 1023px) {
-    column-count: 2;
-    column-width: inherit;
-  }
+  // @media screen and (min-width: 1023px) {
+  //   column-count: 2;
+  //   column-width: inherit;
+  // }
 }
