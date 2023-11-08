@@ -8,7 +8,6 @@
   position: fixed;
   left: 0;
   width: 100%;
-  display: none;
   background-color: var(--greyBgRgb);
   color: var(--textColorRgb);
   border-top: 1px solid rgba(var(--textColor), 0.2);
@@ -16,6 +15,8 @@
   backdrop-filter: blur(0.5rem);
   padding: 1.5rem 2rem;
   bottom: 0;
+  transform: translateY(100%);
+  transition: transform 0.3s;
   & > div {
     display: flex;
     align-items: center;
@@ -27,6 +28,11 @@
 
   .btn-icon {
     font-size: 1.6rem;
+  }
+
+  &.show {
+    transform: none;
+    z-index: 1000;
   }
 }
 
@@ -255,7 +261,7 @@
   }
 }
 
-.bookmark-list {
+.bookmarks-list {
   list-style: none;
   padding: 0;
   margin: 0;
@@ -267,6 +273,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    margin: 0;
   }
 
   h4 {

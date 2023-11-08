@@ -1,4 +1,5 @@
 import { IBookmark } from "./IBookmark.model";
+import { IHighlight } from "./IHighlight.model";
 
 export interface IUserPreferencesState {
   anchorWordIndex: number;
@@ -6,5 +7,6 @@ export interface IUserPreferencesState {
   fontSize: number;
   colorMode: string;
   fontFamily: string;
-  bookmarks: IBookmark[];
+  bookmarks: IBookmark;
+  highlights: IHighlight;
 }

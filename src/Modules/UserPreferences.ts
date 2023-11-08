@@ -1,4 +1,5 @@
 import { IBookmark } from "../Models/IBookmark.model";
+import { IHighlight } from "../Models/IHighlight.model";
 
 export class UserPreferences {
   bookId: string;
@@ -8,7 +9,8 @@ export class UserPreferences {
   colorMode: string;
   fontFamily: string;
   localStorageKeys: any;
-  bookmarks: IBookmark[];
+  bookmarks: IBookmark;
+  highlights: IHighlight;
 
   constructor(bookId) {
     this.bookId = bookId;
@@ -17,7 +19,8 @@ export class UserPreferences {
     this.fontSize = 0;
     this.colorMode = null;
     this.fontFamily = null;
-    this.bookmarks = [];
+    this.bookmarks = null;
+    this.highlights = null;
 
     this.localStorageKeys = {
       fontSize: `${this.bookId}_fontSize`,
@@ -27,6 +30,7 @@ export class UserPreferences {
       anchorWordIndex: "anchorWordIndex",
       chapter: "chapter",
       bookmarks: `${this.bookId}_bookmarks`,
+      highlights: `${this.bookId}_highlights`,
     };
   }
 
@@ -39,7 +43,8 @@ export class UserPreferences {
     fontSize: number,
     colorMode: string,
     fontFamily: string,
-    bookmarks: IBookmark[],
+    bookmarks: IBookmark,
+    highlights: IHighlight,
     saveToLocalStorage = true
   ) {
     this.anchorWordIndex = anchorWordIndex;
@@ -48,6 +53,7 @@ export class UserPreferences {
     this.colorMode = colorMode;
     this.fontFamily = fontFamily;
     this.bookmarks = bookmarks;
+    this.highlights = highlights;
     if (saveToLocalStorage) {
       localStorage.setItem(
         this.localStorageKeys.lastPosition,
@@ -66,6 +72,10 @@ export class UserPreferences {
         this.localStorageKeys.bookmarks,
         JSON.stringify(this.bookmarks)
       );
+      localStorage.setItem(
+        this.localStorageKeys.highlights,
+        JSON.stringify(this.highlights)
+      );
     }
   }
 
@@ -80,6 +90,9 @@ export class UserPreferences {
     this.bookmarks = JSON.parse(
       localStorage.getItem(this.localStorageKeys.bookmarks)
     );
+    this.highlights = JSON.parse(
+      localStorage.getItem(this.localStorageKeys.highlights)
+    );
     const lastPosition = JSON.parse(
       localStorage.getItem(this.localStorageKeys.lastPosition)
     );
@@ -90,6 +103,7 @@ export class UserPreferences {
       colorMode: this.colorMode,
       fontFamily: this.fontFamily,
       bookmarks: this.bookmarks,
+      highlights: this.highlights,
       chapter: this.chapter,
       anchorWordIndex: this.anchorWordIndex,
     };

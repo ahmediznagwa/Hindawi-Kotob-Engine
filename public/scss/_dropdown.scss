@@ -6,6 +6,18 @@
       display: block;
     }
   }
+  .dropdown__empty {
+    display: none;
+    padding: 1rem;
+    text-align: center;
+    color: #999;
+    margin: 0;
+  }
+  &.empty {
+    .dropdown__empty {
+      display: block;
+    }
+  }
 }
 
 .dropdown-menu {

@@ -1,6 +1,9 @@
+import { IBookInfo } from "../Models/IBookInfo.model";
 import { IBookmark } from "../Models/IBookmark.model";
+import { IHighlightedWord } from "../Models/IHighlightedWord.model";
 import { PageUpdatedMessage } from "../Models/IPostMessage.model";
 import { IUserPreferencesState } from "../Models/IUserPreferencesState.model";
+import { isObjEmpty } from "../shared/utilities";
 import { Book } from "./Book";
 import { HTMLExtractor } from "./HTMLExtractor";
 import { UserPreferences } from "./UserPreferences";
@@ -22,7 +25,7 @@ export class Controller {
     Initiates the app asynchronously by getting the chapters array
   */
   async initWithChapters(
-    bookId: string,
+    bookInfo: IBookInfo,
     json: string,
     rootFolder: string,
     tableOfContent: string,
@@ -37,8 +40,9 @@ export class Controller {
         colorMode,
         fontFamily,
         bookmarks,
+        highlights,
       } = config || {};
-      this.userPreferences = new UserPreferences(bookId);
+      this.userPreferences = new UserPreferences(bookInfo.bookId);
       this.userPreferences.save(
         anchorWordIndex,
         currentChapter,
@@ -46,6 +50,7 @@ export class Controller {
         colorMode,
         fontFamily,
         bookmarks,
+        highlights,
         false
       );
       const parser = new DOMParser();
@@ -66,7 +71,7 @@ export class Controller {
       });
 
       this.htmlExtractor = new HTMLExtractor(
-        bookId,
+        bookInfo,
         rootFolder,
         tableOfContents
       );
@@ -111,9 +116,11 @@ export class Controller {
 
       // alert("Got Chapters");
 
-      this.detectUserPreferences(bookId);
+      this.detectUserPreferences(bookInfo.bookId);
       this.setupHandlers();
       this.setupEventListeners();
+      this.renderBookmarks();
+      this.renderHighlights();
 
       // Triggering click on body to show navigation bar at initial
       $("body").trigger("click");
@@ -128,7 +135,7 @@ export class Controller {
   setupHandlers() {
     // alert("Book Init");
     this.book = new Book(
-      this.htmlExtractor.bookId,
+      this.htmlExtractor.bookInfo,
       this.htmlExtractor.chapters,
       this.htmlExtractor.rootFolder,
       this.htmlExtractor.tableOfContents,
@@ -137,7 +144,8 @@ export class Controller {
       this?.userPreferences?.anchorWordIndex,
       this?.userPreferences?.colorMode,
       this?.userPreferences?.fontFamily,
-      this?.userPreferences?.bookmarks
+      this?.userPreferences?.bookmarks,
+      this?.userPreferences?.highlights
     );
     // alert("Book Done");
   }
@@ -161,7 +169,8 @@ export class Controller {
       this.book.fontSize,
       this.book.colorMode,
       this.book.fontFamily,
-      this.book.bookmarks
+      this.book.bookmarks,
+      this.book.highlights
     );
     this.postPageUpdatedMessage();
   }
@@ -258,19 +267,11 @@ export class Controller {
       "click",
       this.addBookmark.bind(this)
     );
-    UTILS.DOM_ELS.bookmarksBtns?.forEach((btn) => {
-      btn
-        .querySelector(".btn")
-        .addEventListener("click", this.removeBookmark.bind(this));
-    });
     UTILS.DOM_ELS.colorModeBtns?.forEach((btn) => {
       btn.addEventListener("click", this.colorModeEventHandler.bind(this));
     });
     UTILS.DOM_ELS.fontFamilyBtns?.forEach((btn) => {
       btn.addEventListener("click", this.fontFamilyEventHandler.bind(this));
-    });
-    UTILS.DOM_ELS.bookmarksBtns?.forEach((btn) => {
-      btn.addEventListener("click", this.goToBookmark.bind(this));
     });
     UTILS.DOM_ELS.showTableOfContenBtn?.addEventListener("click", function () {
       $(UTILS.DOM_ELS.tableOfContentWrapper).addClass(
@@ -283,9 +284,30 @@ export class Controller {
       );
     });
     this.wordPositionChangeHandler();
-    // document.fonts.onloadingdone = () => {
-    //   this.resizeEventHandler();
-    // };
+    this.book.bindEventHandlersOnHighlightedInChapter();
+
+    // Binding click events on appended items
+    $(document).on("click", (e) => {
+      // Highlighting
+      const selectedWord = $(e.target)
+        .closest("[data-word-index]")
+        .attr("data-word-index");
+      const isHighlight = $(e.target).parent().hasClass("highlight");
+      const isUnHighlight = $(e.target).parent().hasClass("unhighlight");
+
+      if (isHighlight) {
+        this.addHighlight($(`span[n=${selectedWord}]`)[0]);
+      }
+      if (isUnHighlight) {
+        this.removeHighlight(e, $(`span[n=${selectedWord}]`)[0]);
+      }
+    });
+    // menu
+    //   .querySelector(".copy")
+    //   .addEventListener("click", this.copyText.bind(this, element));
+    document.fonts.onloadingdone = () => {
+      this.resizeEventHandler();
+    };
 
     // alert("Setup Event Listeners Done");
   }
@@ -505,30 +527,33 @@ export class Controller {
     add bookmark for the current page
   */
   addBookmark() {
-    const bookmarks = this.book.bookmarks || [];
-    const bookmark: IBookmark = {
-      title: this.book.currentChapter.chapterEl.querySelector("h1").textContent,
-      chapterIndex: this.book.currentChapterIndex,
-      anchorWordIndex: this.book.anchorWordIndex,
+    const el = $(`span[n=${this.book.anchorWordIndex}]`)[0];
+    const bookmark: IHighlightedWord = {
+      index: +el.getAttribute("n"),
+      content: el.textContent,
       createdOn: Date.now(),
+      chapterTitle:
+        this.book.tableOfContents[this.book.currentChapterIndex].chapterTitle,
     };
-    if (bookmarks.some((e) => e.anchorWordIndex === bookmark.anchorWordIndex)) {
-      return;
-    }
-    bookmarks.push(bookmark);
-    this.book.bookmarks = bookmarks;
-    this.book.renderBookmarks();
+    const storedBookmarks = this.book.bookmarks || {};
 
-    // Appending event listeners to appended elements
-    UTILS.DOM_ELS.bookmarksBtns?.forEach((btn) => {
-      btn.addEventListener("click", this.goToBookmark.bind(this));
-    });
-    UTILS.DOM_ELS.bookmarksBtns?.forEach((btn) => {
-      btn
-        .querySelector(".btn")
-        .addEventListener("click", this.removeBookmark.bind(this));
-    });
-    this.storeUserPreferences();
+    storedBookmarks[this.book.currentChapterIndex] = storedBookmarks[
+      this.book.currentChapterIndex
+    ]
+      ? {
+          bookmarks: [
+            ...storedBookmarks[this.book.currentChapterIndex].bookmarks.filter(
+              (x) => x.index !== bookmark.index
+            ),
+            bookmark,
+          ],
+        }
+      : {
+          bookmarks: [bookmark],
+        };
+
+    this.book.bookmarks = storedBookmarks;
+    this.renderBookmarks();
   }
 
   /**
@@ -538,12 +563,127 @@ export class Controller {
     e.stopPropagation();
     const el = e.target.closest("li") as HTMLElement;
     const anchorWordIndex = +el.getAttribute("data-anchor-word-index");
-    let bookmarks = this.book.bookmarks || [];
-    bookmarks = bookmarks.filter((e) => e.anchorWordIndex !== anchorWordIndex);
+    const chapterIndex = +el.getAttribute("data-chapter-index");
+    const storedBookmarks = this.book.bookmarks || {};
 
-    this.book.bookmarks = bookmarks;
-    this.book.renderBookmarks();
+    if (storedBookmarks[chapterIndex].bookmarks.length > 1) {
+      storedBookmarks[chapterIndex] = {
+        bookmarks: storedBookmarks[chapterIndex].bookmarks.filter(
+          (x) => x.index !== anchorWordIndex
+        ),
+      };
+    } else {
+      delete storedBookmarks[chapterIndex];
+    }
 
+    this.book.bookmarks = isObjEmpty(storedBookmarks) ? null : storedBookmarks;
+    this.renderBookmarks();
+  }
+
+  /**
+    Render bookmarks list into DOM
+  */
+  renderBookmarks() {
+    const list = UTILS.DOM_ELS.bookmarksList;
+    $(list).html("");
+    if (this.book.bookmarks) {
+      $(list).closest(".dropdown").removeClass("empty");
+      Object.keys(this.book.bookmarks).forEach((key) => {
+        (this.book.bookmarks[key].bookmarks as IHighlightedWord[]).forEach(
+          (word) => {
+            $(list).append(
+              `
+            <li class="bookmark-item" data-chapter-index="${key}" data-anchor-word-index="${
+                word.index
+              }">
+              <div>
+                <h4>${word.content}</h4>
+                <p>${new Date(word.createdOn).toUTCString()}</p>
+              </div>
+              <button class="btn-icon btn">
+                <i class="f-icon trash-icon"></i>
+              </button>
+            </li>
+            `
+            );
+          }
+        );
+      });
+    } else {
+      $(list).closest(".dropdown").addClass("empty");
+    }
+    this.postRenderBookmarks();
+  }
+
+  /**
+    Highlight selected word
+  */
+  addHighlight(target: HTMLElement) {
+    $(target).addClass("highlighted");
+    this.book.currentChapter.hideActionsMenu();
+
+    const newHighlight: IHighlightedWord = {
+      index: +target.getAttribute("n"),
+      content: target.textContent,
+      createdOn: Date.now(),
+      chapterTitle:
+        this.book.tableOfContents[this.book.currentChapterIndex].chapterTitle,
+    };
+    const storedhighlightedWords = this.book.highlights || {};
+
+    storedhighlightedWords[this.book.currentChapterIndex] =
+      storedhighlightedWords[this.book.currentChapterIndex]
+        ? {
+            highlights: [
+              ...storedhighlightedWords[this.book.currentChapterIndex]
+                .highlights,
+              newHighlight,
+            ],
+          }
+        : {
+            highlights: [newHighlight],
+          };
+
+    this.book.highlights = storedhighlightedWords;
+    this.renderHighlights();
+  }
+
+  /**
+    Unhighlight selected word
+  */
+  removeHighlight(e?, word?: HTMLElement) {
+    e?.stopPropagation();
+    const el = e?.target.closest("li") as HTMLElement;
+    this.book.currentChapter.hideActionsMenu();
+
+    const anchorWordIndex =
+      +el?.getAttribute("data-anchor-word-index") || +word.getAttribute("n");
+    const chapterIndex =
+      +el?.getAttribute("data-chapter-index") || +this.book.currentChapterIndex;
+    const storedHighlights = this.book.highlights || {};
+    $(`span[n=${anchorWordIndex}]`).removeClass("highlighted");
+
+    if (storedHighlights[chapterIndex].highlights.length > 1) {
+      storedHighlights[chapterIndex] = {
+        highlights: storedHighlights[chapterIndex].highlights.filter(
+          (x) => x.index !== anchorWordIndex
+        ),
+      };
+    } else {
+      delete storedHighlights[chapterIndex];
+    }
+
+    this.book.highlights = isObjEmpty(storedHighlights)
+      ? null
+      : storedHighlights;
+    this.renderHighlights();
+  }
+
+  /**
+    Handle after rendering bookmarks
+  */
+  postRenderBookmarks() {
+    this.storeUserPreferences();
     // Appending event listeners to appended elements
     UTILS.DOM_ELS.bookmarksBtns?.forEach((btn) => {
       btn.addEventListener("click", this.goToBookmark.bind(this));
@@ -553,7 +693,66 @@ export class Controller {
         .querySelector(".btn")
         .addEventListener("click", this.removeBookmark.bind(this));
     });
+  }
+
+  /**
+    Render highlights list into DOM
+  */
+  renderHighlights() {
+    const list = UTILS.DOM_ELS.highlightsList;
+    $(list).html("");
+    if (this.book.highlights) {
+      $(list).closest(".dropdown").removeClass("empty");
+      Object.keys(this.book.highlights).forEach((key) => {
+        (this.book.highlights[key].highlights as IHighlightedWord[]).forEach(
+          (word) => {
+            $(list).append(
+              `
+                <li class="highlight-item" data-chapter-index="${key}" data-anchor-word-index="${
+                word.index
+              }">
+                  <div>
+                    <h4>${word.content}</h4>
+                    <p>${new Date(word.createdOn).toUTCString()}</p>
+                  </div>
+                  <button class="btn-icon btn">
+                    <i class="f-icon trash-icon"></i>
+                  </button>
+                </li>
+            `
+            );
+          }
+        );
+      });
+    } else {
+      $(list).closest(".dropdown").addClass("empty");
+    }
+    this.postRenderHighlight();
+  }
+
+  /**
+    Handle after rendering bookmarks
+  */
+  postRenderHighlight() {
     this.storeUserPreferences();
+
+    // Appending event listeners to appended elements
+    UTILS.DOM_ELS.highlightsBtns?.forEach((btn) => {
+      btn.addEventListener("click", this.goToBookmark.bind(this));
+    });
+    UTILS.DOM_ELS.highlightsBtns?.forEach((btn) => {
+      btn
+        .querySelector(".btn")
+        .addEventListener("click", this.removeHighlight.bind(this));
+    });
+  }
+
+  /**
+    Update chapter images relative to selected book folder
+  */
+  copyText(target: HTMLElement) {
+    navigator.clipboard.writeText(target.textContent);
+    this.book.currentChapter.hideActionsMenu();
   }
 
   /**
@@ -593,5 +792,17 @@ export class Controller {
     });
     e.target.classList.add("selected");
     this.setFontFamily(e.target.dataset.value);
+  }
+
+  hideToolbar() {
+    $(".bottom-bar").removeClass("show");
+    $(".dropdown").removeClass("show");
+    $(".hide-fonts").trigger("click");
+  }
+
+  toggleOverlay() {
+    $(".dropdown").removeClass("show");
+    $(".bottom-bar").toggleClass("show");
+    $(".hide-fonts").trigger("click");
   }
 }

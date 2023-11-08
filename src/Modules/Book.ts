@@ -1,4 +1,7 @@
+import { IBookInfo } from "../Models/IBookInfo.model";
 import { IBookmark } from "../Models/IBookmark.model";
+import { IHighlight } from "../Models/IHighlight.model";
+import { IHighlightedWord } from "../Models/IHighlightedWord.model";
 import { BookChapter } from "./BookChapter";
 import { UTILS } from "./Utils";
 
@@ -9,7 +12,7 @@ interface ITableOfContent {
 }
 
 export class Book {
-  bookId: string;
+  bookInfo: IBookInfo;
   chapters: HTMLDivElement[];
   rootFolder: string;
   fontSize: number;
@@ -18,7 +21,8 @@ export class Book {
   bookWordsCount: number;
   colorMode: string;
   fontFamily: string;
-  bookmarks: IBookmark[];
+  bookmarks: IBookmark;
+  highlights: IHighlight;
   currentChapter: BookChapter;
   currentProgressPercent: number;
   currentScrollPercentage: number;
@@ -35,7 +39,7 @@ export class Book {
   anchorWordIndex: number;
   tableOfContents: ITableOfContent[] = [];
   constructor(
-    bookId,
+    bookInfo,
     chapters,
     rootFolder,
     tableOfContents,
@@ -44,9 +48,10 @@ export class Book {
     anchorWordIndex,
     colorMode = "white",
     fontFamily = "NotoNaskhArabic",
-    bookmarks = []
+    bookmarks,
+    highlights
   ) {
-    this.bookId = bookId;
+    this.bookInfo = bookInfo;
     this.rootFolder = rootFolder;
     this.tableOfContents = tableOfContents;
     this.bookWordsCount = null;
@@ -57,7 +62,7 @@ export class Book {
     );
     this.currentChapter = new BookChapter(
       this.chapters[this.currentChapterIndex],
-      this.bookId,
+      this.bookInfo.bookId,
       this.currentChapterIndex,
       this.rootFolder
     );
@@ -68,6 +73,7 @@ export class Book {
     this.colorMode = colorMode;
     this.fontFamily = fontFamily;
     this.bookmarks = bookmarks;
+    this.highlights = highlights;
     this.fontSizeStep = 0.15;
     this.fontSize = fontSize || this.rootFontSize;
     this.changeFontSize();
@@ -78,7 +84,6 @@ export class Book {
       this.currentPage = this.calcAnchorWordPage();
       this.changePage();
     }, 1000);
-    this.renderBookmarks();
     this.addBookStyles();
     this.handleClickOnAnchors();
     this.generateBookTableOfContent();
@@ -353,7 +358,7 @@ export class Book {
 
     this.currentChapter = new BookChapter(
       this.chapters[this.currentChapterIndex],
-      this.bookId,
+      this.bookInfo.bookId,
       this.currentChapterIndex,
       this.rootFolder
     );
@@ -437,6 +442,7 @@ export class Book {
       default:
         break;
     }
+
     //Update the state of chapter and page
     this.updateChapterPageState();
     //update scroll percentage
@@ -551,34 +557,6 @@ export class Book {
   }
 
   /**
-    Render bookmarks list into DOM
-  */
-  renderBookmarks() {
-    const list = UTILS.DOM_ELS.bookmarksList;
-
-    if (this.bookmarks) {
-      $(list).html("");
-      this.bookmarks.forEach((bookmark) => {
-        $(list).append(
-          `
-          <li class="bookmark-item" data-chapter-index="${
-            bookmark.chapterIndex
-          }" data-anchor-word-index="${bookmark.anchorWordIndex}">
-            <div>
-              <h4>${bookmark.title}</h4>
-              <p>${new Date(bookmark.createdOn).toUTCString()}</p>
-            </div>
-            <button class="btn-icon btn">
-              <i class="f-icon trash-icon"></i>
-            </button>
-          </li>
-          `
-        );
-      });
-    }
-  }
-
-  /**
     Add book styles to the index.html head
   */
   addBookStyles() {
@@ -629,12 +607,63 @@ export class Book {
       const chapterIndex = +row.getAttribute("data-chapter-index");
       row.addEventListener("click", (e) => {
         e.stopPropagation();
-
         this.renderChapter(chapterIndex);
         $(UTILS.DOM_ELS.tableOfContentWrapper).removeClass(
           "book-content-list--show"
         );
       });
     });
+  }
+
+  /**
+    Handling dropdown that show on word click
+  */
+  wordEventHandler(e) {
+    e.stopPropagation();
+    const element = e.target as HTMLElement;
+    if (element.tagName.toLowerCase() !== "span") {
+      return;
+    }
+    this.currentChapter.hideActionsMenu();
+    const top = $(element).offset().top;
+    const left = $(element).offset().left;
+    const menu = document.createElement("div");
+    menu.classList.add("actions-menu");
+    const actionsMenu = `
+        <ul data-word-index="${element.getAttribute("n")}">
+          <li class="highlight"><a href="#">تلوين</a></li>
+          <li class="unhighlight"><a href="#">الغاء التلوين</a></li>
+        </ul>
+        `;
+    // <li class="copy"><a href="#">نسخ</a></li>
+
+    menu.innerHTML = actionsMenu;
+    document.body.appendChild(menu);
+
+    $(element).addClass("selected");
+
+    if ($(element).hasClass("highlighted")) {
+      $(menu).addClass("has-highlight");
+      $(menu).find(".highlight").remove();
+    }
+
+    // Positioning the appended menu according to word
+    $(menu).css({
+      position: "absolute",
+      left: left + $(element).width() / 2,
+      transform: "translate(-50%,-120%)",
+      top,
+    });
+
+    // menu
+    //   .querySelector(".copy")
+    //   .addEventListener("click", this.copyText.bind(this, element));
+  }
+
+  /**
+      Binding event handlers on highlighted elements in chapter
+    */
+  bindEventHandlersOnHighlightedInChapter() {
+    $(document).on("taphold", (e) => this.wordEventHandler(e));
   }
 }
