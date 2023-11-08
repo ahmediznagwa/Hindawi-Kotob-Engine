@@ -25,12 +25,17 @@ export class Controller {
     Initiates the app asynchronously by getting the chapters array
   */
   async initWithChapters(
-    bookInfo: IBookInfo,
+    bookId: string,
+    bookTitle: string,
     json: string,
     rootFolder: string,
     tableOfContent: string,
     config?: IUserPreferencesState
   ) {
+    const bookInfo = {
+      bookId,
+      bookTitle,
+    };
     try {
       // alert("Function Init");
       let {
@@ -727,9 +732,7 @@ export class Controller {
           (word) => {
             $(list).append(
               `
-                <li class="highlight-item" data-chapter-index="${key}" data-anchor-word-index="${
-                word.index
-              }">
+                <li class="highlight-item" data-chapter-index="${key}" data-anchor-word-index="${word.index}">
                   <div>
                     <h4>${word.content}</h4>
                     <p>${word.chapterTitle}</p>
