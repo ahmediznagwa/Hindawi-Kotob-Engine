@@ -11,13 +11,19 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <div class="app-bar app-bar--top">
+      <h1 class="book-title">عنوان الكتاب</h1>
+      <button class="btn close-reader">
+        <i class="f-icon chevron-left-icon"></i>
+      </button>
+    </div>
     <div class="book-container">
       <div class="book-wrapper">
         <div class="book"></div>
       </div>
     </div>
 
-    <div class="bottom-bar">
+    <div class="app-bar app-bar--bottom">
       <div class="book-pagination">
         <div class="bar-left">
           <button
@@ -53,7 +59,7 @@
                   </label>
                 </div> -->
                 <div class="control-row">
-                  <h5>Color Mode</h5>
+                  <h5>نظام الألوان</h5>
 
                   <div class="color-modes">
                     <div class="change-color" data-value="white"></div>
@@ -62,7 +68,7 @@
                   </div>
                 </div>
                 <div class="control-row show-fonts">
-                  <h5>Font</h5>
+                  <h5>الخط</h5>
                   <div class="selected-font-family"></div>
                 </div>
               </div>
@@ -90,10 +96,12 @@
             </button>
             <div class="dropdown-menu">
               <ul class="bookmarks-list"></ul>
-              <p class="dropdown__empty">There are no bookmarks yet.</p>
+              <p class="dropdown__empty">
+                لا توجد أي علامات لمتابعة القراءة حتى الآن
+              </p>
               <button class="add-bookmark-btn btn-primary-text btn">
                 <i class="f-icon bookmark-icon"></i>
-                Add Bookmark
+                إضافة علامة متابعة القراءة
               </button>
             </div>
           </div>
@@ -103,7 +111,7 @@
             </button>
             <div class="dropdown-menu">
               <ul class="bookmarks-list bookmarks-list--highlights"></ul>
-              <p class="dropdown__empty">There are no highlights yet.</p>
+              <p class="dropdown__empty">لا توجد أي نصوص مميزة حتى الآن</p>
             </div>
           </div>
         </div>

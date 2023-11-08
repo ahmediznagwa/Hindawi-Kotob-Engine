@@ -85,6 +85,7 @@ export class Book {
       this.changePage();
     }, 1000);
     this.addBookStyles();
+    this.addBookTitle();
     this.handleClickOnAnchors();
     this.generateBookTableOfContent();
   }
@@ -152,8 +153,8 @@ export class Book {
   }
 
   /**
-      Updates the DOM element representing the progress percentage value
-    */
+    Updates the DOM element representing the progress percentage value
+  */
   updateProgressPercentage() {
     // DR. HINDAWI'S EQUATION TO CALCULATE THE PROGRESS PERCENTAGE
     // i = first word on the page j = last word on the page n = number of words in the reader
@@ -564,6 +565,13 @@ export class Book {
     style.rel = "stylesheet";
     style.href = `${this.rootFolder}/TempBook.css`;
     document.head.prepend(style);
+  }
+
+  /**
+    Add book title to the top bar
+  */
+  addBookTitle() {
+    UTILS.DOM_ELS.bookTitle.textContent = this.bookInfo.bookTitle;
   }
 
   /**

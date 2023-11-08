@@ -3,19 +3,19 @@
   opacity: 0.5;
 }
 
-.bottom-bar {
-  font-family: "NotoNaskhArabic", sans-serif;
+.app-bar {
+  font-family: $appFont;
   position: fixed;
   left: 0;
   width: 100%;
   background-color: var(--greyBgRgb);
   color: var(--textColorRgb);
-  border-top: 1px solid rgba(var(--textColor), 0.2);
+  border-color: rgba(var(--textColor), 0.2) !important;
   -webkit-backdrop-filter: blur(0.5rem);
   backdrop-filter: blur(0.5rem);
   padding: 1.5rem 2rem;
-  bottom: 0;
-  transform: translateY(100%);
+  min-height: 7.3rem;
+
   transition: transform 0.3s;
   & > div {
     display: flex;
@@ -26,6 +26,10 @@
     }
   }
 
+  .btn {
+    font-family: inherit;
+  }
+
   .btn-icon {
     font-size: 1.6rem;
   }
@@ -33,6 +37,37 @@
   &.show {
     transform: none;
     z-index: 1000;
+  }
+
+  &--bottom {
+    transform: translateY(100%);
+    border-top: 1px solid;
+    bottom: 0;
+  }
+
+  &--top {
+    top: 0;
+    transform: translateY(-100%);
+    border-bottom: 1px solid;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: $appFont;
+
+    .btn {
+      font-size: 2.1rem;
+      height: 4.2rem;
+      width: 4.2rem;
+      position: absolute;
+      left: 1.5rem;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--textColor);
+      font-family: inherit;
+      font-size: 2.1rem;
+    }
   }
 }
 
@@ -230,7 +265,7 @@
   text-transform: capitalize;
   font-size: 1.6rem;
   display: flex;
-    align-items: center;
+  align-items: center;
   &::after {
     content: "\f053";
     font-family: $fAwsome;
@@ -298,7 +333,7 @@
   justify-content: center;
   margin: 0 auto;
   padding: 15px !important;
-  font-size: 1.6rem;
+  font-size: 1.8rem;
   color: $primaryColor;
   i {
     margin-inline-end: 10px;

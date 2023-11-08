@@ -8,28 +8,28 @@ let controller = new Controller();
 export const hindawiReaders = (function () {
   controller = new Controller();
   // for demo only
-  window.addEventListener("load", async () => {
-    // const bookId = "40262648"; // hindawi;
-    // const bookId = "16264295"; // hindawi;
-    // const bookId = "69058261"; // publisher;
-    const bookId = "42581692"; // hindawi;
+  // window.addEventListener("load", async () => {
+  //   // const bookId = "40262648"; // hindawi;
+  //   // const bookId = "16264295"; // hindawi;
+  //   // const bookId = "69058261"; // publisher;
+  //   const bookId = "42581692"; // hindawi;
 
-    const bookInfo = {
-      bookId,
-      bookTitle: "شلن واحد من أجل الشموع",
-    };
-    Promise.all([
-      fetch(`./books/${bookId}/Content.main`).then((res) => res.text()),
-      fetch(`./books/${bookId}/toc.nav`).then((res) => res.text()),
-    ]).then(([res1, res2]) => {
-      controller.initWithChapters(
-        bookInfo,
-        res1,
-        `./books/${bookInfo.bookId}`,
-        res2
-      );
-    });
-  });
+  //   const bookInfo = {
+  //     bookId,
+  //     bookTitle: "شلن واحد من أجل الشموع",
+  //   };
+  //   Promise.all([
+  //     fetch(`./books/${bookId}/Content.main`).then((res) => res.text()),
+  //     fetch(`./books/${bookId}/toc.nav`).then((res) => res.text()),
+  //   ]).then(([res1, res2]) => {
+  //     controller.initWithChapters(
+  //       bookInfo,
+  //       res1,
+  //       `./books/${bookInfo.bookId}`,
+  //       res2
+  //     );
+  //   });
+  // });
   return {
     init: controller.initWithChapters.bind(controller),
   };
@@ -68,11 +68,11 @@ $("body").on("click", function () {
   controller.toggleOverlay();
   controller?.book?.currentChapter?.hideActionsMenu();
 });
-$(".bottom-bar, .actions-menu").on("click", function (e) {
+$(".app-bar, .actions-menu").on("click", function (e) {
   e.stopPropagation();
 });
 
-if ($(".bottom-bar").length) {
+if ($(".app-bar").length) {
   let isHovering = false;
   let timer;
 
@@ -82,14 +82,13 @@ if ($(".bottom-bar").length) {
       if (isHovering) {
         return;
       }
-      $(".bottom-bar").removeClass('show');
+      $(".app-bar").removeClass("show");
     }, 4000);
-    console.log(isHovering);
   });
-  $(".bottom-bar").on("mouseenter", function () {
+  $(".app-bar").on("mouseenter", function () {
     isHovering = true;
   });
-  $(".bottom-bar").on("mouseleave", function () {
+  $(".app-bar").on("mouseleave", function () {
     isHovering = false;
   });
 }

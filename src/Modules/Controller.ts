@@ -3,7 +3,7 @@ import { IBookmark } from "../Models/IBookmark.model";
 import { IHighlightedWord } from "../Models/IHighlightedWord.model";
 import { PageUpdatedMessage } from "../Models/IPostMessage.model";
 import { IUserPreferencesState } from "../Models/IUserPreferencesState.model";
-import { isObjEmpty } from "../shared/utilities";
+import { getSentenceAfterWord, isObjEmpty } from "../shared/utilities";
 import { Book } from "./Book";
 import { HTMLExtractor } from "./HTMLExtractor";
 import { UserPreferences } from "./UserPreferences";
@@ -196,7 +196,7 @@ export class Controller {
       anchorWordIndex: this.book.anchorWordIndex,
     };
     this.postMessage("pageUpdated", messageObj);
-    // console.log("POSTED PAGE UPDATED MESSAGE");
+    console.log("POSTED PAGE UPDATED MESSAGE");
   }
 
   /**
@@ -211,9 +211,10 @@ export class Controller {
   }
 
   /**
-    Sets up the event listeners needed for the app to run
-  */
+   Sets up the event listeners needed for the app to run
+   */
   setupEventListeners() {
+    window.addEventListener("pageUpdated", (e) => console.log(e), false);
     window?.addEventListener("resize", () =>
       setTimeout(this.resizeEventHandler.bind(this), 0)
     );
@@ -227,6 +228,17 @@ export class Controller {
     jQuery(window).on("swiperight", this.goToNextPage.bind(this));
     jQuery(window).on("swipeleft", this.goToPrevPage.bind(this));
     //DOM Elements event listeners
+    document.addEventListener("keydown", (e) => {
+      if (e.key == "ArrowLeft") {
+        this.goToNextPage();
+      } else if (e.key == "ArrowUp") {
+        this.goToPrevChapter();
+      } else if (e.key == "ArrowRight") {
+        this.goToPrevPage();
+      } else if (e.key == "ArrowDown") {
+        this.goToNextChapter();
+      }
+    });
     UTILS.DOM_ELS.nextPageBtn?.addEventListener(
       "click",
       this.goToNextPage.bind(this)
@@ -273,7 +285,8 @@ export class Controller {
     UTILS.DOM_ELS.fontFamilyBtns?.forEach((btn) => {
       btn.addEventListener("click", this.fontFamilyEventHandler.bind(this));
     });
-    UTILS.DOM_ELS.showTableOfContenBtn?.addEventListener("click", function () {
+    UTILS.DOM_ELS.showTableOfContenBtn?.addEventListener("click", () => {
+      this.hideToolbar();
       $(UTILS.DOM_ELS.tableOfContentWrapper).addClass(
         "book-content-list--show"
       );
@@ -528,9 +541,10 @@ export class Controller {
   */
   addBookmark() {
     const el = $(`span[n=${this.book.anchorWordIndex}]`)[0];
+    const index = +el.getAttribute("n");
     const bookmark: IHighlightedWord = {
-      index: +el.getAttribute("n"),
-      content: el.textContent,
+      index,
+      content: getSentenceAfterWord(index),
       createdOn: Date.now(),
       chapterTitle:
         this.book.tableOfContents[this.book.currentChapterIndex].chapterTitle,
@@ -586,19 +600,24 @@ export class Controller {
   renderBookmarks() {
     const list = UTILS.DOM_ELS.bookmarksList;
     $(list).html("");
+
+    // This is to handle old structure for bookmarks
+    if (this.book.bookmarks instanceof Array) {
+      this.book.bookmarks = null;
+      this.storeUserPreferences();
+    }
     if (this.book.bookmarks) {
       $(list).closest(".dropdown").removeClass("empty");
       Object.keys(this.book.bookmarks).forEach((key) => {
         (this.book.bookmarks[key].bookmarks as IHighlightedWord[]).forEach(
           (word) => {
+            // <p>${new Date(word.createdOn).toUTCString()}</p>
             $(list).append(
               `
-            <li class="bookmark-item" data-chapter-index="${key}" data-anchor-word-index="${
-                word.index
-              }">
+            <li class="bookmark-item" data-chapter-index="${key}" data-anchor-word-index="${word.index}">
               <div>
                 <h4>${word.content}</h4>
-                <p>${new Date(word.createdOn).toUTCString()}</p>
+                <p>${word.chapterTitle}</p>
               </div>
               <button class="btn-icon btn">
                 <i class="f-icon trash-icon"></i>
@@ -713,7 +732,7 @@ export class Controller {
               }">
                   <div>
                     <h4>${word.content}</h4>
-                    <p>${new Date(word.createdOn).toUTCString()}</p>
+                    <p>${word.chapterTitle}</p>
                   </div>
                   <button class="btn-icon btn">
                     <i class="f-icon trash-icon"></i>
@@ -795,14 +814,14 @@ export class Controller {
   }
 
   hideToolbar() {
-    $(".bottom-bar").removeClass("show");
+    $(".app-bar").removeClass("show");
     $(".dropdown").removeClass("show");
     $(".hide-fonts").trigger("click");
   }
 
   toggleOverlay() {
+    $(".app-bar").toggleClass("show");
     $(".dropdown").removeClass("show");
-    $(".bottom-bar").toggleClass("show");
     $(".hide-fonts").trigger("click");
   }
 }

@@ -81,6 +81,9 @@ export class UTILS {
     get hideTableOfContenBtn(): HTMLElement {
       return document.querySelector(".hide-book-content");
     },
+    get bookTitle(): HTMLElement {
+      return document.querySelector(".book-title");
+    },
     get words(): NodeListOf<HTMLElement> {
       return document.querySelectorAll("span[n]");
     },
