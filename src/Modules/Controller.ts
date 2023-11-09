@@ -344,6 +344,7 @@ export class Controller {
         <ul data-word-index="${anchorElement.getAttribute("n")}">
           <li class="highlight"><a href="#">تلوين</a></li>
           <li class="unhighlight"><a href="#">الغاء التلوين</a></li>
+          <li class="bookmark"><a href="#">إضافة علامة متابعة القراءة</a></li>
         </ul>
         `;
     // <li class="copy"><a href="#">نسخ</a></li>
@@ -368,6 +369,9 @@ export class Controller {
         "click",
         this.addNote.bind(this, elements, "highlight")
       );
+    menu
+      .querySelector(".bookmark")
+      .addEventListener("click", this.addNote.bind(this, elements, "bookmark"));
     // menu
     //   .querySelector(".copy")
     //   .addEventListener("click", this.copyText.bind(this, element));
@@ -571,12 +575,11 @@ export class Controller {
   }
 
   /**
-    Handles what happened after clicking on specific bookmark in the list
+    Handles what happened after clicking on specific note in the list
   */
-  goToBookmark(e) {
-    const el = e.target.closest("li") as HTMLElement;
-    const chapterIndex = +el.getAttribute("data-chapter-index");
-    const anchorWordIndex = +el.getAttribute("data-anchor-word-index");
+  goToNote(anchorWordIndex: number, chapterIndex: number) {
+    console.log(anchorWordIndex);
+    console.log(chapterIndex);
 
     this.book.renderChapter(chapterIndex);
 
@@ -685,7 +688,10 @@ export class Controller {
   */
   addNote(words: HTMLElement[], type: "highlight" | "bookmark") {
     this.book.currentChapter.hideActionsMenu();
-    wrapHighlightedElements(words);
+
+    if (type === "highlight") {
+      wrapHighlightedElements(words);
+    }
 
     const newNote: IHighlighted = {
       index: +words[0].getAttribute("n"),
@@ -722,32 +728,40 @@ export class Controller {
   /**
     Unhighlight selected word
   */
-  removeHighlight(e?, word?: HTMLElement) {
-    e?.stopPropagation();
-    const el = e?.target.closest("li") as HTMLElement;
+  removeNote(
+    anchorWordIndex: number,
+    chapterIndex: number,
+    type: "highlight" | "bookmark"
+  ) {
     this.book.currentChapter.hideActionsMenu();
+    const storedData =
+      type === "highlight"
+        ? this.book.highlights || {}
+        : this.book.bookmarks || {};
 
-    const anchorWordIndex =
-      +el?.getAttribute("data-anchor-word-index") || +word.getAttribute("n");
-    const chapterIndex =
-      +el?.getAttribute("data-chapter-index") || +this.book.currentChapterIndex;
-    const storedHighlights = this.book.highlights || {};
-    $(`span[n=${anchorWordIndex}]`).removeClass("highlighted");
+    const highlightParent = $(`span[n=${anchorWordIndex}]`).closest(
+      "span.highlighted"
+    );
+    const highlightParentCn = highlightParent.contents();
+    highlightParent.replaceWith(highlightParentCn);
 
-    if (storedHighlights[chapterIndex].notes.length > 1) {
-      storedHighlights[chapterIndex] = {
-        notes: storedHighlights[chapterIndex].notes.filter(
+    if (storedData[chapterIndex].notes.length > 1) {
+      storedData[chapterIndex] = {
+        notes: storedData[chapterIndex].notes.filter(
           (x) => x.index !== anchorWordIndex
         ),
       };
     } else {
-      delete storedHighlights[chapterIndex];
+      delete storedData[chapterIndex];
     }
 
-    this.book.highlights = isObjEmpty(storedHighlights)
-      ? null
-      : storedHighlights;
-    this.renderHighlights();
+    if (type === "highlight") {
+      this.book.highlights = isObjEmpty(storedData) ? null : storedData;
+      this.renderHighlights();
+      return;
+    }
+    this.book.bookmarks = isObjEmpty(storedData) ? null : storedData;
+    this.renderBookmarks();
   }
 
   /**
@@ -756,13 +770,18 @@ export class Controller {
   postRenderBookmarks() {
     this.storeUserPreferences();
     // Appending event listeners to appended elements
-    UTILS.DOM_ELS.bookmarksBtns?.forEach((btn) => {
-      btn.addEventListener("click", this.goToBookmark.bind(this));
-    });
-    UTILS.DOM_ELS.bookmarksBtns?.forEach((btn) => {
-      btn
-        .querySelector(".btn")
-        .addEventListener("click", this.removeBookmark.bind(this));
+    UTILS.DOM_ELS.bookmarksBtns?.forEach((listItem) => {
+      const anchorWordIndex = +$(listItem).attr("data-anchor-word-index");
+      const chapterIndex = +$(listItem).attr("data-chapter-index");
+      $(listItem).on("click", () =>
+        this.goToNote(anchorWordIndex, chapterIndex)
+      );
+
+      $(listItem)
+        .find(".btn")
+        .on("click", () =>
+          this.removeNote(anchorWordIndex, chapterIndex, "bookmark")
+        );
     });
   }
 
@@ -805,13 +824,20 @@ export class Controller {
     window.getSelection().empty();
 
     // Appending event listeners to appended elements
-    UTILS.DOM_ELS.highlightsBtns?.forEach((btn) => {
-      btn.addEventListener("click", this.goToBookmark.bind(this));
-    });
-    UTILS.DOM_ELS.highlightsBtns?.forEach((btn) => {
-      btn
-        .querySelector(".btn")
-        .addEventListener("click", this.removeHighlight.bind(this));
+    UTILS.DOM_ELS.highlightsBtns?.forEach((listItem) => {
+      const anchorWordIndex = +$(listItem).attr("data-anchor-word-index");
+      const chapterIndex = +$(listItem).attr("data-chapter-index");
+      console.log(chapterIndex, anchorWordIndex);
+
+      $(listItem).on("click", () =>
+        this.goToNote(anchorWordIndex, chapterIndex)
+      );
+
+      $(listItem)
+        .find(".btn")
+        .on("click", () =>
+          this.removeNote(anchorWordIndex, chapterIndex, "highlight")
+        );
     });
   }
 

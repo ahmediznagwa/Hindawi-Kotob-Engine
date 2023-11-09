@@ -123,15 +123,15 @@ h1.title {
     a {
       border-radius: 8px;
     }
-    // &:first-child a {
-    //   border-radius: 0 8px 8px 0;
-    // }
-    // &:last-child a {
-    //   border-radius: 8px 0 0 8px;
-    // }
-    // &:only-child a {
-    //   border-radius: 8px;
-    // }
+    &:first-child a {
+      border-radius: 0 8px 8px 0;
+    }
+    &:last-child a {
+      border-radius: 8px 0 0 8px;
+    }
+    &:only-child a {
+      border-radius: 8px;
+    }
 
     &.unhighlight {
       display: none;
