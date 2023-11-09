@@ -1,0 +1,24 @@
+.tabs {
+  display: flex;
+  padding: 3px 0px;
+  border-radius: 6px;
+  margin: 0 auto;
+  background-color: rgba($color: #767676, $alpha: 0.12);
+  .open-tab {
+    margin: 0 0.5rem;
+    padding: 0 1.5rem;
+
+    &.active-tab {
+      border-radius: 6px;
+      background-color: white;
+    }
+  }  
+}
+
+.tab-content {
+  display: none;
+
+  &.active {
+    display: flex;
+  }
+}

@@ -159,10 +159,185 @@
           <i class="f-icon close-icon"> </i>
         </div>
       </div>
-      <ul class="book-content__list"></ul>
+
+      <div class="tabs">
+        <div class="open-tab active-tab" data-target="content">
+          <span> محتوي الكتاب </span>
+        </div>
+        <div class="open-tab" data-target="bookmark">
+          <span> علامة متابعة القراءة </span>
+        </div>
+
+        <div class="open-tab" data-target="notes">
+          <span> ملاحظات </span>
+        </div>
+      </div>
+      <div class="tab-content active" id="content">
+        <ul class="book-content__list"></ul>
+      </div>
+      <div class="tab-content" id="bookmark">
+        <ul class="bookmarks-list">
+          <li
+            class="bookmark-item"
+            data-chapter-index="11"
+            data-anchor-word-index="18895"
+          >
+            <div>
+              <h4>الفصل الثامن كان من الواضح على</h4>
+              <p>الفصل الحادي عشر</p>
+            </div>
+            <button class="btn-icon btn">
+              <i class="f-icon trash-icon"></i>
+            </button>
+          </li>
+
+          <li
+            class="bookmark-item"
+            data-chapter-index="17"
+            data-anchor-word-index="32276"
+          >
+            <div>
+              <h4>الفصل الرابع عشر قال مدير الأمن، وهو</h4>
+              <p>الفصل السابع عشر</p>
+            </div>
+            <button class="btn-icon btn">
+              <i class="f-icon trash-icon"></i>
+            </button>
+          </li>
+
+          <li
+            class="bookmark-item"
+            data-chapter-index="22"
+            data-anchor-word-index="44733"
+          >
+            <div>
+              <h4>ابتهج عقل جامي كما لو</h4>
+              <p>الفصل الثاني والعشرون</p>
+            </div>
+            <button class="btn-icon btn">
+              <i class="f-icon trash-icon"></i>
+            </button>
+          </li>
+
+          <li
+            class="bookmark-item"
+            data-chapter-index="23"
+            data-anchor-word-index="46468"
+          >
+            <div>
+              <h4>الفصل العشرون يتمتع جرانت بخيالٍ خصب،</h4>
+              <p>الفصل الثالث والعشرون</p>
+            </div>
+            <button class="btn-icon btn">
+              <i class="f-icon trash-icon"></i>
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <div class="tab-content" id="notes">
+        <ul class="bookmarks-list bookmarks-list--highlights">
+       
+          <li
+            class="highlight-item"
+            data-chapter-index="10"
+            data-anchor-word-index="18765"
+          >
+            <div>
+              <h4>أقرَّ</h4>
+              <p>الفصل العاشر</p>
+            </div>
+            <button class="btn-icon btn">
+              <i class="f-icon trash-icon"></i>
+            </button>
+          </li>
+
+          <li
+            class="highlight-item"
+            data-chapter-index="10"
+            data-anchor-word-index="18784"
+          >
+            <div>
+              <h4>
+                أوفيسز، هلا فعلت؟» فأنزلها جرانت بجوار سفينة الركاب ذات المدخنة
+                الصفراء.
+              </h4>
+              <p>الفصل العاشر</p>
+            </div>
+            <button class="btn-icon btn">
+              <i class="f-icon trash-icon"></i>
+            </button>
+          </li>
+
+          <li
+            class="highlight-item"
+            data-chapter-index="10"
+            data-anchor-word-index="18868"
+          >
+            <div>
+              <h4>«سأخبرك من خلال والدك. هل هذا مناسب؟»</h4>
+              <p>الفصل العاشر</p>
+            </div>
+            <button class="btn-icon btn">
+              <i class="f-icon trash-icon"></i>
+            </button>
+          </li>
+
+          <li
+            class="highlight-item"
+            data-chapter-index="11"
+            data-anchor-word-index="21231"
+          >
+            <div>
+              <h4></h4>
+              <p>الفصل الحادي عشر</p>
+            </div>
+            <button class="btn-icon btn">
+              <i class="f-icon trash-icon"></i>
+            </button>
+          </li>
+
+          <li
+            class="highlight-item"
+            data-chapter-index="12"
+            data-anchor-word-index="21248"
+          >
+            <div>
+              <h4>
+                — بين الغداء وشاي فترة ما بعد الظهر — ولكن ينبغي استدعاؤه على
+                الفور.
+              </h4>
+              <p>الفصل الثاني عشر</p>
+            </div>
+            <button class="btn-icon btn">
+              <i class="f-icon trash-icon"></i>
+            </button>
+          </li>
+        </ul>
+      </div>
     </div>
     <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
     <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
     <script src="engine.js"></script>
   </body>
 </html>
+<script>
+  $(".open-tab").each(function () {
+    _openTab($(this));
+    $(this).on("click", function () {
+      $(".open-tab.active-tab").removeClass("active-tab");
+      $(this).toggleClass("active-tab");
+    });
+  });
+  function _openTab(el) {
+    el.each(function () {
+      el.on("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const tab = "#" + $(this).attr("data-target");
+        $(".tab-content.active").removeClass("active");
+        $(tab).addClass("active");
+      });
+    });
+  }
+</script>
