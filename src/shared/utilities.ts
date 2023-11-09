@@ -24,3 +24,13 @@ export function extractWordsFromSelection(selected: Selection): HTMLElement[] {
 
   return elementsArray;
 }
+
+export function wrapHighlightedElements(words: HTMLElement[]) {
+  const highlightParent = document.createElement("span");
+  highlightParent.classList.add("highlighted");
+  $(highlightParent).insertBefore($(words[0]));
+  words.forEach((word, index) => {
+    word.textContent = `${index === 0 ? word.textContent : ` ${word.textContent}`}`;
+    $(highlightParent).append(word);
+  });
+}

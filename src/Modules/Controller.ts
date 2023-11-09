@@ -7,6 +7,7 @@ import {
   extractWordsFromSelection,
   getSentenceAfterWord,
   isObjEmpty,
+  wrapHighlightedElements,
 } from "../shared/utilities";
 import { Book } from "./Book";
 import { HTMLExtractor } from "./HTMLExtractor";
@@ -166,7 +167,9 @@ export class Controller {
       $(document).on(eventName, (event) => {
         if (window.getSelection().toString().length) {
           const elements = extractWordsFromSelection(window.getSelection());
-          console.log(elements)
+          // Removing last extra element as selection gets extra not needed element
+          elements.pop();
+
           this.wordsSelectionHandler(event, elements);
         }
       });
@@ -354,16 +357,17 @@ export class Controller {
       top,
     });
 
-    $(anchorElement).addClass("selected");
-
-    if ($(anchorElement).hasClass("highlighted")) {
-      $(menu).addClass("has-highlight");
-      $(menu).find(".highlight").remove();
-    }
+    // $('span[n]').removeClass("selected");
+    // elements.forEach((element) => {
+    //   $(element).addClass("selected");
+    // });
 
     menu
       .querySelector(".highlight")
-      .addEventListener("click", this.addHighlight.bind(this, elements));
+      .addEventListener(
+        "click",
+        this.addNote.bind(this, elements, "highlight")
+      );
     // menu
     //   .querySelector(".copy")
     //   .addEventListener("click", this.copyText.bind(this, element));
@@ -599,15 +603,15 @@ export class Controller {
       this.book.currentChapterIndex
     ]
       ? {
-          bookmarks: [
-            ...storedBookmarks[this.book.currentChapterIndex].bookmarks.filter(
+          notes: [
+            ...storedBookmarks[this.book.currentChapterIndex].notes.filter(
               (x) => x.index !== bookmark.index
             ),
             bookmark,
           ],
         }
       : {
-          bookmarks: [bookmark],
+          notes: [bookmark],
         };
 
     this.book.bookmarks = storedBookmarks;
@@ -624,9 +628,9 @@ export class Controller {
     const chapterIndex = +el.getAttribute("data-chapter-index");
     const storedBookmarks = this.book.bookmarks || {};
 
-    if (storedBookmarks[chapterIndex].bookmarks.length > 1) {
+    if (storedBookmarks[chapterIndex].notes.length > 1) {
       storedBookmarks[chapterIndex] = {
-        bookmarks: storedBookmarks[chapterIndex].bookmarks.filter(
+        notes: storedBookmarks[chapterIndex].notes.filter(
           (x) => x.index !== anchorWordIndex
         ),
       };
@@ -653,11 +657,10 @@ export class Controller {
     if (this.book.bookmarks) {
       $(list).closest(".dropdown").removeClass("empty");
       Object.keys(this.book.bookmarks).forEach((key) => {
-        (this.book.bookmarks[key].bookmarks as IHighlighted[]).forEach(
-          (word) => {
-            // <p>${new Date(word.createdOn).toUTCString()}</p>
-            $(list).append(
-              `
+        (this.book.bookmarks[key].notes as IHighlighted[]).forEach((word) => {
+          // <p>${new Date(word.createdOn).toUTCString()}</p>
+          $(list).append(
+            `
             <li class="bookmark-item" data-chapter-index="${key}" data-anchor-word-index="${word.index}">
               <div>
                 <h4>${word.content}</h4>
@@ -668,9 +671,8 @@ export class Controller {
               </button>
             </li>
             `
-            );
-          }
-        );
+          );
+        });
       });
     } else {
       $(list).closest(".dropdown").addClass("empty");
@@ -681,41 +683,40 @@ export class Controller {
   /**
     Highlight selected word
   */
-  addHighlight(words: HTMLElement[]) {
+  addNote(words: HTMLElement[], type: "highlight" | "bookmark") {
     this.book.currentChapter.hideActionsMenu();
+    wrapHighlightedElements(words);
 
-    words.forEach((word) => {
-      $(word).addClass("highlighted");
-    });
-
-    const newHighlight: IHighlighted = {
+    const newNote: IHighlighted = {
       index: +words[0].getAttribute("n"),
       numberOfWords: words.length,
-      content: getSentenceAfterWord(
-        +words[0].getAttribute("n"),
-        words.length - 1
-      ),
+      content: getSentenceAfterWord(+words[0].getAttribute("n"), words.length),
       createdOn: Date.now(),
       chapterTitle:
         this.book.tableOfContents[this.book.currentChapterIndex].chapterTitle,
     };
-    const storedhighlightedWords = this.book.highlights || {};
+    const storedData =
+      type === "highlight"
+        ? this.book.highlights || {}
+        : this.book.bookmarks || {};
 
-    storedhighlightedWords[this.book.currentChapterIndex] =
-      storedhighlightedWords[this.book.currentChapterIndex]
-        ? {
-            highlights: [
-              ...storedhighlightedWords[this.book.currentChapterIndex]
-                .highlights,
-              newHighlight,
-            ],
-          }
-        : {
-            highlights: [newHighlight],
-          };
+    storedData[this.book.currentChapterIndex] = storedData[
+      this.book.currentChapterIndex
+    ]
+      ? {
+          notes: [...storedData[this.book.currentChapterIndex].notes, newNote],
+        }
+      : {
+          notes: [newNote],
+        };
 
-    this.book.highlights = storedhighlightedWords;
-    this.renderHighlights();
+    if (type === "highlight") {
+      this.book.highlights = storedData;
+      this.renderHighlights();
+      return;
+    }
+    this.book.bookmarks = storedData;
+    this.renderBookmarks();
   }
 
   /**
@@ -733,9 +734,9 @@ export class Controller {
     const storedHighlights = this.book.highlights || {};
     $(`span[n=${anchorWordIndex}]`).removeClass("highlighted");
 
-    if (storedHighlights[chapterIndex].highlights.length > 1) {
+    if (storedHighlights[chapterIndex].notes.length > 1) {
       storedHighlights[chapterIndex] = {
-        highlights: storedHighlights[chapterIndex].highlights.filter(
+        notes: storedHighlights[chapterIndex].notes.filter(
           (x) => x.index !== anchorWordIndex
         ),
       };
@@ -774,10 +775,9 @@ export class Controller {
     if (this.book.highlights) {
       $(list).closest(".dropdown").removeClass("empty");
       Object.keys(this.book.highlights).forEach((key) => {
-        (this.book.highlights[key].highlights as IHighlighted[]).forEach(
-          (word) => {
-            $(list).append(
-              `
+        (this.book.highlights[key].notes as IHighlighted[]).forEach((word) => {
+          $(list).append(
+            `
                 <li class="highlight-item" data-chapter-index="${key}" data-anchor-word-index="${word.index}">
                   <div>
                     <h4>${word.content}</h4>
@@ -788,9 +788,8 @@ export class Controller {
                   </button>
                 </li>
             `
-            );
-          }
-        );
+          );
+        });
       });
     } else {
       $(list).closest(".dropdown").addClass("empty");
@@ -803,6 +802,7 @@ export class Controller {
   */
   postRenderHighlight() {
     this.storeUserPreferences();
+    window.getSelection().empty();
 
     // Appending event listeners to appended elements
     UTILS.DOM_ELS.highlightsBtns?.forEach((btn) => {
