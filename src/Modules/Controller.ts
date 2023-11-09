@@ -37,7 +37,9 @@ export class Controller {
       bookTitle,
     };
     try {
-      // alert("Function Init");
+      alert("Function Init");
+      alert(`BookId: ${bookInfo.bookId}`)
+      alert(`BookTitle: ${bookInfo.bookTitle}`)
       let {
         anchorWordIndex,
         currentChapter,

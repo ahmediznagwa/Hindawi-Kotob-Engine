@@ -85,9 +85,9 @@ export class Book {
       this.changePage();
     }, 1000);
     this.addBookStyles();
-    this.addBookTitle();
     this.handleClickOnAnchors();
     this.generateBookTableOfContent();
+    this.addBookTitle();
   }
 
   /**
