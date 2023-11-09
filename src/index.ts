@@ -8,28 +8,29 @@ let controller = new Controller();
 export const hindawiReaders = (function () {
   controller = new Controller();
   // for demo only
-  // window.addEventListener("load", async () => {
-  //   // const bookId = "40262648"; // hindawi;
-  //   // const bookId = "16264295"; // hindawi;
-  //   // const bookId = "69058261"; // publisher;
-  //   const bookId = "42581692"; // hindawi;
+  window.addEventListener("load", async () => {
+    // const bookId = "40262648"; // hindawi;
+    // const bookId = "16264295"; // hindawi;
+    // const bookId = "69058261"; // publisher;
+    const bookId = "42581692"; // hindawi;
 
-  //   const bookInfo = {
-  //     bookId,
-  //     bookTitle: "شلن واحد من أجل الشموع",
-  //   };
-  //   Promise.all([
-  //     fetch(`./books/${bookId}/Content.main`).then((res) => res.text()),
-  //     fetch(`./books/${bookId}/toc.nav`).then((res) => res.text()),
-  //   ]).then(([res1, res2]) => {
-  //     controller.initWithChapters(
-  //       bookInfo,
-  //       res1,
-  //       `./books/${bookInfo.bookId}`,
-  //       res2
-  //     );
-  //   });
-  // });
+    const bookInfo = {
+      bookId,
+      bookTitle: "شلن واحد من أجل الشموع",
+    };
+    Promise.all([
+      fetch(`./books/${bookId}/Content.main`).then((res) => res.text()),
+      fetch(`./books/${bookId}/toc.nav`).then((res) => res.text()),
+    ]).then(([res1, res2]) => {
+      controller.initWithChapters(
+        bookInfo.bookId,
+        bookInfo.bookTitle,
+        res1,
+        `./books/${bookInfo.bookId}`,
+        res2
+      );
+    });
+  });
   return {
     init: controller.initWithChapters.bind(controller),
   };
@@ -82,7 +83,7 @@ if ($(".app-bar").length) {
       if (isHovering) {
         return;
       }
-      $(".app-bar").removeClass("show");
+      controller.hideToolbar();
     }, 4000);
   });
   $(".app-bar").on("mouseenter", function () {

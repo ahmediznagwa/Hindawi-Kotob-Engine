@@ -1,9 +1,13 @@
 import { IBookInfo } from "../Models/IBookInfo.model";
 import { IBookmark } from "../Models/IBookmark.model";
-import { IHighlightedWord } from "../Models/IHighlightedWord.model";
+import { IHighlighted } from "../Models/IHighlighted.model";
 import { PageUpdatedMessage } from "../Models/IPostMessage.model";
 import { IUserPreferencesState } from "../Models/IUserPreferencesState.model";
-import { getSentenceAfterWord, isObjEmpty } from "../shared/utilities";
+import {
+  extractWordsFromSelection,
+  getSentenceAfterWord,
+  isObjEmpty,
+} from "../shared/utilities";
 import { Book } from "./Book";
 import { HTMLExtractor } from "./HTMLExtractor";
 import { UserPreferences } from "./UserPreferences";
@@ -124,8 +128,6 @@ export class Controller {
       this.detectUserPreferences(bookInfo.bookId);
       this.setupHandlers();
       this.setupEventListeners();
-      this.renderBookmarks();
-      this.renderHighlights();
 
       // Triggering click on body to show navigation bar at initial
       $("body").trigger("click");
@@ -153,6 +155,22 @@ export class Controller {
       this?.userPreferences?.highlights
     );
     // alert("Book Done");
+    this.renderBookmarks();
+    this.renderHighlights();
+
+    document.addEventListener("contextmenu", (event) => {
+      event.preventDefault();
+    });
+
+    ["mouseup, taphold, selectionchange"].forEach((eventName) => {
+      $(document).on(eventName, (event) => {
+        if (window.getSelection().toString().length) {
+          const elements = extractWordsFromSelection(window.getSelection());
+          console.log(elements)
+          this.wordsSelectionHandler(event, elements);
+        }
+      });
+    });
   }
 
   /**
@@ -302,32 +320,53 @@ export class Controller {
       );
     });
     this.wordPositionChangeHandler();
-    this.book.bindEventHandlersOnHighlightedInChapter();
-
-    // Binding click events on appended items
-    $(document).on("click", (e) => {
-      // Highlighting
-      const selectedWord = $(e.target)
-        .closest("[data-word-index]")
-        .attr("data-word-index");
-      const isHighlight = $(e.target).parent().hasClass("highlight");
-      const isUnHighlight = $(e.target).parent().hasClass("unhighlight");
-
-      if (isHighlight) {
-        this.addHighlight($(`span[n=${selectedWord}]`)[0]);
-      }
-      if (isUnHighlight) {
-        this.removeHighlight(e, $(`span[n=${selectedWord}]`)[0]);
-      }
-    });
-    // menu
-    //   .querySelector(".copy")
-    //   .addEventListener("click", this.copyText.bind(this, element));
     document.fonts.onloadingdone = () => {
       this.resizeEventHandler();
     };
 
     // alert("Setup Event Listeners Done");
+  }
+
+  /**
+    Handling dropdown that show on word click
+  */
+  wordsSelectionHandler(e, elements: HTMLElement[]) {
+    e.stopPropagation();
+    const anchorElement = elements[0];
+    // this.book.currentChapter.hideActionsMenu();
+    const top = $(anchorElement).offset().top;
+    const menu = document.createElement("div");
+    menu.classList.add("actions-menu");
+    const actionsMenu = `
+        <ul data-word-index="${anchorElement.getAttribute("n")}">
+          <li class="highlight"><a href="#">تلوين</a></li>
+          <li class="unhighlight"><a href="#">الغاء التلوين</a></li>
+        </ul>
+        `;
+    // <li class="copy"><a href="#">نسخ</a></li>
+
+    menu.innerHTML = actionsMenu;
+    document.body.appendChild(menu);
+
+    // Positioning the appended menu according to word
+    $(menu).css({
+      position: "absolute",
+      top,
+    });
+
+    $(anchorElement).addClass("selected");
+
+    if ($(anchorElement).hasClass("highlighted")) {
+      $(menu).addClass("has-highlight");
+      $(menu).find(".highlight").remove();
+    }
+
+    menu
+      .querySelector(".highlight")
+      .addEventListener("click", this.addHighlight.bind(this, elements));
+    // menu
+    //   .querySelector(".copy")
+    //   .addEventListener("click", this.copyText.bind(this, element));
   }
 
   /**
@@ -547,7 +586,7 @@ export class Controller {
   addBookmark() {
     const el = $(`span[n=${this.book.anchorWordIndex}]`)[0];
     const index = +el.getAttribute("n");
-    const bookmark: IHighlightedWord = {
+    const bookmark: IHighlighted = {
       index,
       content: getSentenceAfterWord(index),
       createdOn: Date.now(),
@@ -614,7 +653,7 @@ export class Controller {
     if (this.book.bookmarks) {
       $(list).closest(".dropdown").removeClass("empty");
       Object.keys(this.book.bookmarks).forEach((key) => {
-        (this.book.bookmarks[key].bookmarks as IHighlightedWord[]).forEach(
+        (this.book.bookmarks[key].bookmarks as IHighlighted[]).forEach(
           (word) => {
             // <p>${new Date(word.createdOn).toUTCString()}</p>
             $(list).append(
@@ -642,13 +681,20 @@ export class Controller {
   /**
     Highlight selected word
   */
-  addHighlight(target: HTMLElement) {
-    $(target).addClass("highlighted");
+  addHighlight(words: HTMLElement[]) {
     this.book.currentChapter.hideActionsMenu();
 
-    const newHighlight: IHighlightedWord = {
-      index: +target.getAttribute("n"),
-      content: target.textContent,
+    words.forEach((word) => {
+      $(word).addClass("highlighted");
+    });
+
+    const newHighlight: IHighlighted = {
+      index: +words[0].getAttribute("n"),
+      numberOfWords: words.length,
+      content: getSentenceAfterWord(
+        +words[0].getAttribute("n"),
+        words.length - 1
+      ),
       createdOn: Date.now(),
       chapterTitle:
         this.book.tableOfContents[this.book.currentChapterIndex].chapterTitle,
@@ -728,7 +774,7 @@ export class Controller {
     if (this.book.highlights) {
       $(list).closest(".dropdown").removeClass("empty");
       Object.keys(this.book.highlights).forEach((key) => {
-        (this.book.highlights[key].highlights as IHighlightedWord[]).forEach(
+        (this.book.highlights[key].highlights as IHighlighted[]).forEach(
           (word) => {
             $(list).append(
               `

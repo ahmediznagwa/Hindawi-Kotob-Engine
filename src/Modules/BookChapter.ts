@@ -1,4 +1,4 @@
-import { IHighlightedWord } from "../Models/IHighlightedWord.model";
+import { IHighlighted } from "../Models/IHighlighted.model";
 import { Book } from "./Book";
 import { UTILS } from "./Utils";
 
@@ -371,7 +371,7 @@ export class BookChapter {
     );
     if (storedhighlightedWords) {
       storedhighlightedWords[this.currentChapterIndex]?.highlights?.forEach(
-        (word: IHighlightedWord) => {
+        (word: IHighlighted) => {
           $(`span[n=${word.index}]`).addClass("highlighted");
         }
       );
