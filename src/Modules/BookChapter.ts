@@ -374,7 +374,7 @@ export class BookChapter {
       let elementsArray: HTMLElement[] = []
       storedhighlightedWords[this.currentChapterIndex]?.notes?.forEach(
         (highlight: IHighlighted) => {
-          for (let index = 0; index <= highlight.numberOfWords; index++) {
+          for (let index = 0; index < highlight.numberOfWords; index++) {
             elementsArray.push($(`span[n=${highlight.index + index}]`)[0]);
           }
           wrapHighlightedElements(elementsArray);

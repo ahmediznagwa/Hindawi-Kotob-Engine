@@ -158,22 +158,6 @@ export class Controller {
     // alert("Book Done");
     this.renderBookmarks();
     this.renderHighlights();
-
-    document.addEventListener("contextmenu", (event) => {
-      event.preventDefault();
-    });
-
-    ["mouseup, taphold, selectionchange"].forEach((eventName) => {
-      $(document).on(eventName, (event) => {
-        if (window.getSelection().toString().length) {
-          const elements = extractWordsFromSelection(window.getSelection());
-          // Removing last extra element as selection gets extra not needed element
-          elements.pop();
-
-          this.wordsSelectionHandler(event, elements);
-        }
-      });
-    });
   }
 
   /**
@@ -250,9 +234,6 @@ export class Controller {
     document.onfullscreenchange = () =>
       setTimeout(this.resizeEventHandler.bind(this), 0);
 
-    // Mobile Event Listeners
-    jQuery(window).on("swiperight", this.goToNextPage.bind(this));
-    jQuery(window).on("swipeleft", this.goToPrevPage.bind(this));
     //DOM Elements event listeners
     document.addEventListener("keydown", (e) => {
       if (e.key == "ArrowLeft") {
@@ -265,6 +246,27 @@ export class Controller {
         this.goToNextChapter();
       }
     });
+
+    // Diabling contextmenu
+    document.addEventListener("contextmenu", (event) => {
+      event.preventDefault();
+    });
+
+    // Handling window selection
+    ["mouseup, taphold, selectionchange"].forEach((eventName) => {
+      $(document).on(eventName, (event) => {
+        // Mobile Swipe Event Listeners
+        $(document).on("swiperight", this.goToNextPage.bind(this));
+        $(document).on("swipeleft", this.goToPrevPage.bind(this));
+        if (window.getSelection().toString().length) {
+          const elements = extractWordsFromSelection(window.getSelection());
+          this.wordsSelectionHandler(event, elements);
+          $(document).off("swiperight swipeleft");
+          return;
+        }
+      });
+    });
+
     UTILS.DOM_ELS.nextPageBtn?.addEventListener(
       "click",
       this.goToNextPage.bind(this)
@@ -660,7 +662,7 @@ export class Controller {
     if (this.book.bookmarks) {
       $(list).closest(".dropdown").removeClass("empty");
       Object.keys(this.book.bookmarks).forEach((key) => {
-        (this.book.bookmarks[key].notes as IHighlighted[]).forEach((word) => {
+        (this.book.bookmarks[key].notes as IHighlighted[])?.forEach((word) => {
           // <p>${new Date(word.createdOn).toUTCString()}</p>
           $(list).append(
             `
@@ -693,9 +695,12 @@ export class Controller {
       wrapHighlightedElements(words);
     }
 
+    console.log(words);
+
     const newNote: IHighlighted = {
       index: +words[0].getAttribute("n"),
       numberOfWords: words.length,
+      wordsIndexes: [...words.map((x) => +x.getAttribute("n"))],
       content: getSentenceAfterWord(+words[0].getAttribute("n"), words.length),
       createdOn: Date.now(),
       chapterTitle:
@@ -739,11 +744,17 @@ export class Controller {
         ? this.book.highlights || {}
         : this.book.bookmarks || {};
 
-    const highlightParent = $(`span[n=${anchorWordIndex}]`).closest(
-      "span.highlighted"
+    const targetNote = storedData[chapterIndex].notes.find(
+      (x) => x.index === anchorWordIndex
     );
-    const highlightParentCn = highlightParent.contents();
-    highlightParent.replaceWith(highlightParentCn);
+
+    targetNote.wordsIndexes.forEach((wordIndex) => {
+      const noteParent = $(`span[n=${wordIndex}]`).closest("span.highlighted");
+      if (noteParent) {
+        const noteParentCn = noteParent.contents();
+        noteParent.replaceWith(noteParentCn);
+      }
+    });
 
     if (storedData[chapterIndex].notes.length > 1) {
       storedData[chapterIndex] = {
@@ -794,7 +805,7 @@ export class Controller {
     if (this.book.highlights) {
       $(list).closest(".dropdown").removeClass("empty");
       Object.keys(this.book.highlights).forEach((key) => {
-        (this.book.highlights[key].notes as IHighlighted[]).forEach((word) => {
+        (this.book.highlights[key].notes as IHighlighted[])?.forEach((word) => {
           $(list).append(
             `
                 <li class="highlight-item" data-chapter-index="${key}" data-anchor-word-index="${word.index}">
@@ -827,7 +838,6 @@ export class Controller {
     UTILS.DOM_ELS.highlightsBtns?.forEach((listItem) => {
       const anchorWordIndex = +$(listItem).attr("data-anchor-word-index");
       const chapterIndex = +$(listItem).attr("data-chapter-index");
-      console.log(chapterIndex, anchorWordIndex);
 
       $(listItem).on("click", () =>
         this.goToNote(anchorWordIndex, chapterIndex)

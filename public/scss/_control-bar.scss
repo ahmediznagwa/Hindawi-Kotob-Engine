@@ -26,6 +26,8 @@
     }
   }
 
+  > 
+
   .btn {
     font-family: inherit;
   }
@@ -179,6 +181,7 @@
     margin: 0;
     font-weight: normal;
     margin-inline-end: auto;
+    font-family: $appFont;
   }
 }
 
