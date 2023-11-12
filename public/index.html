@@ -182,10 +182,14 @@
       </div>
       <div class="tab-content" id="bookmark">
         <ul class="bookmarks-list"></ul>
+        <p class="dropdown__empty">
+          لا توجد أي علامات لمتابعة القراءة حتى الآن
+        </p>
       </div>
 
       <div class="tab-content" id="notes">
         <ul class="bookmarks-list bookmarks-list--highlights"></ul>
+        <p class="dropdown__empty">لا توجد أي نصوص مميزة حتى الآن</p>
       </div>
     </div>
     <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
@@ -193,15 +197,3 @@
     <script src="engine.js"></script>
   </body>
 </html>
-<script>
-  $("[data-type='tab']").each(function () {
-    const el = $(this);
-    const tab = "#" + $(this).attr("data-target");
-    el.on("click", function () {
-      $(".tab-item").removeClass("active-tab");
-      el.addClass("active-tab");
-      $(".tab-content").removeClass("active");
-      $(tab).addClass("active");
-    });
-  });
-</script>

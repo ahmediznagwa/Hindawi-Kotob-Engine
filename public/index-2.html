@@ -121,10 +121,7 @@
               <p class="dropdown__empty">
                 لا توجد أي علامات لمتابعة القراءة حتى الآن
               </p>
-              <button class="add-bookmark-btn btn-primary-text btn">
-                <i class="f-icon bookmark-icon"></i>
-                إضافة علامة متابعة القراءة
-              </button>
+         
             </div>
           </div>
         
@@ -180,15 +177,3 @@
     <script src="engine.js"></script>
   </body>
 </html>
-<script>
-  $("[data-type='tab']").each(function () {
-    const el = $(this);
-    const tab = "#" + $(this).attr("data-target");
-    el.on("click", function () {
-      $(".tab-item").removeClass("active-tab");
-      el.addClass("active-tab");
-      $(".tab-content").removeClass("active");
-      $(tab).addClass("active");
-    });
-  });
-</script>
