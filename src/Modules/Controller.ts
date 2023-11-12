@@ -1,5 +1,3 @@
-import { IBookInfo } from "../Models/IBookInfo.model";
-import { IBookmark } from "../Models/IBookmark.model";
 import { IHighlightedWord } from "../Models/IHighlightedWord.model";
 import { PageUpdatedMessage } from "../Models/IPostMessage.model";
 import { IUserPreferencesState } from "../Models/IUserPreferencesState.model";

@@ -571,7 +571,7 @@ export class Book {
     Add book title to the top bar
   */
   addBookTitle() {
-    UTILS.DOM_ELS.bookTitle.textContent = this.bookInfo.bookTitle;
+    UTILS.DOM_ELS.bookTitle.textContent = this.bookInfo?.bookTitle;
   }
 
   /**
