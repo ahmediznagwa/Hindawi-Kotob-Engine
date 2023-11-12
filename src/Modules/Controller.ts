@@ -255,22 +255,25 @@ export class Controller {
     document.addEventListener("contextmenu", (event) => {
       event.preventDefault();
     });
+    function disableIosSafariCallout(this: Window, event: any) {
+      const s = this.getSelection();
+      if ((s?.rangeCount || 0) > 0) {
+        const r = s?.getRangeAt(0);
+        s?.removeAllRanges();
+        setTimeout(() => {
+          s?.addRange(r!);
+        }, 50);
+      }
+    }
+    document.ontouchend = disableIosSafariCallout.bind(window);
 
     // Handling window selection
     ["mouseup, taphold, selectionchange"].forEach((eventName) => {
-      $(window).on(eventName, (event) => {
+      $(document).on(eventName, (event) => {
         if (window.getSelection().toString().length) {
           const elements = extractWordsFromSelection(window.getSelection());
           this.wordsSelectionHandler(event, elements);
-
-          console.log('has selection')
-          $(document).off("swiperight swipeleft");
-          return;
         }
-
-        console.log('no selection')
-        $(document).on("swiperight", this.goToNextPage.bind(this));
-        $(document).on("swipeleft", this.goToPrevPage.bind(this));
       });
     });
 

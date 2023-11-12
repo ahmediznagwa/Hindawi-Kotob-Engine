@@ -95,6 +95,7 @@ h1.title {
   border-radius: 8px;
   left: 50%;
   transform: translate(-50%, -100%);
+  z-index: 999999;
 
   // &::after {
   //   top: 100%;
