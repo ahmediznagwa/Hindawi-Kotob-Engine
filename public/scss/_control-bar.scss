@@ -72,7 +72,12 @@
       .add-bookmark-btn {
         color: black;
         &.bookmark-added {
-          color: $primaryColor;
+          i {
+            &::before {
+              color: $primaryColor;
+              font-weight: bold !important;
+            }
+          }
         }
       }
       @media screen and (max-width: $mobileLarge) {

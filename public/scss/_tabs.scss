@@ -10,7 +10,7 @@
   background-color: rgba($color: #767676, $alpha: 0.12);
   .tab-item {
     padding: 0 1.5rem;
-
+cursor: pointer;
     &.active-tab {
       border-radius: 6px;
       background-color: white;
