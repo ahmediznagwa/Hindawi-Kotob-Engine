@@ -265,7 +265,10 @@ export class Controller {
         }, 50);
       }
     }
-    document.ontouchend = disableIosSafariCallout.bind(window);
+
+    if (window.matchMedia("(pointer: coarse)").matches) {
+      // document.ontouchend = disableIosSafariCallout.bind(window);
+    }
 
     // Handling window selection
     ["mouseup, taphold, selectionchange"].forEach((eventName) => {

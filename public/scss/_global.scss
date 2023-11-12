@@ -33,6 +33,9 @@ body {
   margin: 0;
   overflow: hidden;
   -webkit-tap-highlight-color: transparent;
+  text-rendering: optimizeLegibility !important;
+  -webkit-font-smoothing: antialiased !important;
+  -webkit-overflow-scrolling: touch;
   .book-container {
     background-color: var(--bgColorRgb);
     *:not(h1) {
@@ -144,7 +147,7 @@ h1.title {
   }
   a {
     color: inherit;
-    font-size: 0.8em;
+    font-size: 1.6rem;
     padding: 5px 10px;
     display: flex;
     background-color: var(--textColorRgb);
