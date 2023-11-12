@@ -247,6 +247,10 @@ export class Controller {
       }
     });
 
+    // Mobile Swipe Event Listeners
+    $(document).on("swiperight", this.goToNextPage.bind(this));
+    $(document).on("swipeleft", this.goToPrevPage.bind(this));
+
     // Diabling contextmenu
     document.addEventListener("contextmenu", (event) => {
       event.preventDefault();
@@ -254,16 +258,19 @@ export class Controller {
 
     // Handling window selection
     ["mouseup, taphold, selectionchange"].forEach((eventName) => {
-      $(document).on(eventName, (event) => {
-        // Mobile Swipe Event Listeners
-        $(document).on("swiperight", this.goToNextPage.bind(this));
-        $(document).on("swipeleft", this.goToPrevPage.bind(this));
+      $(window).on(eventName, (event) => {
         if (window.getSelection().toString().length) {
           const elements = extractWordsFromSelection(window.getSelection());
           this.wordsSelectionHandler(event, elements);
+
+          console.log('has selection')
           $(document).off("swiperight swipeleft");
           return;
         }
+
+        console.log('no selection')
+        $(document).on("swiperight", this.goToNextPage.bind(this));
+        $(document).on("swipeleft", this.goToPrevPage.bind(this));
       });
     });
 
@@ -475,7 +482,7 @@ export class Controller {
     Navigates to next page
   */
   goToNextPage() {
-    this.book.changePage("next");
+    this.book?.changePage("next");
     this.postNavigationHandler();
   }
 
@@ -483,7 +490,7 @@ export class Controller {
     Navigates to previous page
   */
   goToPrevPage() {
-    this.book.changePage("prev");
+    this.book?.changePage("prev");
     this.postNavigationHandler();
   }
 
