@@ -93,6 +93,7 @@ if ($(".app-bar").length) {
   $("body").on("mousemove", function () {
     clearTimeout(timer);
     timer = setTimeout(() => {
+      console.log('hello')
       if (isHovering) {
         return;
       }

@@ -757,8 +757,6 @@ export class Controller {
     }
     this.book.bookmarks = storedData;
     this.renderBookmarks();
-    window.getSelection().removeAllRanges();
-    window.getSelection().empty();
   }
 
   /**
