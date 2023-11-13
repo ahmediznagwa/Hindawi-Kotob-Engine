@@ -7,21 +7,32 @@
   justify-content: center;
   margin: 1rem auto;
   width: fit-content;
-  background-color: rgba($color: #767676, $alpha: 0.12);
+  background-color: rgba(var(--textColor), 0.1);
+
+  .dark & {
+    background-color: var(--lightGreyBgRgb);
+  }
   .tab-item {
     padding: 0 1.5rem;
+    color: var(--textColor);
     cursor: pointer;
+    color: rgba(var(--textColor), 0.5);
+
     &.active-tab {
       border-radius: 6px;
-      background-color: white;
       box-shadow: 1px 2px 4px rgba($color: #000000, $alpha: 0.1);
+      color: var(--textColorRgb);
+      background: rgba(var(--bgColor), 1);
+      .dark & {
+        background-color: rgba(var(--textColor), 0.2);
+      }
     }
   }
   .book-content & {
     margin-bottom: 3rem;
     margin-top: -3rem;
     @media screen and (max-width: $mobilexLarge) {
-      margin-top: -.5rem;
+      margin-top: -0.5rem;
     }
   }
 }
