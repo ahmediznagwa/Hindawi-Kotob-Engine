@@ -224,7 +224,6 @@ export class Controller {
    Sets up the event listeners needed for the app to run
    */
   setupEventListeners() {
-    window.addEventListener("pageUpdated", (e) => console.log(e), false);
     window?.addEventListener("resize", () =>
       setTimeout(this.resizeEventHandler.bind(this), 0)
     );
@@ -267,11 +266,11 @@ export class Controller {
     }
 
     if (window.matchMedia("(pointer: coarse)").matches) {
-      // document.ontouchend = disableIosSafariCallout.bind(window);
+      document.ontouchend = disableIosSafariCallout.bind(window);
     }
 
     // Handling window selection
-    ["mouseup, taphold, selectionchange"].forEach((eventName) => {
+    ["selectionchange"].forEach((eventName) => {
       $(document).on(eventName, (event) => {
         if (window.getSelection().toString().length) {
           const elements = extractWordsFromSelection(window.getSelection());
@@ -593,9 +592,6 @@ export class Controller {
     Handles what happened after clicking on specific note in the list
   */
   goToNote(anchorWordIndex: number, chapterIndex: number) {
-    console.log(anchorWordIndex);
-    console.log(chapterIndex);
-
     this.book.renderChapter(chapterIndex);
 
     // Detect anchor word page index
@@ -707,9 +703,6 @@ export class Controller {
     if (type === "highlight") {
       wrapHighlightedElements(words);
     }
-
-    console.log(words);
-
     const newNote: IHighlighted = {
       index: +words[0].getAttribute("n"),
       numberOfWords: words.length,

@@ -26,9 +26,7 @@
     }
   }
 
-  > 
-
-  .btn {
+  > .btn {
     font-family: inherit;
   }
 
@@ -303,7 +301,7 @@
   list-style: none;
   padding: 0;
   margin: 0;
-  
+
   .dropdown-menu & {
     max-height: 90dvh;
     overflow: auto;
@@ -325,6 +323,10 @@
     line-height: 1.4;
     margin-right: auto;
     font-weight: 700;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   p {
