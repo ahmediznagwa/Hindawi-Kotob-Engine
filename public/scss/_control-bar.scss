@@ -396,3 +396,18 @@
     }
   }
 }
+
+.option-1 {
+  .dropdown-menu {
+    @media screen and (max-width: $mobilexLarge) {
+      left: -10px;
+      right: inherit;
+    }
+    &:before {
+      @media screen and (max-width: $mobilexLarge) {
+        left: 2rem;
+        right: inherit;
+      }
+    }
+  }
+}
