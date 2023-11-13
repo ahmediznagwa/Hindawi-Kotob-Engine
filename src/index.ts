@@ -59,6 +59,19 @@ function _showDropdownMenu(dropdownContainer) {
   dropdownContainer.addClass("show");
 }
 
+// adding tabs
+
+$("[data-type='tab']").each(function () {
+  const el = $(this);
+  const tab = "#" + $(this).attr("data-target");
+  el.on("click", function () {
+    $(".tab-item").removeClass("active-tab");
+    el.addClass("active-tab");
+    $(".tab-content").removeClass("active");
+    $(tab).addClass("active");
+  });
+});
+
 $(document).on("keydown", function (e: any) {
   if (e.key === "Escape") {
     controller.hideToolbar();
