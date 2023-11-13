@@ -366,6 +366,11 @@
       line-height: 1.4;
       color: rgba(var(--textColor), 0.5);
     }
+
+    .tab-content & {
+      padding-right: 0;
+      padding-left: 0;
+    }
   }
 }
 

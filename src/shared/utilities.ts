@@ -7,7 +7,6 @@ export function isObjEmpty(obj): boolean {
   return Object.keys(obj).length === 0;
 }
 
-
 /**
  Get full sentence starting from specific index
 */
@@ -21,7 +20,6 @@ export function getSentenceAfterWord(
   }
   return sentence;
 }
-
 
 /**
  Get elements array back from window selection
@@ -51,7 +49,6 @@ export function extractWordsFromSelection(selected: Selection): HTMLElement[] {
   return elementsArray;
 }
 
-
 /**
  Highlight group os spans elements by wrapping them into new parent
 */
@@ -78,7 +75,10 @@ export function wrapHighlightedElements(words: HTMLElement[]) {
 /**
  Get page number according to specific word index
 */
-export function getPageNumberByWordIndex(wordIndex: number, currentChapter: BookChapter): number {
+export function getPageNumberByWordIndex(
+  wordIndex: number,
+  currentChapter: BookChapter
+): number {
   let pageNo = 0;
   currentChapter?.pagesContentRanges.forEach((page, pageIndex) => {
     const min = Math.min(page[0], page[1]),

@@ -376,7 +376,6 @@ export class Controller {
 
     // Positioning the appended menu according to word
     $(menu).css({
-      position: "absolute",
       top,
     });
 
@@ -693,7 +692,7 @@ export class Controller {
       this.storeUserPreferences();
     }
     if (this.book.bookmarks) {
-      $(list).closest(".dropdown").removeClass("empty");
+      $(list).closest(".tab-content").removeClass("empty");
       Object.keys(this.book.bookmarks).forEach((key) => {
         (this.book.bookmarks[key].notes as IHighlighted[])?.forEach((word) => {
           // <p>${new Date(word.createdOn).toUTCString()}</p>
@@ -713,7 +712,7 @@ export class Controller {
         });
       });
     } else {
-      $(list).closest(".dropdown").addClass("empty");
+      $(list).closest(".tab-content").addClass("empty");
     }
     this.postRenderBookmarks();
   }
@@ -758,6 +757,8 @@ export class Controller {
     }
     this.book.bookmarks = storedData;
     this.renderBookmarks();
+    window.getSelection().removeAllRanges();
+    window.getSelection().empty();
   }
 
   /**
@@ -834,7 +835,7 @@ export class Controller {
     const list = UTILS.DOM_ELS.highlightsList;
     $(list).html("");
     if (this.book.highlights) {
-      $(list).closest(".dropdown").removeClass("empty");
+      $(list).closest(".tab-content").removeClass("empty");
       Object.keys(this.book.highlights).forEach((key) => {
         (this.book.highlights[key].notes as IHighlighted[])?.forEach((word) => {
           $(list).append(
@@ -853,7 +854,7 @@ export class Controller {
         });
       });
     } else {
-      $(list).closest(".dropdown").addClass("empty");
+      $(list).closest(".tab-content").addClass("empty");
     }
     this.postRenderHighlight();
   }
@@ -863,7 +864,6 @@ export class Controller {
   */
   postRenderHighlight() {
     this.storeUserPreferences();
-    window.getSelection().empty();
 
     // Appending event listeners to appended elements
     UTILS.DOM_ELS.highlightsBtns?.forEach((listItem) => {
