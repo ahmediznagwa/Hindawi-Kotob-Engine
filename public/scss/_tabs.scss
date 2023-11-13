@@ -10,7 +10,7 @@
   background-color: rgba($color: #767676, $alpha: 0.12);
   .tab-item {
     padding: 0 1.5rem;
-cursor: pointer;
+    cursor: pointer;
     &.active-tab {
       border-radius: 6px;
       background-color: white;
@@ -20,13 +20,21 @@ cursor: pointer;
   .book-content & {
     margin-bottom: 3rem;
     margin-top: -3rem;
+    @media screen and (max-width: $mobilexLarge) {
+      margin-top: -.5rem;
+    }
   }
 }
 
 .tab-content {
   display: none;
+  overflow: auto;
 
   &.active {
     display: block;
+  }
+
+  .book-content & {
+    flex: 1;
   }
 }

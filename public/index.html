@@ -10,13 +10,12 @@
     <title>Hindawi Reader</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body>
+  <body class="option-1">
     <div class="app-bar app-bar--top">
       <h1 class="book-title">عنوان الكتاب</h1>
       <div class="action-buttons">
         <button class="add-bookmark-btn btn-primary-text btn">
-          <i class="f-icon bookmark-icon light
-          "></i>
+          <i class="f-icon bookmark-icon light"></i>
         </button>
         <button class="btn close-reader">
           <i class="f-icon chevron-left-icon"></i>
@@ -171,7 +170,7 @@
           <span> محتوي الكتاب </span>
         </div>
         <div class="tab-item" data-type="tab" data-target="bookmark">
-          <span> علامة متابعة القراءة </span>
+          <span> علامات المتابعة </span>
         </div>
 
         <div class="tab-item" data-type="tab" data-target="notes">
@@ -183,14 +182,14 @@
       </div>
       <div class="tab-content empty" id="bookmark">
         <ul class="bookmarks-list"></ul>
-        <p class="empty-message">
+        <!-- <p class="empty-message">
           لا توجد أي علامات لمتابعة القراءة حتى الآن
-        </p>
+        </p> -->
       </div>
 
       <div class="tab-content" id="notes">
         <ul class="bookmarks-list bookmarks-list--highlights"></ul>
-        <p class="empty-message">لا توجد أي نصوص مميزة حتى الآن</p>
+        <!-- <p class="empty-message">لا توجد أي نصوص مميزة حتى الآن</p> -->
       </div>
     </div>
     <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>

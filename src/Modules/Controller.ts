@@ -1,10 +1,9 @@
-import { IBookInfo } from "../Models/IBookInfo.model";
-import { IBookmark } from "../Models/IBookmark.model";
 import { IHighlighted } from "../Models/IHighlighted.model";
 import { PageUpdatedMessage } from "../Models/IPostMessage.model";
 import { IUserPreferencesState } from "../Models/IUserPreferencesState.model";
 import {
   extractWordsFromSelection,
+  getPageNumberByWordIndex,
   getSentenceAfterWord,
   isObjEmpty,
   wrapHighlightedElements,
@@ -350,17 +349,26 @@ export class Controller {
   wordsSelectionHandler(e, elements: HTMLElement[]) {
     e.stopPropagation();
     const anchorElement = elements[0];
-    // this.book.currentChapter.hideActionsMenu();
+    this.book?.currentChapter?.hideActionsMenu();
     const top = $(anchorElement).offset().top;
     const menu = document.createElement("div");
     menu.classList.add("actions-menu");
-    const actionsMenu = `
-        <ul data-word-index="${anchorElement.getAttribute("n")}">
-          <li class="highlight"><a href="#">تلوين</a></li>
-          <li class="unhighlight"><a href="#">الغاء التلوين</a></li>
-          <li class="bookmark"><a href="#">إضافة علامة متابعة القراءة</a></li>
-        </ul>
-        `;
+
+    let actionsMenu = `
+    <ul data-word-index="${anchorElement.getAttribute("n")}">
+      <li class="highlight"><a href="#">تلوين</a></li>
+      <li class="bookmark"><a href="#">إضافة علامة متابعة القراءة</a></li>
+    </ul>
+`;
+
+    if ($("body").hasClass("option-1")) {
+      actionsMenu = `
+          <ul data-word-index="${anchorElement.getAttribute("n")}">
+            <li class="highlight"><a href="#">تلوين</a></li>
+          </ul>
+      `;
+    }
+    // <li class="unhighlight"><a href="#">الغاء التلوين</a></li>
     // <li class="copy"><a href="#">نسخ</a></li>
 
     menu.innerHTML = actionsMenu;
@@ -395,7 +403,7 @@ export class Controller {
     Handles the window resize event
   */
   resizeEventHandler = () => {
-    this.book.currentChapter.calcPagesContentRanges();
+    this.book?.currentChapter?.calcPagesContentRanges();
     this.changePageToAnchorWordLocation();
     this.storeUserPreferences();
   };
@@ -470,6 +478,7 @@ export class Controller {
   */
   postNavigationHandler() {
     this.storeUserPreferences();
+    this.book?.checkPageIsBookmarked();
     // document.body.scrollTop = 0;
   }
 
@@ -477,10 +486,10 @@ export class Controller {
     Handles what happens after any font resizing
   */
   postFontResizeHandler() {
-    this.book.currentChapter.calcPagesContentRanges();
+    this.book?.currentChapter?.calcPagesContentRanges();
     this.changePageToAnchorWordLocation();
     this.storeUserPreferences();
-    this.book.currentChapter.hideActionsMenu();
+    this.book?.currentChapter?.hideActionsMenu();
   }
 
   /**
@@ -592,21 +601,40 @@ export class Controller {
     Handles what happened after clicking on specific note in the list
   */
   goToNote(anchorWordIndex: number, chapterIndex: number) {
+    $(UTILS.DOM_ELS.tableOfContentWrapper).removeClass(
+      "book-content-list--show"
+    );
     this.book.renderChapter(chapterIndex);
-
     // Detect anchor word page index
-    this.book.goToPage(this.book.getPageNumberByWordIndex(anchorWordIndex));
+    this.book.goToPage(
+      getPageNumberByWordIndex(anchorWordIndex, this.book.currentChapter)
+    );
+    this.book?.checkPageIsBookmarked();
   }
 
   /**
     add bookmark for the current page
   */
-  addBookmark() {
+  addBookmark(e) {
+    const button = $(e.target).parent();
+    const alreadyAddedBookmark = $(e.target)
+      .parent()
+      .hasClass("bookmark-added");
+
+    if (alreadyAddedBookmark) {
+      const chapterIndex = +button.attr("data-chapter-index");
+      const anchorWordIndex = +button.attr("data-anchor-word-index");
+      this.removeBookmark(anchorWordIndex, chapterIndex);
+      return;
+    }
     const el = $(`span[n=${this.book.anchorWordIndex}]`)[0];
     const index = +el.getAttribute("n");
+    const numberOfWords = 5;
     const bookmark: IHighlighted = {
       index,
-      content: getSentenceAfterWord(index),
+      content: getSentenceAfterWord(index, numberOfWords),
+      wordsIndexes: Array.from({ length: numberOfWords }, (_, i) => index + i),
+      numberOfWords,
       createdOn: Date.now(),
       chapterTitle:
         this.book.tableOfContents[this.book.currentChapterIndex].chapterTitle,
@@ -633,13 +661,9 @@ export class Controller {
   }
 
   /**
-      add bookmark for the current page
-    */
-  removeBookmark(e) {
-    e.stopPropagation();
-    const el = e.target.closest("li") as HTMLElement;
-    const anchorWordIndex = +el.getAttribute("data-anchor-word-index");
-    const chapterIndex = +el.getAttribute("data-chapter-index");
+    add bookmark for the current page
+  */
+  removeBookmark(anchorWordIndex: number, chapterIndex: number) {
     const storedBookmarks = this.book.bookmarks || {};
 
     if (storedBookmarks[chapterIndex].notes.length > 1) {
@@ -698,7 +722,7 @@ export class Controller {
     Highlight selected word
   */
   addNote(words: HTMLElement[], type: "highlight" | "bookmark") {
-    this.book.currentChapter.hideActionsMenu();
+    this.book?.currentChapter?.hideActionsMenu();
 
     if (type === "highlight") {
       wrapHighlightedElements(words);
@@ -744,7 +768,7 @@ export class Controller {
     chapterIndex: number,
     type: "highlight" | "bookmark"
   ) {
-    this.book.currentChapter.hideActionsMenu();
+    this.book?.currentChapter?.hideActionsMenu();
     const storedData =
       type === "highlight"
         ? this.book.highlights || {}
@@ -786,6 +810,7 @@ export class Controller {
   */
   postRenderBookmarks() {
     this.storeUserPreferences();
+    this.book?.checkPageIsBookmarked();
     // Appending event listeners to appended elements
     UTILS.DOM_ELS.bookmarksBtns?.forEach((listItem) => {
       const anchorWordIndex = +$(listItem).attr("data-anchor-word-index");
@@ -862,7 +887,7 @@ export class Controller {
   */
   copyText(target: HTMLElement) {
     navigator.clipboard.writeText(target.textContent);
-    this.book.currentChapter.hideActionsMenu();
+    this.book?.currentChapter?.hideActionsMenu();
   }
 
   /**

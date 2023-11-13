@@ -1,6 +1,9 @@
+import { IBookmark } from "../Models/IBookmark.model";
 import { IHighlighted } from "../Models/IHighlighted.model";
-import { wrapHighlightedElements } from "../shared/utilities";
-import { Book } from "./Book";
+import {
+  getPageNumberByWordIndex,
+  wrapHighlightedElements,
+} from "../shared/utilities";
 import { UTILS } from "./Utils";
 
 export class BookChapter {
@@ -371,14 +374,14 @@ export class BookChapter {
       localStorage.getItem(`${this.bookId}_highlights`)
     );
     if (storedhighlightedWords) {
-      let elementsArray: HTMLElement[] = []
+      let elementsArray: HTMLElement[] = [];
       storedhighlightedWords[this.currentChapterIndex]?.notes?.forEach(
         (highlight: IHighlighted) => {
           for (let index = 0; index < highlight.numberOfWords; index++) {
             elementsArray.push($(`span[n=${highlight.index + index}]`)[0]);
           }
           wrapHighlightedElements(elementsArray);
-          elementsArray = []
+          elementsArray = [];
         }
       );
     }

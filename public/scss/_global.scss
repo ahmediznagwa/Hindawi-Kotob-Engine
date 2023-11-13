@@ -120,6 +120,7 @@ h1.title {
     justify-content: center;
     padding: 0;
     margin: 0;
+    min-width: max-content;
   }
 
   li {
@@ -251,9 +252,13 @@ h1.title {
   flex-direction: column;
   ul {
     margin: 0;
-    padding: 1rem 2rem 2rem;
+    padding: 0 2rem 2rem;
     overflow: auto;
     flex: 1;
+  }
+
+  .tab-content ul {
+    overflow: initial;
   }
 
   li {
@@ -324,5 +329,11 @@ h1.title {
   }
   to {
     background-color: transparent;
+  }
+}
+
+.option-1 {
+  .actions-menu .bookmark {
+    display: none;
   }
 }

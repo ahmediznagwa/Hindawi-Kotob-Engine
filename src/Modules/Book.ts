@@ -1,7 +1,7 @@
 import { IBookInfo } from "../Models/IBookInfo.model";
 import { IBookmark } from "../Models/IBookmark.model";
 import { IHighlight } from "../Models/IHighlight.model";
-import { IHighlighted } from "../Models/IHighlighted.model";
+import { getPageNumberByWordIndex } from "../shared/utilities";
 import { BookChapter } from "./BookChapter";
 import { UTILS } from "./Utils";
 
@@ -60,12 +60,7 @@ export class Book {
       currentChapterIndex || 0,
       this.chapters.length - 1
     );
-    this.currentChapter = new BookChapter(
-      this.chapters[this.currentChapterIndex],
-      this.bookInfo.bookId,
-      this.currentChapterIndex,
-      this.rootFolder
-    );
+    this.renderChapter(this.currentChapterIndex);
     this.calculateBookWordsCount();
     this.anchorWordIndex = Math.min(anchorWordIndex || 0, this.bookWordsCount);
     this.currentProgressPercent = 0;
@@ -80,7 +75,7 @@ export class Book {
     this.changeColorMode(this.colorMode);
     this.changeFontFamily(this.fontFamily);
     setTimeout(() => {
-      this.currentChapter.calcPagesContentRanges();
+      this.currentChapter?.calcPagesContentRanges();
       this.currentPage = this.calcAnchorWordPage();
       this.changePage();
     }, 1000);
@@ -88,6 +83,7 @@ export class Book {
     this.addBookTitle();
     this.handleClickOnAnchors();
     this.generateBookTableOfContent();
+    this.checkPageIsBookmarked();
   }
 
   /**
@@ -263,14 +259,16 @@ export class Book {
     }`;
     // Check if it is in the same chapter (mainly user in footnotes)
     let targetEl;
-    if ($(this.currentChapter.chapterEl).find(elementSelector).length) {
-      targetEl = $(this.currentChapter.chapterEl).find(elementSelector);
+    if ($(this.currentChapter?.chapterEl).find(elementSelector).length) {
+      targetEl = $(this.currentChapter?.chapterEl).find(elementSelector);
       const firstWordInElementIndex = targetEl.find(`span:first-child`).length
         ? +targetEl.find(`span:first-child`).attr("n")
         : +targetEl.next("span[n]").attr("n") ||
           +targetEl.parent().find("span[n]:last-child").attr("n");
 
-      this.goToPage(this.getPageNumberByWordIndex(firstWordInElementIndex));
+      this.goToPage(
+        getPageNumberByWordIndex(firstWordInElementIndex, this.currentChapter)
+      );
 
       // Highlight element after render page.
       this.highlightSelectedElement($(elementSelector).parent()[0]);
@@ -289,7 +287,9 @@ export class Book {
           : +targetEl.next("span[n]").attr("n") ||
             +targetEl.parent().find("span[n]:last-child").attr("n");
 
-        this.goToPage(this.getPageNumberByWordIndex(firstWordInElementIndex));
+        this.goToPage(
+          getPageNumberByWordIndex(firstWordInElementIndex, this.currentChapter)
+        );
 
         // Highlight element after render page
         this.highlightSelectedElement($(elementSelector)[0]);
@@ -316,8 +316,8 @@ export class Book {
     selector = selector.includes(".") ? selector.replace(".", "\\.") : selector;
     // check if it is in the same chapter
 
-    if ($(this.currentChapter.chapterEl).find(selector).length) {
-      return $(this.currentChapter.chapterEl).find(selector)[0];
+    if ($(this.currentChapter?.chapterEl).find(selector).length) {
+      return $(this.currentChapter?.chapterEl).find(selector)[0];
     }
     this.chapters.forEach((chapter: HTMLElement, index: number) => {
       if ($(chapter).find(selector).length) {
@@ -326,26 +326,6 @@ export class Book {
     });
 
     return el;
-  }
-
-  /**
-    Render specific chapter with chapter index
-  */
-  getPageNumberByWordIndex(wordIndex: number): number {
-    let pageNo = 0;
-    this.currentChapter.pagesContentRanges.forEach((page, pageIndex) => {
-      const min = Math.min(page[0], page[1]),
-        max = Math.max(page[0], page[1]);
-      if (
-        (wordIndex > min && wordIndex < max) ||
-        wordIndex === min ||
-        wordIndex === max
-      ) {
-        pageNo = pageIndex;
-      }
-    });
-
-    return pageNo;
   }
 
   /**
@@ -363,11 +343,11 @@ export class Book {
       this.currentChapterIndex,
       this.rootFolder
     );
-    this.currentChapter.calcPagesContentRanges();
+    this.currentChapter?.calcPagesContentRanges();
     this.changePage("first");
 
     setTimeout(() => {
-      this.currentChapter.calcPagesContentRanges();
+      this.currentChapter?.calcPagesContentRanges();
     }, 1000);
     this.handleClickOnAnchors();
   }
@@ -463,10 +443,10 @@ export class Book {
   */
   updateStartEndWordID() {
     this.currentPageFirstWordIndex =
-      this.currentChapter.pagesContentRanges[this.currentPage][0];
+      this.currentChapter?.pagesContentRanges[this.currentPage][0];
 
     this.currentPageLastWordIndex =
-      this.currentChapter.pagesContentRanges[this.currentPage][1];
+      this.currentChapter?.pagesContentRanges[this.currentPage][1];
 
     this.anchorWordIndex = this.currentPageFirstWordIndex;
   }
@@ -476,7 +456,7 @@ export class Book {
   */
   calcAnchorWordPage(): number {
     let pageNo = 0;
-    this.currentChapter.pagesContentRanges.forEach((page, pageIndex) => {
+    this.currentChapter?.pagesContentRanges.forEach((page, pageIndex) => {
       const min = Math.min(page[0], page[1]),
         max = Math.max(page[0], page[1]);
       if (
@@ -621,5 +601,40 @@ export class Book {
         );
       });
     });
+  }
+
+  /**
+    Check if page is bookmarked
+  */
+  checkPageIsBookmarked() {
+    let hasBookmark = false;
+    if (this.bookmarks) {
+      const notes = this.bookmarks[this.currentChapterIndex]?.notes;
+      if (notes?.length) {
+        for (let index = 0; index < notes.length; index++) {
+          if (
+            this.currentPage ===
+            getPageNumberByWordIndex(notes[index]?.index, this.currentChapter)
+          ) {
+            $(UTILS.DOM_ELS.addBookmarkBtn).addClass("bookmark-added");
+            $(UTILS.DOM_ELS.addBookmarkBtn).attr(
+              "data-chapter-index",
+              this.currentChapterIndex
+            );
+            $(UTILS.DOM_ELS.addBookmarkBtn).attr(
+              "data-anchor-word-index",
+              notes[index]?.index
+            );
+            hasBookmark = true;
+            break;
+          }
+        }
+      }
+    }
+    if (!hasBookmark) {
+      $(UTILS.DOM_ELS.addBookmarkBtn).removeClass("bookmark-added");
+      $(UTILS.DOM_ELS.addBookmarkBtn).removeAttr("data-chapter-index");
+      $(UTILS.DOM_ELS.addBookmarkBtn).removeAttr("data-anchor-word-index");
+    }
   }
 }
