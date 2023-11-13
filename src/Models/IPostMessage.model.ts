@@ -1,6 +1,7 @@
 export interface PageUpdatedMessage {
   isFirstPage: boolean;
   isLastPage: boolean;
+  colorMode: string;
   isFirstChapter: boolean;
   isLastChapter: boolean;
   chapterMaxPages: number;

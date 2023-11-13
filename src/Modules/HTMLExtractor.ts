@@ -1,13 +1,14 @@
+import { IBookInfo } from "../Models/IBookInfo.model";
+
 export class HTMLExtractor {
-  bookId: string;
-  cssFiles: string[] = [];
+  bookInfo: IBookInfo;
   chapters: any[];
   rootFolder: string;
   tableOfContents: string[];
-  constructor(bookId: string, rootFolder: string, tableOfContents: string[]) {
-    this.bookId = bookId;
+  constructor(bookInfo: IBookInfo, rootFolder: string, tableOfContents: string[]) {
+    this.bookInfo = bookInfo;
     this.chapters = [];
     this.rootFolder = rootFolder;
-    this.tableOfContents = tableOfContents;
+    this.tableOfContents = tableOfContents
   }
 }

@@ -1,6 +1,7 @@
+import { IHighlighted } from "./IHighlighted.model";
+
 export interface IBookmark {
-    title: string;
-    chapterIndex: number;
-    anchorWordIndex: number;
-    createdOn: number;
+  [key: string]: {
+    notes: IHighlighted[];
+  };
 }

@@ -1,3 +1,9 @@
+import { IBookmark } from "../Models/IBookmark.model";
+import { IHighlighted } from "../Models/IHighlighted.model";
+import {
+  getPageNumberByWordIndex,
+  wrapHighlightedElements,
+} from "../shared/utilities";
 import { UTILS } from "./Utils";
 
 export class BookChapter {
@@ -40,11 +46,21 @@ export class BookChapter {
     Replace image paths
   */
   updateImagePaths(): void {
-    const images = UTILS.DOM_ELS.book.querySelectorAll("img");
-    images.forEach((img: HTMLImageElement) => {
-      const imgSrc = img.getAttribute("src").split("/");
+    const images =
+      Array.from(UTILS.DOM_ELS.book.querySelectorAll("img")).length > 0
+        ? UTILS.DOM_ELS.book.querySelectorAll("img")
+        : UTILS.DOM_ELS.book.querySelectorAll("image");
+
+    images.forEach((img: HTMLImageElement | SVGImageElement) => {
+      const imgSrc =
+        img.getAttribute("src")?.split("/") ||
+        img.getAttribute("xlink:href")?.split("/");
       const imgName = imgSrc[imgSrc.length - 1];
-      img.src = `${this.rootFolder}/Images/${imgName}`;
+      if (img instanceof HTMLImageElement) {
+        img.src = `${this.rootFolder}/Images/${imgName}`;
+        return;
+      }
+      img.setAttribute("xlink:href", `${this.rootFolder}/Images/${imgName}`);
     });
   }
 
@@ -303,8 +319,6 @@ export class BookChapter {
         }
       }
     );
-
-    console.log(this.pagesContentRanges);
   }
 
   /**
@@ -315,7 +329,7 @@ export class BookChapter {
     const section = document.createElement("section");
     section.classList.add("book-chapter");
 
-    section.innerHTML = this.chapterEl.innerHTML;
+    section.innerHTML = this.chapterEl?.innerHTML;
 
     // Some wrapper contain class controll the style so I added the whole thing if they
     if (
@@ -329,9 +343,9 @@ export class BookChapter {
     UTILS.DOM_ELS.book.innerHTML = "";
     UTILS.DOM_ELS.book.append(section);
     this.calcPagesContentRanges();
-    this.bindEventHandlersInChapter();
     this.wrapWordsInAnchors();
     this.updateImagePaths();
+    this.getHighlightedWords();
     $("body").removeClass("loading");
     // this.insertFullPageImage(); insert fullpage image after specific index
   }
@@ -353,143 +367,24 @@ export class BookChapter {
   }
 
   /**
-    Highlight selected word
+    Get highlighted words for each chapter
   */
-  highlightWord(target: HTMLElement) {
-    $(target).closest(".actions-menu").addClass("has-highlight");
-    $(target).addClass("highlighted");
-    this.hideActionsMenu();
-    this.saveHighlightedWords(target);
-  }
-
-  /**
-    Unhighlight selected word
-  */
-  unhighlightWord(target: HTMLElement) {
-    $(target).closest(".actions-menu").removeClass("has-highlight");
-    $(target).removeClass("highlighted");
-    this.hideActionsMenu();
-    this.saveHighlightedWords(target);
-  }
-
-  /**
-    Store highlighted words for each chapter
-  */
-  saveHighlightedWords(el: HTMLElement) {
-    const highlightedWords = {};
-    document.querySelectorAll(".highlighted").forEach((word: HTMLElement) => {
-      if (highlightedWords[word.getAttribute("n")]) {
-        delete highlightedWords[word.getAttribute("n")];
-        return;
-      }
-      highlightedWords[word.getAttribute("n")] = 1;
-    });
-
-    const storedhighlightedWords =
-      JSON.parse(localStorage.getItem("highlightedWords")) || {};
-
-    storedhighlightedWords[this.currentChapterIndex] = {
-      words: highlightedWords,
-    };
-
-    localStorage.setItem(
-      "highlightedWords",
-      JSON.stringify(storedhighlightedWords)
+  getHighlightedWords() {
+    const storedhighlightedWords = JSON.parse(
+      localStorage.getItem(`${this.bookId}_highlights`)
     );
-  }
-
-  /**
-    Update chapter images relative to selected book folder
-  */
-  copyText(target: HTMLElement) {
-    navigator.clipboard.writeText(target.textContent);
-    this.hideActionsMenu();
-  }
-
-  /**
-    Binding event handlers in chapter
-  */
-  bindEventHandlersInChapter() {
-    // Bind click event in all words
-    const highlightedWords = JSON.parse(
-      localStorage.getItem("highlightedWords")
-    );
-
-    UTILS.DOM_ELS.words?.forEach((word: HTMLElement) => {
-      $(word).on("taphold", this.wordEventHandler.bind(this));
-      const wordIndex = word.getAttribute("n");
-
-      // Checking if there was stored highlighted words
-      if (
-        highlightedWords &&
-        highlightedWords[this.currentChapterIndex] &&
-        highlightedWords[this.currentChapterIndex]?.words[wordIndex]
-      ) {
-        $(word).closest(".actions-menu").addClass("has-highlight");
-        $(word).addClass("highlighted");
-      }
-    });
-  }
-
-  /**
-    Handling dropdown that show on word click
-  */
-  wordEventHandler(e) {
-    e.stopPropagation();
-    const element = e.target as HTMLElement;
-    this.hideActionsMenu();
-    const top = $(element).offset().top;
-    const left = $(element).offset().left;
-    const menu = document.createElement("div");
-    menu.classList.add("actions-menu");
-    const actionsMenu = `
-      <ul>
-        <li class="highlight"><a href="#">تلوين</a></li>
-        <li class="unhighlight"><a href="#">الغاء التلوين</a></li>
-      </ul>
-      `;
-    // <li class="copy"><a href="#">نسخ</a></li>
-
-    menu.innerHTML = actionsMenu;
-    document.body.appendChild(menu);
-
-    $(element).addClass("selected");
-
-    if ($(element).hasClass("highlighted")) {
-      $(menu).addClass("has-highlight");
-      $(menu).find(".highlight").remove();
+    if (storedhighlightedWords) {
+      let elementsArray: HTMLElement[] = [];
+      storedhighlightedWords[this.currentChapterIndex]?.notes?.forEach(
+        (highlight: IHighlighted) => {
+          for (let index = 0; index < highlight.numberOfWords; index++) {
+            elementsArray.push($(`span[n=${highlight.index + index}]`)[0]);
+          }
+          wrapHighlightedElements(elementsArray);
+          elementsArray = [];
+        }
+      );
     }
-
-    // Positioning the appended menu according to word
-    $(menu).css({
-      position: "absolute",
-      left: left + $(element).width() / 2,
-      transform: "translate(-50%,-120%)",
-      top,
-    });
-
-    $(window).on("resize", () => {
-      this.hideActionsMenu();
-    });
-
-    // Binding click events on menu items
-    $(menu).on("click", function (e: any) {
-      e.stopPropagation();
-    });
-    if (menu.querySelector(".highlight")) {
-      menu
-        .querySelector(".highlight")
-        .addEventListener("click", this.highlightWord.bind(this, element));
-    }
-    if (menu.querySelector(".unhighlight")) {
-      menu
-        .querySelector(".unhighlight")
-        .addEventListener("click", this.unhighlightWord.bind(this, element));
-    }
-
-    // menu
-    //   .querySelector(".copy")
-    //   .addEventListener("click", this.copyText.bind(this, element));
   }
 
   /**
@@ -500,16 +395,16 @@ export class BookChapter {
     $("span").removeClass("selected");
   }
 
-  insertFullPageImage(wordIndex: number = 533) {
-    const book = $(UTILS.DOM_ELS.book);
-    const el = book.find(`span[n='${wordIndex}']`);
-    const bookChapter = el.closest(".book-chapter");
-    const bookHeight = book.outerHeight();
-    if (el.length) {
-      const image = `<div class="inserted-image" style="height: ${bookHeight}px"><img src="image.jpg"></div>`;
-      bookChapter.append(image);
-      $(image).css("height");
-      this.calcPagesContentRanges();
-    }
-  }
+  // insertFullPageImage(wordIndex: number = 533) {
+  //   const book = $(UTILS.DOM_ELS.book);
+  //   const el = book.find(`span[n='${wordIndex}']`);
+  //   const bookChapter = el.closest(".book-chapter");
+  //   const bookHeight = book.outerHeight();
+  //   if (el.length) {
+  //     const image = `<div class="inserted-image" style="height: ${bookHeight}px"><img src="image.jpg"></div>`;
+  //     bookChapter.append(image);
+  //     $(image).css("height");
+  //     this.calcPagesContentRanges();
+  //   }
+  // }
 }

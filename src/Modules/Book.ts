@@ -1,4 +1,7 @@
+import { IBookInfo } from "../Models/IBookInfo.model";
 import { IBookmark } from "../Models/IBookmark.model";
+import { IHighlight } from "../Models/IHighlight.model";
+import { getPageNumberByWordIndex } from "../shared/utilities";
 import { BookChapter } from "./BookChapter";
 import { UTILS } from "./Utils";
 
@@ -9,9 +12,8 @@ interface ITableOfContent {
 }
 
 export class Book {
-  bookId: string;
+  bookInfo: IBookInfo;
   chapters: HTMLDivElement[];
-  cssFiles: string[];
   rootFolder: string;
   fontSize: number;
   currentChapterIndex: number;
@@ -19,7 +21,8 @@ export class Book {
   bookWordsCount: number;
   colorMode: string;
   fontFamily: string;
-  bookmarks: IBookmark[];
+  bookmarks: IBookmark;
+  highlights: IHighlight;
   currentChapter: BookChapter;
   currentProgressPercent: number;
   currentScrollPercentage: number;
@@ -35,11 +38,9 @@ export class Book {
   currentPageLastWordIndex: number;
   anchorWordIndex: number;
   tableOfContents: ITableOfContent[] = [];
-
   constructor(
-    bookId,
+    bookInfo,
     chapters,
-    cssFiles,
     rootFolder,
     tableOfContents,
     fontSize = 18,
@@ -47,24 +48,19 @@ export class Book {
     anchorWordIndex,
     colorMode = "white",
     fontFamily = "NotoNaskhArabic",
-    bookmarks = []
+    bookmarks,
+    highlights
   ) {
-    this.bookId = bookId;
+    this.bookInfo = bookInfo;
     this.rootFolder = rootFolder;
     this.tableOfContents = tableOfContents;
     this.bookWordsCount = null;
     this.chapters = chapters;
-    this.cssFiles = cssFiles;
     this.currentChapterIndex = Math.min(
       currentChapterIndex || 0,
       this.chapters.length - 1
     );
-    this.currentChapter = new BookChapter(
-      this.chapters[this.currentChapterIndex],
-      this.bookId,
-      this.currentChapterIndex,
-      this.rootFolder
-    );
+    this.renderChapter(this.currentChapterIndex);
     this.calculateBookWordsCount();
     this.anchorWordIndex = Math.min(anchorWordIndex || 0, this.bookWordsCount);
     this.currentProgressPercent = 0;
@@ -72,20 +68,22 @@ export class Book {
     this.colorMode = colorMode;
     this.fontFamily = fontFamily;
     this.bookmarks = bookmarks;
+    this.highlights = highlights;
     this.fontSizeStep = 0.15;
     this.fontSize = fontSize || this.rootFontSize;
     this.changeFontSize();
     this.changeColorMode(this.colorMode);
     this.changeFontFamily(this.fontFamily);
     setTimeout(() => {
-      this.currentChapter.calcPagesContentRanges();
+      this.currentChapter?.calcPagesContentRanges();
       this.currentPage = this.calcAnchorWordPage();
       this.changePage();
     }, 1000);
-    this.renderBookmarks();
     this.addBookStyles();
+    this.addBookTitle();
     this.handleClickOnAnchors();
     this.generateBookTableOfContent();
+    this.checkPageIsBookmarked();
   }
 
   /**
@@ -151,8 +149,8 @@ export class Book {
   }
 
   /**
-      Updates the DOM element representing the progress percentage value
-    */
+    Updates the DOM element representing the progress percentage value
+  */
   updateProgressPercentage() {
     // DR. HINDAWI'S EQUATION TO CALCULATE THE PROGRESS PERCENTAGE
     // i = first word on the page j = last word on the page n = number of words in the reader
@@ -261,14 +259,16 @@ export class Book {
     }`;
     // Check if it is in the same chapter (mainly user in footnotes)
     let targetEl;
-    if ($(this.currentChapter.chapterEl).find(elementSelector).length) {
-      targetEl = $(this.currentChapter.chapterEl).find(elementSelector);
+    if ($(this.currentChapter?.chapterEl).find(elementSelector).length) {
+      targetEl = $(this.currentChapter?.chapterEl).find(elementSelector);
       const firstWordInElementIndex = targetEl.find(`span:first-child`).length
         ? +targetEl.find(`span:first-child`).attr("n")
         : +targetEl.next("span[n]").attr("n") ||
           +targetEl.parent().find("span[n]:last-child").attr("n");
 
-      this.goToPage(this.getPageNumberByWordIndex(firstWordInElementIndex));
+      this.goToPage(
+        getPageNumberByWordIndex(firstWordInElementIndex, this.currentChapter)
+      );
 
       // Highlight element after render page.
       this.highlightSelectedElement($(elementSelector).parent()[0]);
@@ -287,7 +287,9 @@ export class Book {
           : +targetEl.next("span[n]").attr("n") ||
             +targetEl.parent().find("span[n]:last-child").attr("n");
 
-        this.goToPage(this.getPageNumberByWordIndex(firstWordInElementIndex));
+        this.goToPage(
+          getPageNumberByWordIndex(firstWordInElementIndex, this.currentChapter)
+        );
 
         // Highlight element after render page
         this.highlightSelectedElement($(elementSelector)[0]);
@@ -314,8 +316,8 @@ export class Book {
     selector = selector.includes(".") ? selector.replace(".", "\\.") : selector;
     // check if it is in the same chapter
 
-    if ($(this.currentChapter.chapterEl).find(selector).length) {
-      return $(this.currentChapter.chapterEl).find(selector)[0];
+    if ($(this.currentChapter?.chapterEl).find(selector).length) {
+      return $(this.currentChapter?.chapterEl).find(selector)[0];
     }
     this.chapters.forEach((chapter: HTMLElement, index: number) => {
       if ($(chapter).find(selector).length) {
@@ -329,26 +331,6 @@ export class Book {
   /**
     Render specific chapter with chapter index
   */
-  getPageNumberByWordIndex(wordIndex: number): number {
-    let pageNo = 0;
-    this.currentChapter.pagesContentRanges.forEach((page, pageIndex) => {
-      const min = Math.min(page[0], page[1]),
-        max = Math.max(page[0], page[1]);
-      if (
-        (wordIndex > min && wordIndex < max) ||
-        wordIndex === min ||
-        wordIndex === max
-      ) {
-        pageNo = pageIndex;
-      }
-    });
-
-    return pageNo;
-  }
-
-  /**
-    Render specific chapter with chapter index
-  */
   renderChapter(chapterIndex: number): void {
     this.currentChapterIndex = Math.min(
       chapterIndex || 0,
@@ -357,15 +339,15 @@ export class Book {
 
     this.currentChapter = new BookChapter(
       this.chapters[this.currentChapterIndex],
-      this.bookId,
+      this.bookInfo.bookId,
       this.currentChapterIndex,
       this.rootFolder
     );
-    this.currentChapter.calcPagesContentRanges();
-    this.changePage('first');
+    this.currentChapter?.calcPagesContentRanges();
+    this.changePage("first");
 
     setTimeout(() => {
-      this.currentChapter.calcPagesContentRanges();
+      this.currentChapter?.calcPagesContentRanges();
     }, 1000);
     this.handleClickOnAnchors();
   }
@@ -441,6 +423,7 @@ export class Book {
       default:
         break;
     }
+
     //Update the state of chapter and page
     this.updateChapterPageState();
     //update scroll percentage
@@ -460,10 +443,10 @@ export class Book {
   */
   updateStartEndWordID() {
     this.currentPageFirstWordIndex =
-      this.currentChapter.pagesContentRanges[this.currentPage][0];
+      this.currentChapter?.pagesContentRanges[this.currentPage][0];
 
     this.currentPageLastWordIndex =
-      this.currentChapter.pagesContentRanges[this.currentPage][1];
+      this.currentChapter?.pagesContentRanges[this.currentPage][1];
 
     this.anchorWordIndex = this.currentPageFirstWordIndex;
   }
@@ -473,7 +456,7 @@ export class Book {
   */
   calcAnchorWordPage(): number {
     let pageNo = 0;
-    this.currentChapter.pagesContentRanges.forEach((page, pageIndex) => {
+    this.currentChapter?.pagesContentRanges.forEach((page, pageIndex) => {
       const min = Math.min(page[0], page[1]),
         max = Math.max(page[0], page[1]);
       if (
@@ -555,44 +538,20 @@ export class Book {
   }
 
   /**
-    Render bookmarks list into DOM
-  */
-  renderBookmarks() {
-    const list = UTILS.DOM_ELS.bookmarksList;
-
-    if (this.bookmarks) {
-      $(list).html("");
-      this.bookmarks.forEach((bookmark) => {
-        $(list).append(
-          `
-          <li class="bookmark-item" data-chapter-index="${
-            bookmark.chapterIndex
-          }" data-anchor-word-index="${bookmark.anchorWordIndex}">
-            <div>
-              <h4>${bookmark.title}</h4>
-              <p>${new Date(bookmark.createdOn).toUTCString()}</p>
-            </div>
-            <button class="btn-icon btn">
-              <i class="f-icon trash-icon"></i>
-            </button>
-          </li>
-          `
-        );
-      });
-    }
-  }
-
-  /**
     Add book styles to the index.html head
   */
   addBookStyles() {
-    this.cssFiles.forEach((cssString) => {
-      const style = document.createElement("style");
-      style.textContent = cssString
-        .replaceAll("{", "\n{\n")
-        .replaceAll("}", "\n}\n");
-      document.head.prepend(style);
-    });
+    const style = document.createElement("link");
+    style.rel = "stylesheet";
+    style.href = `${this.rootFolder}/TempBook.css`;
+    document.head.prepend(style);
+  }
+
+  /**
+    Add book title to the top bar
+  */
+  addBookTitle() {
+    UTILS.DOM_ELS.bookTitle.textContent = this.bookInfo.bookTitle;
   }
 
   /**
@@ -642,5 +601,40 @@ export class Book {
         );
       });
     });
+  }
+
+  /**
+    Check if page is bookmarked
+  */
+  checkPageIsBookmarked() {
+    let hasBookmark = false;
+    if (this.bookmarks) {
+      const notes = this.bookmarks[this.currentChapterIndex]?.notes;
+      if (notes?.length) {
+        for (let index = 0; index < notes.length; index++) {
+          if (
+            this.currentPage ===
+            getPageNumberByWordIndex(notes[index]?.index, this.currentChapter)
+          ) {
+            $(UTILS.DOM_ELS.addBookmarkBtn).addClass("bookmark-added");
+            $(UTILS.DOM_ELS.addBookmarkBtn).attr(
+              "data-chapter-index",
+              this.currentChapterIndex
+            );
+            $(UTILS.DOM_ELS.addBookmarkBtn).attr(
+              "data-anchor-word-index",
+              notes[index]?.index
+            );
+            hasBookmark = true;
+            break;
+          }
+        }
+      }
+    }
+    if (!hasBookmark) {
+      $(UTILS.DOM_ELS.addBookmarkBtn).removeClass("bookmark-added");
+      $(UTILS.DOM_ELS.addBookmarkBtn).removeAttr("data-chapter-index");
+      $(UTILS.DOM_ELS.addBookmarkBtn).removeAttr("data-anchor-word-index");
+    }
   }
 }

@@ -6,6 +6,12 @@
       display: block;
     }
   }
+
+  &.empty {
+    .empty-message {
+      display: block;
+    }
+  }
 }
 
 .dropdown-menu {
@@ -41,5 +47,17 @@
       left: inherit;
       right: 6.3rem;
     }
+  }
+}
+
+.empty-message {
+  display: none;
+  padding: 1rem;
+  text-align: center;
+  color: #999;
+  margin: 0;
+  justify-content: center;
+  .empty &{
+    display: flex;
   }
 }

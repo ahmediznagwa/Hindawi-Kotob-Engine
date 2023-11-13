@@ -64,7 +64,10 @@ export class UTILS {
       return document.querySelector(".add-bookmark-btn");
     },
     get bookmarksList(): HTMLElement {
-      return document.querySelector(".bookmark-list");
+      return document.querySelector(".bookmarks-list");
+    },
+    get highlightsList(): HTMLElement {
+      return document.querySelector(".bookmarks-list--highlights");
     },
     get tableOfContentWrapper(): HTMLElement {
       return document.querySelector(".book-content");
@@ -77,6 +80,9 @@ export class UTILS {
     },
     get hideTableOfContenBtn(): HTMLElement {
       return document.querySelector(".hide-book-content");
+    },
+    get bookTitle(): HTMLElement {
+      return document.querySelector(".book-title");
     },
     get words(): NodeListOf<HTMLElement> {
       return document.querySelectorAll("span[n]");
@@ -98,6 +104,9 @@ export class UTILS {
     },
     get bookmarksBtns(): NodeListOf<HTMLElement> {
       return document.querySelectorAll(".bookmark-item");
+    },
+    get highlightsBtns(): NodeListOf<HTMLElement> {
+      return document.querySelectorAll(".highlight-item");
     },
   };
 

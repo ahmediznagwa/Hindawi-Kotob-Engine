@@ -9,7 +9,6 @@ module.exports = merge(common, {
   plugins: [
     new CopyPlugin({
       patterns: [
-        { from: './public/packages', to: 'packages' },
         { from: './public/fonts', to: 'fonts' },
         { from: './public/images', to: 'images' },
         { from: './public/index.html' },

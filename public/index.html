@@ -10,14 +10,25 @@
     <title>Hindawi Reader</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body>
+  <body class="option-1">
+    <div class="app-bar app-bar--top">
+      <h1 class="book-title">عنوان الكتاب</h1>
+      <div class="action-buttons">
+        <button class="add-bookmark-btn btn-primary-text btn">
+          <i class="f-icon bookmark-icon light"></i>
+        </button>
+        <button class="btn close-reader">
+          <i class="f-icon chevron-left-icon"></i>
+        </button>
+      </div>
+    </div>
     <div class="book-container">
       <div class="book-wrapper">
         <div class="book"></div>
       </div>
     </div>
 
-    <div class="bottom-bar">
+    <div class="app-bar app-bar--bottom">
       <div class="book-pagination">
         <div class="bar-left">
           <button
@@ -53,7 +64,7 @@
                   </label>
                 </div> -->
                 <div class="control-row">
-                  <h5>Color Mode</h5>
+                  <h5>نظام الألوان</h5>
 
                   <div class="color-modes">
                     <div class="change-color" data-value="white"></div>
@@ -62,7 +73,7 @@
                   </div>
                 </div>
                 <div class="control-row show-fonts">
-                  <h5>Font</h5>
+                  <h5>نوع الخط</h5>
                   <div class="selected-font-family"></div>
                 </div>
               </div>
@@ -84,18 +95,30 @@
               </div>
             </div>
           </div>
-          <div class="dropdown dropdown--bookmark">
+          <!-- <div class="dropdown dropdown--bookmark">
             <button class="btn-icon-outline-grey btn-icon btn dropdown-toggle">
               <i class="f-icon bookmark-icon"></i>
             </button>
             <div class="dropdown-menu">
-              <ul class="bookmark-list"></ul>
+              <ul class="bookmarks-list"></ul>
+              <p class="empty-message">
+                لا توجد أي علامات لمتابعة القراءة حتى الآن
+              </p>
               <button class="add-bookmark-btn btn-primary-text btn">
                 <i class="f-icon bookmark-icon"></i>
-                Add Bookmark
+                إضافة علامة متابعة القراءة
               </button>
             </div>
           </div>
+          <div class="dropdown">
+            <button class="btn-icon-outline-grey btn-icon btn dropdown-toggle">
+              <i class="f-icon highlighter-icon"></i>
+            </button>
+            <div class="dropdown-menu">
+              <ul class="bookmarks-list bookmarks-list--highlights"></ul>
+              <p class="empty-message">لا توجد أي نصوص مميزة حتى الآن</p>
+            </div>
+          </div> -->
         </div>
 
         <div class="bar-right">
@@ -141,7 +164,33 @@
           <i class="f-icon close-icon"> </i>
         </div>
       </div>
-      <ul class="book-content__list"></ul>
+
+      <div class="tabs">
+        <div class="tab-item active-tab" data-type="tab" data-target="content">
+          <span> محتوي الكتاب </span>
+        </div>
+        <div class="tab-item" data-type="tab" data-target="bookmark">
+          <span> علامات المتابعة </span>
+        </div>
+
+        <div class="tab-item" data-type="tab" data-target="notes">
+          <span> ملاحظات </span>
+        </div>
+      </div>
+      <div class="tab-content active" id="content">
+        <ul class="book-content__list"></ul>
+      </div>
+      <div class="tab-content empty" id="bookmark">
+        <ul class="bookmarks-list"></ul>
+        <!-- <p class="empty-message">
+          لا توجد أي علامات لمتابعة القراءة حتى الآن
+        </p> -->
+      </div>
+
+      <div class="tab-content" id="notes">
+        <ul class="bookmarks-list bookmarks-list--highlights"></ul>
+        <!-- <p class="empty-message">لا توجد أي نصوص مميزة حتى الآن</p> -->
+      </div>
     </div>
     <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
     <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
