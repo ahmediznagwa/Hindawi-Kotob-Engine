@@ -7,7 +7,7 @@ h1,
 }
 .book-container {
   padding: 6rem 0 0;
-  height: 100vh;
+  height: 100dvh;
   @media screen and (max-width: $mobilexLarge) {
     padding: 4rem 0 0;
   }
@@ -30,7 +30,7 @@ h1,
   break-before: avoid;
 }
 .book {
-  height: calc(100vh - 12rem);
+  height: calc(100dvh - 12rem);
   width: 100%;
   overflow: hidden;
   outline: none;
@@ -47,6 +47,6 @@ h1,
     column-width: inherit;
   }
   @media screen and (max-width: $mobilexLarge) {
-    height: calc(100vh - 8rem);
+    height: calc(100dvh - 8rem);
   }
 }

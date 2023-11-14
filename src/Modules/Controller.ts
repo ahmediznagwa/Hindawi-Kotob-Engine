@@ -271,6 +271,7 @@ export class Controller {
     // Handling window selection
     ["selectionchange"].forEach((eventName) => {
       $(document).on(eventName, (event) => {
+        event.preventDefault();
         if (window.getSelection().toString().length) {
           const elements = extractWordsFromSelection(window.getSelection());
           this.wordsSelectionHandler(event, elements);
@@ -350,7 +351,7 @@ export class Controller {
     e.stopPropagation();
     const anchorElement = elements[0];
     this.book?.currentChapter?.hideActionsMenu();
-    const top = $(anchorElement).offset().top;
+    const top = $(anchorElement)?.offset()?.top;
     const menu = document.createElement("div");
     menu.classList.add("actions-menu");
 
@@ -376,7 +377,6 @@ export class Controller {
 
     // Positioning the appended menu according to word
     $(menu).css({
-      position: "absolute",
       top,
     });
 
@@ -385,15 +385,22 @@ export class Controller {
     //   $(element).addClass("selected");
     // });
 
-    menu
-      .querySelector(".highlight")
-      .addEventListener(
+    const highlightBtn = menu.querySelector(".highlight");
+
+    if (highlightBtn) {
+      highlightBtn.addEventListener(
         "click",
         this.addNote.bind(this, elements, "highlight")
       );
-    menu
-      .querySelector(".bookmark")
-      .addEventListener("click", this.addNote.bind(this, elements, "bookmark"));
+    }
+
+    const bookmarkBtn = menu.querySelector(".bookmark");
+    if (bookmarkBtn) {
+      bookmarkBtn.addEventListener(
+        "click",
+        this.addNote.bind(this, elements, "bookmark")
+      );
+    }
     // menu
     //   .querySelector(".copy")
     //   .addEventListener("click", this.copyText.bind(this, element));
@@ -693,7 +700,7 @@ export class Controller {
       this.storeUserPreferences();
     }
     if (this.book.bookmarks) {
-      $(list).closest(".dropdown").removeClass("empty");
+      $(list).closest(".tab-content").removeClass("empty");
       Object.keys(this.book.bookmarks).forEach((key) => {
         (this.book.bookmarks[key].notes as IHighlighted[])?.forEach((word) => {
           // <p>${new Date(word.createdOn).toUTCString()}</p>
@@ -713,7 +720,7 @@ export class Controller {
         });
       });
     } else {
-      $(list).closest(".dropdown").addClass("empty");
+      $(list).closest(".tab-content").addClass("empty");
     }
     this.postRenderBookmarks();
   }
@@ -725,6 +732,7 @@ export class Controller {
     this.book?.currentChapter?.hideActionsMenu();
 
     if (type === "highlight") {
+      console.log(words)
       wrapHighlightedElements(words);
     }
     const newNote: IHighlighted = {
@@ -834,7 +842,7 @@ export class Controller {
     const list = UTILS.DOM_ELS.highlightsList;
     $(list).html("");
     if (this.book.highlights) {
-      $(list).closest(".dropdown").removeClass("empty");
+      $(list).closest(".tab-content").removeClass("empty");
       Object.keys(this.book.highlights).forEach((key) => {
         (this.book.highlights[key].notes as IHighlighted[])?.forEach((word) => {
           $(list).append(
@@ -853,7 +861,7 @@ export class Controller {
         });
       });
     } else {
-      $(list).closest(".dropdown").addClass("empty");
+      $(list).closest(".tab-content").addClass("empty");
     }
     this.postRenderHighlight();
   }
@@ -863,7 +871,6 @@ export class Controller {
   */
   postRenderHighlight() {
     this.storeUserPreferences();
-    window.getSelection().empty();
 
     // Appending event listeners to appended elements
     UTILS.DOM_ELS.highlightsBtns?.forEach((listItem) => {

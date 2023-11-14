@@ -99,12 +99,6 @@ if ($(".app-bar").length) {
       controller.hideToolbar();
     }, 4000);
   });
-  $(".app-bar").on("mouseenter", function () {
-    isHovering = true;
-  });
-  $(".app-bar").on("mouseleave", function () {
-    isHovering = false;
-  });
 }
 
 $(window).on("resize", () => {

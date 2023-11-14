@@ -52,6 +52,7 @@
     align-items: center;
     justify-content: center;
     font-family: $appFont;
+    padding-top: calc(env(safe-area-inset-top) + 1.5rem);
     .action-buttons {
       position: absolute;
       display: flex;
@@ -366,6 +367,11 @@
       line-height: 1.4;
       color: rgba(var(--textColor), 0.5);
     }
+
+    .tab-content & {
+      padding-right: 0;
+      padding-left: 0;
+    }
   }
 }
 
@@ -383,6 +389,21 @@
 }
 
 .dropdown--bookmark {
+  .dropdown-menu {
+    @media screen and (max-width: $mobilexLarge) {
+      left: -10px;
+      right: inherit;
+    }
+    &:before {
+      @media screen and (max-width: $mobilexLarge) {
+        left: 2rem;
+        right: inherit;
+      }
+    }
+  }
+}
+
+.option-1 {
   .dropdown-menu {
     @media screen and (max-width: $mobilexLarge) {
       left: -10px;

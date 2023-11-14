@@ -1,9 +1,5 @@
-import { IBookmark } from "../Models/IBookmark.model";
 import { IHighlighted } from "../Models/IHighlighted.model";
-import {
-  getPageNumberByWordIndex,
-  wrapHighlightedElements,
-} from "../shared/utilities";
+import { wrapHighlightedElements } from "../shared/utilities";
 import { UTILS } from "./Utils";
 
 export class BookChapter {
