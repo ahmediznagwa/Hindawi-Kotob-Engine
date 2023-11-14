@@ -56,7 +56,9 @@ export function wrapHighlightedElements(words: HTMLElement[]) {
   let highlightParent;
   let currentWordParent;
 
+  console.log(words.length)
   words.forEach((word, index) => {
+    console.log(index === words.length - 1 && index)
     word.textContent = `${
       index === words.length - 1 ? word.textContent : `${word.textContent} `
     }`;

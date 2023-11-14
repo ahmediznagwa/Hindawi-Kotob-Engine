@@ -271,6 +271,7 @@ export class Controller {
     // Handling window selection
     ["selectionchange"].forEach((eventName) => {
       $(document).on(eventName, (event) => {
+        event.preventDefault();
         if (window.getSelection().toString().length) {
           const elements = extractWordsFromSelection(window.getSelection());
           this.wordsSelectionHandler(event, elements);
@@ -350,7 +351,7 @@ export class Controller {
     e.stopPropagation();
     const anchorElement = elements[0];
     this.book?.currentChapter?.hideActionsMenu();
-    const top = $(anchorElement).offset().top;
+    const top = $(anchorElement)?.offset()?.top;
     const menu = document.createElement("div");
     menu.classList.add("actions-menu");
 
@@ -384,15 +385,22 @@ export class Controller {
     //   $(element).addClass("selected");
     // });
 
-    menu
-      .querySelector(".highlight")
-      .addEventListener(
+    const highlightBtn = menu.querySelector(".highlight");
+
+    if (highlightBtn) {
+      highlightBtn.addEventListener(
         "click",
         this.addNote.bind(this, elements, "highlight")
       );
-    menu
-      .querySelector(".bookmark")
-      .addEventListener("click", this.addNote.bind(this, elements, "bookmark"));
+    }
+
+    const bookmarkBtn = menu.querySelector(".bookmark");
+    if (bookmarkBtn) {
+      bookmarkBtn.addEventListener(
+        "click",
+        this.addNote.bind(this, elements, "bookmark")
+      );
+    }
     // menu
     //   .querySelector(".copy")
     //   .addEventListener("click", this.copyText.bind(this, element));
@@ -724,6 +732,7 @@ export class Controller {
     this.book?.currentChapter?.hideActionsMenu();
 
     if (type === "highlight") {
+      console.log(words)
       wrapHighlightedElements(words);
     }
     const newNote: IHighlighted = {

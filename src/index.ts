@@ -93,18 +93,11 @@ if ($(".app-bar").length) {
   $("body").on("mousemove", function () {
     clearTimeout(timer);
     timer = setTimeout(() => {
-      console.log('hello')
       if (isHovering) {
         return;
       }
       controller.hideToolbar();
     }, 4000);
-  });
-  $(".app-bar").on("mouseenter", function () {
-    isHovering = true;
-  });
-  $(".app-bar").on("mouseleave", function () {
-    isHovering = false;
   });
 }
 
