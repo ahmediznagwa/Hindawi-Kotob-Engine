@@ -251,13 +251,14 @@ export class Controller {
 
     // Diabling contextmenu
     document.addEventListener("contextmenu", (event) => {
+      console.log(event);
       event.preventDefault();
     });
     function disableIosSafariCallout(this: Window, event: any) {
       const s = this.getSelection();
       if ((s?.rangeCount || 0) > 0) {
         const r = s?.getRangeAt(0);
-        s?.removeAllRanges();
+        s?.empty();
         setTimeout(() => {
           s?.addRange(r!);
         }, 50);
@@ -265,7 +266,7 @@ export class Controller {
     }
 
     if (window.matchMedia("(pointer: coarse)").matches) {
-      document.ontouchend = disableIosSafariCallout.bind(window);
+      // document.ontouchend = disableIosSafariCallout.bind(window);
     }
 
     // Handling window selection
@@ -275,6 +276,7 @@ export class Controller {
         if (window.getSelection().toString().length) {
           const elements = extractWordsFromSelection(window.getSelection());
           this.wordsSelectionHandler(event, elements);
+          return;
         }
       });
     });
@@ -356,7 +358,7 @@ export class Controller {
     menu.classList.add("actions-menu");
 
     let actionsMenu = `
-    <ul data-word-index="${anchorElement.getAttribute("n")}">
+    <ul data-word-index="${anchorElement?.getAttribute("n")}">
       <li class="highlight"><a href="#">تلوين</a></li>
       <li class="bookmark"><a href="#">إضافة علامة متابعة القراءة</a></li>
     </ul>
@@ -364,7 +366,7 @@ export class Controller {
 
     if ($("body").hasClass("option-1")) {
       actionsMenu = `
-          <ul data-word-index="${anchorElement.getAttribute("n")}">
+          <ul data-word-index="${anchorElement?.getAttribute("n")}">
             <li class="highlight"><a href="#">تلوين</a></li>
           </ul>
       `;
@@ -377,7 +379,7 @@ export class Controller {
 
     // Positioning the appended menu according to word
     $(menu).css({
-      top,
+      // top,
     });
 
     // $('span[n]').removeClass("selected");
@@ -388,18 +390,19 @@ export class Controller {
     const highlightBtn = menu.querySelector(".highlight");
 
     if (highlightBtn) {
-      highlightBtn.addEventListener(
-        "click",
-        this.addNote.bind(this, elements, "highlight")
-      );
+      $(highlightBtn).on("click", (e) => {
+        e.stopPropagation();
+        window.getSelection().empty();
+        this.addNote(elements, "highlight");
+      });
     }
 
     const bookmarkBtn = menu.querySelector(".bookmark");
     if (bookmarkBtn) {
-      bookmarkBtn.addEventListener(
-        "click",
-        this.addNote.bind(this, elements, "bookmark")
-      );
+      $(bookmarkBtn).on("click", (e) => {
+        e.stopPropagation();
+        this.addNote(elements, "bookmark");
+      });
     }
     // menu
     //   .querySelector(".copy")
@@ -616,6 +619,14 @@ export class Controller {
     this.book.goToPage(
       getPageNumberByWordIndex(anchorWordIndex, this.book.currentChapter)
     );
+
+    // Animated highlighting for bookmarked text
+    const targetEL = $(`span[n="${anchorWordIndex}"]`).closest(
+      ".bookmarked"
+    )[0];
+    this.book.highlightSelectedElement(targetEL);
+
+    // Checking if this page is bookmarked (option 1)
     this.book?.checkPageIsBookmarked();
   }
 
@@ -731,10 +742,8 @@ export class Controller {
   addNote(words: HTMLElement[], type: "highlight" | "bookmark") {
     this.book?.currentChapter?.hideActionsMenu();
 
-    if (type === "highlight") {
-      console.log(words)
-      wrapHighlightedElements(words);
-    }
+    wrapHighlightedElements(words, type);
+
     const newNote: IHighlighted = {
       index: +words[0].getAttribute("n"),
       numberOfWords: words.length,
@@ -753,7 +762,12 @@ export class Controller {
       this.book.currentChapterIndex
     ]
       ? {
-          notes: [...storedData[this.book.currentChapterIndex].notes, newNote],
+          notes: [
+            ...storedData[this.book.currentChapterIndex].notes.filter(
+              (x) => x.index !== newNote.index
+            ),
+            newNote,
+          ],
         }
       : {
           notes: [newNote],
@@ -786,13 +800,17 @@ export class Controller {
       (x) => x.index === anchorWordIndex
     );
 
-    targetNote.wordsIndexes.forEach((wordIndex) => {
-      const noteParent = $(`span[n=${wordIndex}]`).closest("span.highlighted");
-      if (noteParent) {
-        const noteParentCn = noteParent.contents();
-        noteParent.replaceWith(noteParentCn);
-      }
-    });
+    if (type === "highlight") {
+      targetNote.wordsIndexes.forEach((wordIndex) => {
+        const noteParent = $(`span[n=${wordIndex}]`).closest(
+          "span.highlighted"
+        );
+        if (noteParent) {
+          const noteParentCn = noteParent.contents();
+          noteParent.replaceWith(noteParentCn);
+        }
+      });
+    }
 
     if (storedData[chapterIndex].notes.length > 1) {
       storedData[chapterIndex] = {

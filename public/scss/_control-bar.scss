@@ -71,7 +71,7 @@
         }
       }
       .add-bookmark-btn {
-        color: black;
+        color: inherit;
         &.bookmark-added {
           i {
             &::before {
@@ -366,6 +366,10 @@
       margin: 0;
       line-height: 1.4;
       color: rgba(var(--textColor), 0.5);
+    }
+
+    &:last-child {
+      border-bottom: 0;
     }
 
     .tab-content & {

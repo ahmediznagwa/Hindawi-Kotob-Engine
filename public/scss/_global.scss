@@ -96,8 +96,9 @@ h1.title {
   color: var(--bgColorRgb);
   // box-shadow: 2px 4px 8px rgba($color: #000000, $alpha: 0.1);
   border-radius: 8px;
+  top: 0;
   left: 50%;
-  transform: translate(-50%, -120%);
+  transform: translate(-50%, 0);
   position: fixed;
   z-index: 999999;
 
