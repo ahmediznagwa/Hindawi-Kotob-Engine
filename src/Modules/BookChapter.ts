@@ -342,6 +342,7 @@ export class BookChapter {
     this.wrapWordsInAnchors();
     this.updateImagePaths();
     this.getHighlightedWords();
+    this.getBookmarkedWords();
     $("body").removeClass("loading");
     // this.insertFullPageImage(); insert fullpage image after specific index
   }
@@ -366,17 +367,38 @@ export class BookChapter {
     Get highlighted words for each chapter
   */
   getHighlightedWords() {
-    const storedhighlightedWords = JSON.parse(
+    const storedHighlightedWords = JSON.parse(
       localStorage.getItem(`${this.bookId}_highlights`)
     );
-    if (storedhighlightedWords) {
+    if (storedHighlightedWords) {
       let elementsArray: HTMLElement[] = [];
-      storedhighlightedWords[this.currentChapterIndex]?.notes?.forEach(
-        (highlight: IHighlighted) => {
-          for (let index = 0; index < highlight.numberOfWords; index++) {
-            elementsArray.push($(`span[n=${highlight.index + index}]`)[0]);
+      storedHighlightedWords[this.currentChapterIndex]?.notes?.forEach(
+        (note: IHighlighted) => {
+          for (let index = 0; index < note.numberOfWords; index++) {
+            elementsArray.push($(`span[n=${note.index + index}]`)[0]);
           }
-          wrapHighlightedElements(elementsArray);
+          wrapHighlightedElements(elementsArray, "highlight");
+          elementsArray = [];
+        }
+      );
+    }
+  }
+
+  /**
+    Get highlighted words for each chapter
+  */
+  getBookmarkedWords() {
+    const storedBookmarkedWords = JSON.parse(
+      localStorage.getItem(`${this.bookId}_bookmarks`)
+    );
+    if (storedBookmarkedWords) {
+      let elementsArray: HTMLElement[] = [];
+      storedBookmarkedWords[this.currentChapterIndex]?.notes?.forEach(
+        (note: IHighlighted) => {
+          for (let index = 0; index < note.numberOfWords; index++) {
+            elementsArray.push($(`span[n=${note.index + index}]`)[0]);
+          }
+          wrapHighlightedElements(elementsArray, "bookmark");
           elementsArray = [];
         }
       );

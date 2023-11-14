@@ -43,7 +43,7 @@ export function extractWordsFromSelection(selected: Selection): HTMLElement[] {
   }
 
   if (isSameParent) {
-    elementsArray.pop();
+    const lastItem = elementsArray.pop();
   }
 
   return elementsArray;
@@ -52,20 +52,21 @@ export function extractWordsFromSelection(selected: Selection): HTMLElement[] {
 /**
  Highlight group os spans elements by wrapping them into new parent
 */
-export function wrapHighlightedElements(words: HTMLElement[]) {
+export function wrapHighlightedElements(
+  words: HTMLElement[],
+  type: "highlight" | "bookmark"
+) {
   let highlightParent;
   let currentWordParent;
-
-  console.log(words.length)
+  let className = type === "highlight" ? "highlighted" : "bookmarked";
   words.forEach((word, index) => {
-    console.log(index === words.length - 1 && index)
     word.textContent = `${
       index === words.length - 1 ? word.textContent : `${word.textContent} `
     }`;
     if (currentWordParent !== word.parentNode) {
       currentWordParent = word.parentNode;
       highlightParent = document.createElement("span");
-      highlightParent.classList.add("highlighted");
+      highlightParent.classList.add(className);
       $(highlightParent).insertBefore($(words[index]));
       $(highlightParent).append(word);
     } else {
