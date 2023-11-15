@@ -251,34 +251,19 @@ export class Controller {
 
     // Diabling contextmenu
     document.addEventListener("contextmenu", (event) => {
-      console.log(event);
       event.preventDefault();
     });
-    function disableIosSafariCallout(this: Window, event: any) {
-      const s = this.getSelection();
-      if ((s?.rangeCount || 0) > 0) {
-        const r = s?.getRangeAt(0);
-        s?.empty();
-        setTimeout(() => {
-          s?.addRange(r!);
-        }, 50);
-      }
-    }
-
-    if (window.matchMedia("(pointer: coarse)").matches) {
-      // document.ontouchend = disableIosSafariCallout.bind(window);
-    }
 
     // Handling window selection
-    ["selectionchange"].forEach((eventName) => {
-      $(document).on(eventName, (event) => {
-        event.preventDefault();
-        if (window.getSelection().toString().length) {
-          const elements = extractWordsFromSelection(window.getSelection());
-          this.wordsSelectionHandler(event, elements);
-          return;
-        }
-      });
+    $(document).on("selectionchange", (event) => {
+      event.preventDefault();
+      if (window.getSelection().toString().length) {
+        const elements = extractWordsFromSelection(window.getSelection());
+        this.wordsSelectionHandler(event, elements);
+      }
+    });
+    $(document).on("touchend", (_) => {
+      this.disableIosSafariCallout();
     });
 
     UTILS.DOM_ELS.nextPageBtn?.addEventListener(
@@ -358,11 +343,11 @@ export class Controller {
     menu.classList.add("actions-menu");
 
     let actionsMenu = `
-    <ul data-word-index="${anchorElement?.getAttribute("n")}">
-      <li class="highlight"><a href="#">تلوين</a></li>
-      <li class="bookmark"><a href="#">إضافة علامة متابعة القراءة</a></li>
-    </ul>
-`;
+      <ul data-word-index="${anchorElement?.getAttribute("n")}">
+        <li class="highlight"><a href="#">تلوين</a></li>
+        <li class="bookmark"><a href="#">إضافة علامة متابعة القراءة</a></li>
+      </ul>
+  `;
 
     if ($("body").hasClass("option-1")) {
       actionsMenu = `
@@ -379,7 +364,7 @@ export class Controller {
 
     // Positioning the appended menu according to word
     $(menu).css({
-      // top,
+      top,
     });
 
     // $('span[n]').removeClass("selected");
@@ -392,7 +377,6 @@ export class Controller {
     if (highlightBtn) {
       $(highlightBtn).on("click", (e) => {
         e.stopPropagation();
-        window.getSelection().empty();
         this.addNote(elements, "highlight");
       });
     }
@@ -941,6 +925,24 @@ export class Controller {
     });
     e.target.classList.add("selected");
     this.setColorMode(e.target.dataset.value);
+  }
+
+  /**
+    Disables touch callout
+  */
+  disableIosSafariCallout() {
+    const s = window.getSelection();
+    if ((s?.rangeCount || 0) > 0) {
+      const r = s?.getRangeAt(0);
+      s?.empty();
+      setTimeout(() => {
+        if (s.toString().trim() !== "" && r.toString().trim() !== "") {
+          console.log('s', s.toString().trim())
+          console.log('r', r.toString().trim())
+          s?.addRange(r!);
+        }
+      }, 100);
+    }
   }
 
   /**
