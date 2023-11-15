@@ -23,6 +23,7 @@ export class Controller {
   midWordFirstPageLeft: number;
   midWordLeft: number;
   lastWordLeft: number;
+  isSelecting: boolean;
   constructor() {}
 
   /**
@@ -246,8 +247,18 @@ export class Controller {
     });
 
     // Mobile Swipe Event Listeners
-    $(document).on("swiperight", this.goToNextPage.bind(this));
-    $(document).on("swipeleft", this.goToPrevPage.bind(this));
+    $(document).on("swiperight", () => {
+      console.log(this.isSelecting);
+      if (!this.isSelecting) {
+        this.goToNextPage();
+      }
+    });
+    $(document).on("swipeleft", () => {
+      console.log(this.isSelecting);
+      if (!this.isSelecting) {
+        this.goToPrevPage();
+      }
+    });
 
     // Diabling contextmenu
     document.addEventListener("contextmenu", (event) => {
@@ -258,11 +269,13 @@ export class Controller {
     $(document).on("selectionchange", (event) => {
       event.preventDefault();
       if (window.getSelection().toString().length) {
+        this.isSelecting = true;
         const elements = extractWordsFromSelection(window.getSelection());
         this.wordsSelectionHandler(event, elements);
       }
     });
     $(document).on("touchend", (event) => {
+      this.isSelecting = false;
       if (event.target.nodeName !== "A") {
         this.disableIosSafariCallout();
       }
