@@ -262,8 +262,10 @@ export class Controller {
         this.wordsSelectionHandler(event, elements);
       }
     });
-    $(document).on("touchend", (_) => {
-      this.disableIosSafariCallout();
+    $(document).on("touchend", (event) => {
+      if (event.target.nodeName !== "A") {
+        this.disableIosSafariCallout();
+      }
     });
 
     UTILS.DOM_ELS.nextPageBtn?.addEventListener(
@@ -936,9 +938,7 @@ export class Controller {
       const r = s?.getRangeAt(0);
       s?.empty();
       setTimeout(() => {
-        if (s.toString().trim() !== "" && r.toString().trim() !== "") {
-          console.log('s', s.toString().trim())
-          console.log('r', r.toString().trim())
+        if (r.toString().trim() !== "") {
           s?.addRange(r!);
         }
       }, 100);
