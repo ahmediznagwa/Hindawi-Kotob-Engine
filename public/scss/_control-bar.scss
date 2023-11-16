@@ -20,7 +20,7 @@
   & > div {
     display: flex;
     align-items: center;
-    @media screen and (max-width: $mobileLarge) {
+    @media screen and (max-width: $mobilexLarge) {
       flex-direction: column;
       align-items: unset;
     }
@@ -82,7 +82,7 @@
           }
         }
       }
-      @media screen and (max-width: $mobileLarge) {
+      @media screen and (max-width: $mobilexLarge) {
         flex-direction: unset;
         align-items: center;
       }
@@ -148,7 +148,7 @@
 .pagination-info {
   margin: 0 2rem;
   font-size: 1.8rem;
-  @media screen and (max-width: $mobileLarge) {
+  @media screen and (max-width: $mobilexLarge) {
     margin: 0 auto;
   }
 }
@@ -160,19 +160,19 @@
   button {
     margin: 0 3px;
     &:first-child {
-      @media screen and (max-width: $mobileLarge) {
+      @media screen and (max-width: $mobilexLarge) {
         margin-inline-start: 0;
       }
     }
 
     &:last-child {
-      @media screen and (max-width: $mobileLarge) {
+      @media screen and (max-width: $mobilexLarge) {
         margin-inline-end: 0;
       }
     }
   }
 
-  @media screen and (max-width: $mobileLarge) {
+  @media screen and (max-width: $mobilexLarge) {
     order: 1;
     margin: 0;
     margin-bottom: 1rem;
@@ -191,13 +191,13 @@
     &:last-child {
       // margin-inline-start: 0;
 
-      @media screen and (max-width: $mobileLarge) {
+      @media screen and (max-width: $mobilexLarge) {
         margin-inline-start: auto;
       }
     }
   }
 
-  @media screen and (max-width: $mobileLarge) {
+  @media screen and (max-width: $mobilexLarge) {
     order: 2;
   }
 }
