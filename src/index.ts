@@ -14,8 +14,10 @@ export const hindawiReaders = (function () {
     // const bookId = "69058261"; // publisher;
     const bookId = "42581692"; // hindawi;
 
-    const bookInfo = {
+    const readerConfig = {
       bookId,
+      paddingTop: 0,
+      paddingBottom: 0,
       bookTitle: "شلن واحد من أجل الشموع",
     };
     Promise.all([
@@ -23,10 +25,14 @@ export const hindawiReaders = (function () {
       fetch(`./books/${bookId}/toc.nav`).then((res) => res.text()),
     ]).then(([res1, res2]) => {
       controller.initWithChapters(
-        bookInfo.bookId,
-        bookInfo.bookTitle,
+        `{
+          "bookId": "${readerConfig.bookId}",
+          "paddingTop": ${readerConfig.paddingTop},
+          "paddingBottom": ${readerConfig.paddingBottom},
+          "bookTitle": "${readerConfig.bookTitle}"
+        }`,
         res1,
-        `./books/${bookInfo.bookId}`,
+        `./books/${readerConfig.bookId}`,
         res2
       );
     });

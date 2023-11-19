@@ -53,7 +53,6 @@
     align-items: center;
     justify-content: center;
     font-family: $appFont;
-    padding-top: calc(env(safe-area-inset-top) + 1.5rem);
     .action-buttons {
       position: absolute;
       display: flex;
@@ -68,7 +67,7 @@
           margin: 0;
         }
         &.close-reader {
-          margin-right: auto;
+          margin-left: auto;
         }
       }
       .add-bookmark-btn {

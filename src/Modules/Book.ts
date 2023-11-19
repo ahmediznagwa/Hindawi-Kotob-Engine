@@ -1,6 +1,6 @@
-import { IBookInfo } from "../Models/IBookInfo.model";
 import { IBookmark } from "../Models/IBookmark.model";
 import { IHighlight } from "../Models/IHighlight.model";
+import { IReaderConfig } from "../Models/IReaderConfig.model";
 import { getPageNumberByWordIndex } from "../shared/utilities";
 import { BookChapter } from "./BookChapter";
 import { UTILS } from "./Utils";
@@ -12,7 +12,7 @@ interface ITableOfContent {
 }
 
 export class Book {
-  bookInfo: IBookInfo;
+  readerConfig: IReaderConfig;
   chapters: HTMLDivElement[];
   rootFolder: string;
   fontSize: number;
@@ -39,7 +39,7 @@ export class Book {
   anchorWordIndex: number;
   tableOfContents: ITableOfContent[] = [];
   constructor(
-    bookInfo,
+    readerConfig,
     chapters,
     rootFolder,
     tableOfContents,
@@ -51,7 +51,7 @@ export class Book {
     bookmarks,
     highlights
   ) {
-    this.bookInfo = bookInfo;
+    this.readerConfig = readerConfig;
     this.rootFolder = rootFolder;
     this.tableOfContents = tableOfContents;
     this.bookWordsCount = null;
@@ -79,11 +79,11 @@ export class Book {
       this.currentPage = this.calcAnchorWordPage();
       this.changePage();
     }, 1000);
-    this.addBookStyles();
     this.addBookTitle();
     this.handleClickOnAnchors();
     this.generateBookTableOfContent();
     this.checkPageIsBookmarked();
+    this.addBookStyles();
   }
 
   /**
@@ -339,7 +339,7 @@ export class Book {
 
     this.currentChapter = new BookChapter(
       this.chapters[this.currentChapterIndex],
-      this.bookInfo.bookId,
+      this.readerConfig.bookId,
       this.currentChapterIndex,
       this.rootFolder
     );
@@ -545,13 +545,28 @@ export class Book {
     style.rel = "stylesheet";
     style.href = `${this.rootFolder}/TempBook.css`;
     document.head.prepend(style);
+
+    // Adding padding for top and bottom control bars
+    const topBar = $(".app-bar--top");
+    const bottomBar = $(".app-bar--bottom");
+
+    topBar.css({
+      paddingTop:
+        UTILS.extractComputedStyleNumber(topBar[0], "padding-top") +
+        this.readerConfig.paddingTop,
+    });
+    bottomBar.css({
+      paddingBottom:
+        UTILS.extractComputedStyleNumber(bottomBar[0], "padding-bottom") +
+        this.readerConfig.paddingBottom,
+    });
   }
 
   /**
     Add book title to the top bar
   */
   addBookTitle() {
-    UTILS.DOM_ELS.bookTitle.textContent = this.bookInfo.bookTitle;
+    UTILS.DOM_ELS.bookTitle.textContent = this.readerConfig.bookTitle;
   }
 
   /**

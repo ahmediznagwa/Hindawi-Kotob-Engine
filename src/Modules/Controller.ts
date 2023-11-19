@@ -30,17 +30,14 @@ export class Controller {
     Initiates the app asynchronously by getting the chapters array
   */
   async initWithChapters(
-    bookId: string,
-    bookTitle: string,
+    readerConfig: string,
     json: string,
     rootFolder: string,
     tableOfContent: string,
     config?: IUserPreferencesState
   ) {
-    const bookInfo = {
-      bookId,
-      bookTitle,
-    };
+    const { bookId, bookTitle, paddingTop, paddingBottom } =
+      JSON.parse(readerConfig);
     try {
       // alert("Function Init");
       let {
@@ -52,7 +49,7 @@ export class Controller {
         bookmarks,
         highlights,
       } = config || {};
-      this.userPreferences = new UserPreferences(bookInfo.bookId);
+      this.userPreferences = new UserPreferences(bookId);
       this.userPreferences.save(
         anchorWordIndex,
         currentChapter,
@@ -81,7 +78,7 @@ export class Controller {
       });
 
       this.htmlExtractor = new HTMLExtractor(
-        bookInfo,
+        JSON.parse(readerConfig),
         rootFolder,
         tableOfContents
       );
@@ -126,7 +123,7 @@ export class Controller {
 
       // alert("Got Chapters");
 
-      this.detectUserPreferences(bookInfo.bookId);
+      this.detectUserPreferences(bookId);
       this.setupHandlers();
       this.setupEventListeners();
 
@@ -143,7 +140,7 @@ export class Controller {
   setupHandlers() {
     // alert("Book Init");
     this.book = new Book(
-      this.htmlExtractor.bookInfo,
+      this.htmlExtractor.readerConfig,
       this.htmlExtractor.chapters,
       this.htmlExtractor.rootFolder,
       this.htmlExtractor.tableOfContents,
