@@ -248,13 +248,11 @@ export class Controller {
 
     // Mobile Swipe Event Listeners
     $(document).on("swiperight", () => {
-      console.log(this.isSelecting);
       if (!this.isSelecting) {
         this.goToNextPage();
       }
     });
     $(document).on("swipeleft", () => {
-      console.log(this.isSelecting);
       if (!this.isSelecting) {
         this.goToPrevPage();
       }
@@ -268,6 +266,7 @@ export class Controller {
     // Handling window selection
     $(document).on("selectionchange", (event) => {
       event.preventDefault();
+      // console.log(window.getSelection().toString())
       if (window.getSelection().toString().length) {
         this.isSelecting = true;
         const elements = extractWordsFromSelection(window.getSelection());
@@ -391,6 +390,7 @@ export class Controller {
 
     if (highlightBtn) {
       $(highlightBtn).on("click", (e) => {
+        e.preventDefault();
         e.stopPropagation();
         this.addNote(elements, "highlight");
       });
@@ -399,6 +399,7 @@ export class Controller {
     const bookmarkBtn = menu.querySelector(".bookmark");
     if (bookmarkBtn) {
       $(bookmarkBtn).on("click", (e) => {
+        e.preventDefault();
         e.stopPropagation();
         this.addNote(elements, "bookmark");
       });
@@ -619,11 +620,13 @@ export class Controller {
       getPageNumberByWordIndex(anchorWordIndex, this.book.currentChapter)
     );
 
-    // Animated highlighting for bookmarked text
-    const targetEL = $(`span[n="${anchorWordIndex}"]`).closest(
-      ".bookmarked"
-    )[0];
-    this.book.highlightSelectedElement(targetEL);
+    // Animated highlighting for bookmarked text (option 2)
+    if (!$("body").hasClass("option-1")) {
+      const targetEL = $(`span[n="${anchorWordIndex}"]`).closest(
+        ".bookmarked"
+      )[0];
+      this.book.highlightSelectedElement(targetEL);
+    }
 
     // Checking if this page is bookmarked (option 1)
     this.book?.checkPageIsBookmarked();

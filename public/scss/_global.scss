@@ -155,11 +155,7 @@ h1.title {
     background-color: var(--textColorRgb);
     text-decoration: none;
     transition: background-color 0.3s;
-    &:hover {
-      // background-color: rgba(var(--textColor), 0.7);
-      background-color: var(--bgHover);
-      text-decoration: none;
-    }
+    user-select: none;
   }
 
   &.has-highlight {
