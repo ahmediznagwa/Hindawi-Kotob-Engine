@@ -8,35 +8,35 @@ let controller = new Controller();
 export const hindawiReaders = (function () {
   controller = new Controller();
   // for demo only
-  window.addEventListener("load", async () => {
-    // const bookId = "40262648"; // hindawi;
-    // const bookId = "16264295"; // hindawi;
-    // const bookId = "69058261"; // publisher;
-    const bookId = "42581692"; // hindawi;
+  // window.addEventListener("load", async () => {
+  //   // const bookId = "40262648"; // hindawi;
+  //   // const bookId = "16264295"; // hindawi;
+  //   // const bookId = "69058261"; // publisher;
+  //   const bookId = "42581692"; // hindawi;
 
-    const readerConfig = {
-      bookId,
-      paddingTop: 0,
-      paddingBottom: 0,
-      bookTitle: "شلن واحد من أجل الشموع",
-    };
-    Promise.all([
-      fetch(`./books/${bookId}/Content.main`).then((res) => res.text()),
-      fetch(`./books/${bookId}/toc.nav`).then((res) => res.text()),
-    ]).then(([res1, res2]) => {
-      controller.initWithChapters(
-        `{
-          "bookId": "${readerConfig.bookId}",
-          "paddingTop": ${readerConfig.paddingTop},
-          "paddingBottom": ${readerConfig.paddingBottom},
-          "bookTitle": "${readerConfig.bookTitle}"
-        }`,
-        res1,
-        `./books/${readerConfig.bookId}`,
-        res2
-      );
-    });
-  });
+  //   const readerConfig = {
+  //     bookId,
+  //     paddingTop: 0,
+  //     paddingBottom: 0,
+  //     bookTitle: "شلن واحد من أجل الشموع",
+  //   };
+  //   Promise.all([
+  //     fetch(`./books/${bookId}/Content.main`).then((res) => res.text()),
+  //     fetch(`./books/${bookId}/toc.nav`).then((res) => res.text()),
+  //   ]).then(([res1, res2]) => {
+  //     controller.initWithChapters(
+  //       `{
+  //         "bookId": "${readerConfig.bookId}",
+  //         "paddingTop": ${readerConfig.paddingTop},
+  //         "paddingBottom": ${readerConfig.paddingBottom},
+  //         "bookTitle": "${readerConfig.bookTitle}"
+  //       }`,
+  //       res1,
+  //       `./books/${readerConfig.bookId}`,
+  //       res2
+  //     );
+  //   });
+  // });
   return {
     init: controller.initWithChapters.bind(controller),
   };

@@ -546,20 +546,32 @@ export class Book {
     style.href = `${this.rootFolder}/TempBook.css`;
     document.head.prepend(style);
 
-    // Adding padding for top and bottom control bars
+    // Adding padding according to mobile safe area if it is bigger than the ones in CSS
+    const {paddingTop, paddingBottom} = this.readerConfig;
     const topBar = $(".app-bar--top");
+    const topBarTopPadding = UTILS.extractComputedStyleNumber(topBar[0], 'padding-top');
     const bottomBar = $(".app-bar--bottom");
+    const bottomBarBottomPadding = UTILS.extractComputedStyleNumber(bottomBar[0], 'padding-bottom');
+    const bookContentBtn = $(".book-content .action-button");
+    const bookContentBtnTopPadding = UTILS.extractComputedStyleNumber(bookContentBtn[0], 'padding-top');
+    const bookContainer = UTILS.DOM_ELS.bookContainer;
+    const bookContainerTopPadding = UTILS.extractComputedStyleNumber(bookContainer, 'padding-top');
+    const bookContainerBottomPadding = UTILS.extractComputedStyleNumber(bookContainer, 'padding-bottom');
 
     topBar.css({
-      paddingTop:
-        UTILS.extractComputedStyleNumber(topBar[0], "padding-top") +
-        this.readerConfig.paddingTop,
+      paddingTop: paddingTop > topBarTopPadding && paddingTop,
     });
     bottomBar.css({
-      paddingBottom:
-        UTILS.extractComputedStyleNumber(bottomBar[0], "padding-bottom") +
-        this.readerConfig.paddingBottom,
+      paddingBottom: paddingBottom > bottomBarBottomPadding && paddingBottom,
     });
+    $(bookContainer).css({
+      paddingTop: paddingTop > bookContainerTopPadding && paddingTop,
+      paddingBottom: paddingBottom > bookContainerBottomPadding && paddingBottom,
+    });
+    bookContentBtn.css({
+      paddingTop: paddingTop > bookContentBtnTopPadding && paddingTop,
+    });
+
   }
 
   /**
