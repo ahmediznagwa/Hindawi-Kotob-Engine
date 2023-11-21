@@ -1,3 +1,4 @@
+import { IReaderConfig } from "./Models/IReaderConfig.model";
 import { Controller } from "./Modules/Controller";
 declare global {
   interface Window {
@@ -13,11 +14,11 @@ export const hindawiReaders = (function () {
   //   // const bookId = "16264295"; // hindawi;
   //   // const bookId = "69058261"; // publisher;
   //   const bookId = "42581692"; // hindawi;
-
-  //   const readerConfig = {
+  //   const readerConfig: IReaderConfig = {
   //     bookId,
   //     paddingTop: 0,
   //     paddingBottom: 0,
+  //     isIphone: false,
   //     bookTitle: "شلن واحد من أجل الشموع",
   //   };
   //   Promise.all([

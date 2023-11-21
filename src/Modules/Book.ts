@@ -547,31 +547,49 @@ export class Book {
     document.head.prepend(style);
 
     // Adding padding according to mobile safe area if it is bigger than the ones in CSS
-    const {paddingTop, paddingBottom} = this.readerConfig;
+    const { paddingTop, paddingBottom, isIphone } = this.readerConfig;
     const topBar = $(".app-bar--top");
-    const topBarTopPadding = UTILS.extractComputedStyleNumber(topBar[0], 'padding-top');
+    const topBarTopPadding = UTILS.extractComputedStyleNumber(
+      topBar[0],
+      "padding-top"
+    );
     const bottomBar = $(".app-bar--bottom");
-    const bottomBarBottomPadding = UTILS.extractComputedStyleNumber(bottomBar[0], 'padding-bottom');
+    const bottomBarBottomPadding = UTILS.extractComputedStyleNumber(
+      bottomBar[0],
+      "padding-bottom"
+    );
     const bookContentBtn = $(".book-content .action-button");
-    const bookContentBtnTopPadding = UTILS.extractComputedStyleNumber(bookContentBtn[0], 'padding-top');
+    const bookContentBtnTopPadding = UTILS.extractComputedStyleNumber(
+      bookContentBtn[0],
+      "padding-top"
+    );
     const bookContainer = UTILS.DOM_ELS.bookContainer;
-    const bookContainerTopPadding = UTILS.extractComputedStyleNumber(bookContainer, 'padding-top');
-    const bookContainerBottomPadding = UTILS.extractComputedStyleNumber(bookContainer, 'padding-bottom');
+    const bookContainerTopPadding = UTILS.extractComputedStyleNumber(
+      bookContainer,
+      "padding-top"
+    );
+    const bookContainerBottomPadding = UTILS.extractComputedStyleNumber(
+      bookContainer,
+      "padding-bottom"
+    );
 
     topBar.css({
-      paddingTop: paddingTop > topBarTopPadding && paddingTop,
+      paddingTop: paddingTop > topBarTopPadding && isIphone && paddingTop,
     });
     bottomBar.css({
-      paddingBottom: paddingBottom > bottomBarBottomPadding && paddingBottom,
+      paddingBottom:
+        paddingBottom > bottomBarBottomPadding && isIphone && paddingBottom,
     });
     $(bookContainer).css({
-      paddingTop: paddingTop > bookContainerTopPadding && paddingTop,
-      paddingBottom: paddingBottom > bookContainerBottomPadding && paddingBottom,
+      paddingTop:
+        paddingTop > bookContainerTopPadding && isIphone && paddingTop,
+      paddingBottom:
+        paddingBottom > bookContainerBottomPadding && isIphone && paddingBottom,
     });
     bookContentBtn.css({
-      paddingTop: paddingTop > bookContentBtnTopPadding && paddingTop,
+      paddingTop:
+        paddingTop > bookContentBtnTopPadding && isIphone && paddingTop,
     });
-
   }
 
   /**

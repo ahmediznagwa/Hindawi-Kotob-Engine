@@ -36,8 +36,7 @@ export class Controller {
     tableOfContent: string,
     config?: IUserPreferencesState
   ) {
-    const { bookId, bookTitle, paddingTop, paddingBottom } =
-      JSON.parse(readerConfig);
+    const { bookId } = JSON.parse(readerConfig);
     try {
       // alert("Function Init");
       let {

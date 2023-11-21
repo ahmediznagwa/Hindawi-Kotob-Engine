@@ -3,4 +3,5 @@ export interface IReaderConfig {
     bookTitle: string;
     paddingTop: number;
     paddingBottom: number;
+    isIphone: boolean;
   }
