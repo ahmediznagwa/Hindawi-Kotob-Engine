@@ -8,7 +8,7 @@ declare global {
 let controller = new Controller();
 export const hindawiReaders = (function () {
   controller = new Controller();
-  // for demo only
+  // Demo [START]
   // window.addEventListener("load", async () => {
   //   // const bookId = "40262648"; // hindawi;
   //   // const bookId = "16264295"; // hindawi;
@@ -16,9 +16,9 @@ export const hindawiReaders = (function () {
   //   const bookId = "42581692"; // hindawi;
   //   const readerConfig: IReaderConfig = {
   //     bookId,
-  //     paddingTop: 0,
+  //     paddingTop: 20,
   //     paddingBottom: 0,
-  //     isIphone: false,
+  //     isIphone: true,
   //     bookTitle: "شلن واحد من أجل الشموع",
   //   };
   //   Promise.all([
@@ -30,6 +30,7 @@ export const hindawiReaders = (function () {
   //         "bookId": "${readerConfig.bookId}",
   //         "paddingTop": ${readerConfig.paddingTop},
   //         "paddingBottom": ${readerConfig.paddingBottom},
+  //         "isIphone": ${readerConfig.isIphone},
   //         "bookTitle": "${readerConfig.bookTitle}"
   //       }`,
   //       res1,
@@ -38,6 +39,7 @@ export const hindawiReaders = (function () {
   //     );
   //   });
   // });
+  // Demo [END]
   return {
     init: controller.initWithChapters.bind(controller),
     nextPage: controller.goToNextPage.bind(controller),

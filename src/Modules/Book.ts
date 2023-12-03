@@ -574,21 +574,21 @@ export class Book {
     );
 
     topBar.css({
-      paddingTop: paddingTop > topBarTopPadding && isIphone && paddingTop,
+      paddingTop: paddingTop > topBarTopPadding && paddingTop,
     });
     bottomBar.css({
       paddingBottom:
-        paddingBottom > bottomBarBottomPadding && isIphone && paddingBottom,
+        paddingBottom > bottomBarBottomPadding && paddingBottom,
     });
     $(bookContainer).css({
       paddingTop:
-        paddingTop > bookContainerTopPadding && isIphone && paddingTop,
+        paddingTop > bookContainerTopPadding && paddingTop,
       paddingBottom:
-        paddingBottom > bookContainerBottomPadding && isIphone && paddingBottom,
+        paddingBottom > bookContainerBottomPadding && paddingBottom,
     });
     bookContentBtn.css({
       paddingTop:
-        paddingTop > bookContentBtnTopPadding && isIphone && paddingTop,
+        paddingTop > bookContentBtnTopPadding && paddingTop,
     });
   }
 
