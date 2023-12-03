@@ -40,6 +40,10 @@ export const hindawiReaders = (function () {
   // });
   return {
     init: controller.initWithChapters.bind(controller),
+    nextPage: controller.goToNextPage.bind(controller),
+    prevPage: controller.goToPrevPage.bind(controller),
+    nextChapter: controller.goToNextChapter.bind(controller),
+    prevChapter: controller.goToPrevChapter.bind(controller),
   };
 })();
 
