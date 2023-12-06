@@ -73,7 +73,6 @@ function _showDropdownMenu(dropdownContainer) {
 }
 
 // adding tabs
-let maxTabHeight = 0;
 $("[data-type='tab']").each(function () {
   const el = $(this);
   const tab = "#" + $(this).attr("data-target");
@@ -83,10 +82,6 @@ $("[data-type='tab']").each(function () {
     el.addClass("active-tab");
     $(".tab-content").removeClass("active");
     $(tab).addClass("active");
-    maxTabHeight = Math.max(maxTabHeight, $(tab).height());
-    if ($(tab).closest(".dropdown-menu").length) {
-      $(tab).css("min-height", maxTabHeight);
-    }
   });
 });
 

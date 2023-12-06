@@ -376,23 +376,21 @@
   align-items: center;
   justify-content: center;
   margin: 0 auto;
-  font-size: 1.8rem;
+  font-size: 1.4rem;
   color: white;
   position: fixed;
   bottom: 1.5rem;
   left: 1.5rem;
   background-color: $primaryColor;
-  width: 4rem;
-  height: 4rem;
+  width: 3rem;
+  height: 3rem;
   display: none;
   justify-content: center;
   align-items: center;
   border-radius: 50%;
 
   .bookmark-added & {
-    @media screen and (max-width: $mobilexLarge) {
-      display: flex;
-    }
+    display: flex;
   }
 }
 
@@ -408,5 +406,18 @@
         right: inherit;
       }
     }
+  }
+}
+
+.tabs-container {
+  height: 30rem;
+  position: relative;
+  overflow: auto;
+
+  .tab-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
   }
 }
