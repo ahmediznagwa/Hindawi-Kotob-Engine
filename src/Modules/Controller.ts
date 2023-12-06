@@ -359,13 +359,6 @@ export class Controller {
       </ul>
   `;
 
-    if ($("body").hasClass("option-1")) {
-      actionsMenu = `
-          <ul data-word-index="${anchorElement?.getAttribute("n")}">
-            <li class="highlight"><a href="#">تلوين</a></li>
-          </ul>
-      `;
-    }
     // <li class="unhighlight"><a href="#">الغاء التلوين</a></li>
     // <li class="copy"><a href="#">نسخ</a></li>
 
@@ -616,15 +609,12 @@ export class Controller {
       getPageNumberByWordIndex(anchorWordIndex, this.book.currentChapter)
     );
 
-    // Animated highlighting for bookmarked text (option 2)
-    if (!$("body").hasClass("option-1")) {
-      const targetEL = $(`span[n="${anchorWordIndex}"]`).closest(
-        ".bookmarked"
-      )[0];
-      this.book.highlightSelectedElement(targetEL);
-    }
+    // Animated highlighting for bookmarked text
+    const targetEL = $(`span[n="${anchorWordIndex}"]`).closest(
+      ".bookmarked"
+    )[0];
+    this.book.highlightSelectedElement(targetEL);
 
-    // Checking if this page is bookmarked (option 1)
     this.book?.checkPageIsBookmarked();
   }
 
@@ -632,15 +622,14 @@ export class Controller {
     add bookmark for the current page
   */
   addBookmark(e) {
+    e.stopPropagation();
     const button = $(e.target).parent();
-    const alreadyAddedBookmark = $(e.target)
-      .parent()
-      .hasClass("bookmark-added");
+    const alreadyAddedBookmark = $(document.body).hasClass("bookmark-added");
 
     if (alreadyAddedBookmark) {
-      const chapterIndex = +button.attr("data-chapter-index");
-      const anchorWordIndex = +button.attr("data-anchor-word-index");
-      this.removeBookmark(anchorWordIndex, chapterIndex);
+      // const chapterIndex = +button.attr("data-chapter-index");
+      // const anchorWordIndex = +button.attr("data-anchor-word-index");
+      // this.removeBookmark(anchorWordIndex, chapterIndex);
       return;
     }
     const el = $(`span[n=${this.book.anchorWordIndex}]`)[0];
@@ -702,6 +691,7 @@ export class Controller {
   renderBookmarks() {
     const list = UTILS.DOM_ELS.bookmarksList;
     $(list).html("");
+    const tabContent = $(list).closest(".tab-content");
 
     // This is to handle old structure for bookmarks
     if (this.book.bookmarks instanceof Array) {
@@ -709,7 +699,7 @@ export class Controller {
       this.storeUserPreferences();
     }
     if (this.book.bookmarks) {
-      $(list).closest(".tab-content").removeClass("empty");
+      tabContent.removeClass("empty");
       Object.keys(this.book.bookmarks).forEach((key) => {
         (this.book.bookmarks[key].notes as IHighlighted[])?.forEach((word) => {
           // <p>${new Date(word.createdOn).toUTCString()}</p>
@@ -729,7 +719,7 @@ export class Controller {
         });
       });
     } else {
-      $(list).closest(".tab-content").addClass("empty");
+      tabContent.addClass("empty");
     }
     this.postRenderBookmarks();
   }

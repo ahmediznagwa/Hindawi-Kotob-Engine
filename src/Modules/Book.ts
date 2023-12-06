@@ -661,7 +661,7 @@ export class Book {
             this.currentPage ===
             getPageNumberByWordIndex(notes[index]?.index, this.currentChapter)
           ) {
-            $(UTILS.DOM_ELS.addBookmarkBtn).addClass("bookmark-added");
+            $(document.body).addClass("bookmark-added");
             $(UTILS.DOM_ELS.addBookmarkBtn).attr(
               "data-chapter-index",
               this.currentChapterIndex
@@ -677,7 +677,7 @@ export class Book {
       }
     }
     if (!hasBookmark) {
-      $(UTILS.DOM_ELS.addBookmarkBtn).removeClass("bookmark-added");
+      $(document.body).removeClass("bookmark-added");
       $(UTILS.DOM_ELS.addBookmarkBtn).removeAttr("data-chapter-index");
       $(UTILS.DOM_ELS.addBookmarkBtn).removeAttr("data-anchor-word-index");
     }

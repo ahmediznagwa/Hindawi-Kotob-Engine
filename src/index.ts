@@ -73,15 +73,20 @@ function _showDropdownMenu(dropdownContainer) {
 }
 
 // adding tabs
-
+let maxTabHeight = 0;
 $("[data-type='tab']").each(function () {
   const el = $(this);
   const tab = "#" + $(this).attr("data-target");
+
   el.on("click", function () {
     $(".tab-item").removeClass("active-tab");
     el.addClass("active-tab");
     $(".tab-content").removeClass("active");
     $(tab).addClass("active");
+    maxTabHeight = Math.max(maxTabHeight, $(tab).height());
+    if ($(tab).closest(".dropdown-menu").length) {
+      $(tab).css("min-height", maxTabHeight);
+    }
   });
 });
 
