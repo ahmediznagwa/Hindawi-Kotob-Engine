@@ -1,7 +1,7 @@
-import { IHighlightedWord } from "./IHighlightedWord.model";
+import { IHighlighted } from "./IHighlighted.model";
 
 export interface IBookmark {
   [key: string]: {
-    bookmarks: IHighlightedWord[];
+    notes: IHighlighted[];
   };
 }

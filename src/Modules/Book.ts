@@ -1,7 +1,7 @@
-import { IBookInfo } from "../Models/IBookInfo.model";
 import { IBookmark } from "../Models/IBookmark.model";
 import { IHighlight } from "../Models/IHighlight.model";
-import { IHighlightedWord } from "../Models/IHighlightedWord.model";
+import { IReaderConfig } from "../Models/IReaderConfig.model";
+import { getPageNumberByWordIndex } from "../shared/utilities";
 import { BookChapter } from "./BookChapter";
 import { UTILS } from "./Utils";
 
@@ -12,7 +12,7 @@ interface ITableOfContent {
 }
 
 export class Book {
-  bookInfo: IBookInfo;
+  readerConfig: IReaderConfig;
   chapters: HTMLDivElement[];
   rootFolder: string;
   fontSize: number;
@@ -39,7 +39,7 @@ export class Book {
   anchorWordIndex: number;
   tableOfContents: ITableOfContent[] = [];
   constructor(
-    bookInfo,
+    readerConfig,
     chapters,
     rootFolder,
     tableOfContents,
@@ -51,7 +51,7 @@ export class Book {
     bookmarks,
     highlights
   ) {
-    this.bookInfo = bookInfo;
+    this.readerConfig = readerConfig;
     this.rootFolder = rootFolder;
     this.tableOfContents = tableOfContents;
     this.bookWordsCount = null;
@@ -60,12 +60,7 @@ export class Book {
       currentChapterIndex || 0,
       this.chapters.length - 1
     );
-    this.currentChapter = new BookChapter(
-      this.chapters[this.currentChapterIndex],
-      this.bookInfo.bookId,
-      this.currentChapterIndex,
-      this.rootFolder
-    );
+    this.renderChapter(this.currentChapterIndex);
     this.calculateBookWordsCount();
     this.anchorWordIndex = Math.min(anchorWordIndex || 0, this.bookWordsCount);
     this.currentProgressPercent = 0;
@@ -80,14 +75,15 @@ export class Book {
     this.changeColorMode(this.colorMode);
     this.changeFontFamily(this.fontFamily);
     setTimeout(() => {
-      this.currentChapter.calcPagesContentRanges();
+      this.currentChapter?.calcPagesContentRanges();
       this.currentPage = this.calcAnchorWordPage();
       this.changePage();
     }, 1000);
-    this.addBookStyles();
+    this.addBookTitle();
     this.handleClickOnAnchors();
     this.generateBookTableOfContent();
-    this.addBookTitle();
+    this.checkPageIsBookmarked();
+    this.addBookStyles();
   }
 
   /**
@@ -263,14 +259,16 @@ export class Book {
     }`;
     // Check if it is in the same chapter (mainly user in footnotes)
     let targetEl;
-    if ($(this.currentChapter.chapterEl).find(elementSelector).length) {
-      targetEl = $(this.currentChapter.chapterEl).find(elementSelector);
+    if ($(this.currentChapter?.chapterEl).find(elementSelector).length) {
+      targetEl = $(this.currentChapter?.chapterEl).find(elementSelector);
       const firstWordInElementIndex = targetEl.find(`span:first-child`).length
         ? +targetEl.find(`span:first-child`).attr("n")
         : +targetEl.next("span[n]").attr("n") ||
           +targetEl.parent().find("span[n]:last-child").attr("n");
 
-      this.goToPage(this.getPageNumberByWordIndex(firstWordInElementIndex));
+      this.goToPage(
+        getPageNumberByWordIndex(firstWordInElementIndex, this.currentChapter)
+      );
 
       // Highlight element after render page.
       this.highlightSelectedElement($(elementSelector).parent()[0]);
@@ -289,7 +287,9 @@ export class Book {
           : +targetEl.next("span[n]").attr("n") ||
             +targetEl.parent().find("span[n]:last-child").attr("n");
 
-        this.goToPage(this.getPageNumberByWordIndex(firstWordInElementIndex));
+        this.goToPage(
+          getPageNumberByWordIndex(firstWordInElementIndex, this.currentChapter)
+        );
 
         // Highlight element after render page
         this.highlightSelectedElement($(elementSelector)[0]);
@@ -316,8 +316,8 @@ export class Book {
     selector = selector.includes(".") ? selector.replace(".", "\\.") : selector;
     // check if it is in the same chapter
 
-    if ($(this.currentChapter.chapterEl).find(selector).length) {
-      return $(this.currentChapter.chapterEl).find(selector)[0];
+    if ($(this.currentChapter?.chapterEl).find(selector).length) {
+      return $(this.currentChapter?.chapterEl).find(selector)[0];
     }
     this.chapters.forEach((chapter: HTMLElement, index: number) => {
       if ($(chapter).find(selector).length) {
@@ -331,26 +331,6 @@ export class Book {
   /**
     Render specific chapter with chapter index
   */
-  getPageNumberByWordIndex(wordIndex: number): number {
-    let pageNo = 0;
-    this.currentChapter.pagesContentRanges.forEach((page, pageIndex) => {
-      const min = Math.min(page[0], page[1]),
-        max = Math.max(page[0], page[1]);
-      if (
-        (wordIndex > min && wordIndex < max) ||
-        wordIndex === min ||
-        wordIndex === max
-      ) {
-        pageNo = pageIndex;
-      }
-    });
-
-    return pageNo;
-  }
-
-  /**
-    Render specific chapter with chapter index
-  */
   renderChapter(chapterIndex: number): void {
     this.currentChapterIndex = Math.min(
       chapterIndex || 0,
@@ -359,15 +339,15 @@ export class Book {
 
     this.currentChapter = new BookChapter(
       this.chapters[this.currentChapterIndex],
-      this.bookInfo.bookId,
+      this.readerConfig.bookId,
       this.currentChapterIndex,
       this.rootFolder
     );
-    this.currentChapter.calcPagesContentRanges();
+    this.currentChapter?.calcPagesContentRanges();
     this.changePage("first");
 
     setTimeout(() => {
-      this.currentChapter.calcPagesContentRanges();
+      this.currentChapter?.calcPagesContentRanges();
     }, 1000);
     this.handleClickOnAnchors();
   }
@@ -463,10 +443,10 @@ export class Book {
   */
   updateStartEndWordID() {
     this.currentPageFirstWordIndex =
-      this.currentChapter.pagesContentRanges[this.currentPage][0];
+      this.currentChapter?.pagesContentRanges[this.currentPage][0];
 
     this.currentPageLastWordIndex =
-      this.currentChapter.pagesContentRanges[this.currentPage][1];
+      this.currentChapter?.pagesContentRanges[this.currentPage][1];
 
     this.anchorWordIndex = this.currentPageFirstWordIndex;
   }
@@ -476,7 +456,7 @@ export class Book {
   */
   calcAnchorWordPage(): number {
     let pageNo = 0;
-    this.currentChapter.pagesContentRanges.forEach((page, pageIndex) => {
+    this.currentChapter?.pagesContentRanges.forEach((page, pageIndex) => {
       const min = Math.min(page[0], page[1]),
         max = Math.max(page[0], page[1]);
       if (
@@ -565,6 +545,48 @@ export class Book {
     style.rel = "stylesheet";
     style.href = `${this.rootFolder}/TempBook.css`;
     document.head.prepend(style);
+
+    // Adding padding according to mobile safe area if it is bigger than the ones in CSS
+    const { paddingTop, paddingBottom, isIphone } = this.readerConfig;
+    const topBar = $(".app-bar--top");
+    const topBarTopPadding = UTILS.extractComputedStyleNumber(
+      topBar[0],
+      "padding-top"
+    );
+    const bottomBar = $(".app-bar--bottom");
+    const bottomBarBottomPadding = UTILS.extractComputedStyleNumber(
+      bottomBar[0],
+      "padding-bottom"
+    );
+    const bookContentBtn = $(".book-content .action-button");
+    const bookContentBtnTopPadding = UTILS.extractComputedStyleNumber(
+      bookContentBtn[0],
+      "padding-top"
+    );
+    const bookContainer = UTILS.DOM_ELS.bookContainer;
+    const bookContainerTopPadding = UTILS.extractComputedStyleNumber(
+      bookContainer,
+      "padding-top"
+    );
+    const bookContainerBottomPadding = UTILS.extractComputedStyleNumber(
+      bookContainer,
+      "padding-bottom"
+    );
+
+    topBar.css({
+      paddingTop: paddingTop > topBarTopPadding && paddingTop,
+    });
+    bottomBar.css({
+      paddingBottom: paddingBottom > bottomBarBottomPadding && paddingBottom,
+    });
+    $(bookContainer).css({
+      paddingTop: paddingTop > bookContainerTopPadding && paddingTop,
+      paddingBottom:
+        paddingBottom > bookContainerBottomPadding && paddingBottom,
+    });
+    bookContentBtn.css({
+      paddingTop: paddingTop > bookContentBtnTopPadding && paddingTop,
+    });
   }
 
   /**
@@ -572,7 +594,7 @@ export class Book {
   */
   addBookTitle() {
     if (UTILS.DOM_ELS.bookTitle) {
-      UTILS.DOM_ELS.bookTitle.textContent = this.bookInfo.bookTitle;
+      UTILS.DOM_ELS.bookTitle.textContent = this.readerConfig.bookTitle;
     }
   }
 
@@ -626,54 +648,37 @@ export class Book {
   }
 
   /**
-    Handling dropdown that show on word click
+    Check if page is bookmarked
   */
-  wordEventHandler(e) {
-    e.stopPropagation();
-    const element = e.target as HTMLElement;
-    if (element.tagName.toLowerCase() !== "span") {
-      return;
+  checkPageIsBookmarked() {
+    let hasBookmark = false;
+    if (this.bookmarks) {
+      const notes = this.bookmarks[this.currentChapterIndex]?.notes;
+      if (notes?.length) {
+        for (let index = 0; index < notes.length; index++) {
+          if (
+            this.currentPage ===
+            getPageNumberByWordIndex(notes[index]?.index, this.currentChapter)
+          ) {
+            $(document.body).addClass("bookmark-added");
+            $(UTILS.DOM_ELS.addBookmarkBtn).attr(
+              "data-chapter-index",
+              this.currentChapterIndex
+            );
+            $(UTILS.DOM_ELS.addBookmarkBtn).attr(
+              "data-anchor-word-index",
+              notes[index]?.index
+            );
+            hasBookmark = true;
+            break;
+          }
+        }
+      }
     }
-    this.currentChapter.hideActionsMenu();
-    const top = $(element).offset().top;
-    const left = $(element).offset().left;
-    const menu = document.createElement("div");
-    menu.classList.add("actions-menu");
-    const actionsMenu = `
-        <ul data-word-index="${element.getAttribute("n")}">
-          <li class="highlight"><a href="#">تلوين</a></li>
-          <li class="unhighlight"><a href="#">الغاء التلوين</a></li>
-        </ul>
-        `;
-    // <li class="copy"><a href="#">نسخ</a></li>
-
-    menu.innerHTML = actionsMenu;
-    document.body.appendChild(menu);
-
-    $(element).addClass("selected");
-
-    if ($(element).hasClass("highlighted")) {
-      $(menu).addClass("has-highlight");
-      $(menu).find(".highlight").remove();
+    if (!hasBookmark) {
+      $(document.body).removeClass("bookmark-added");
+      $(UTILS.DOM_ELS.addBookmarkBtn).removeAttr("data-chapter-index");
+      $(UTILS.DOM_ELS.addBookmarkBtn).removeAttr("data-anchor-word-index");
     }
-
-    // Positioning the appended menu according to word
-    $(menu).css({
-      position: "absolute",
-      left: left + $(element).width() / 2,
-      transform: "translate(-50%,-120%)",
-      top,
-    });
-
-    // menu
-    //   .querySelector(".copy")
-    //   .addEventListener("click", this.copyText.bind(this, element));
-  }
-
-  /**
-      Binding event handlers on highlighted elements in chapter
-    */
-  bindEventHandlersOnHighlightedInChapter() {
-    $(document).on("taphold", (e) => this.wordEventHandler(e));
   }
 }

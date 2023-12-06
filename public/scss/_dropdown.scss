@@ -6,15 +6,9 @@
       display: block;
     }
   }
-  .dropdown__empty {
-    display: none;
-    padding: 1rem;
-    text-align: center;
-    color: #999;
-    margin: 0;
-  }
+
   &.empty {
-    .dropdown__empty {
+    .empty-message {
       display: block;
     }
   }
@@ -53,5 +47,17 @@
       left: inherit;
       right: 6.3rem;
     }
+  }
+}
+
+.empty-message {
+  display: none;
+  padding: 1rem;
+  text-align: center;
+  color: #999;
+  margin: 0;
+  justify-content: center;
+  .empty &{
+    display: flex;
   }
 }

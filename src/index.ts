@@ -1,3 +1,4 @@
+import { IReaderConfig } from "./Models/IReaderConfig.model";
 import { Controller } from "./Modules/Controller";
 declare global {
   interface Window {
@@ -7,15 +8,17 @@ declare global {
 let controller = new Controller();
 export const hindawiReaders = (function () {
   controller = new Controller();
-  // for demo only
+  // Demo [START]
   // window.addEventListener("load", async () => {
   //   // const bookId = "40262648"; // hindawi;
   //   // const bookId = "16264295"; // hindawi;
   //   // const bookId = "69058261"; // publisher;
   //   const bookId = "42581692"; // hindawi;
-
-  //   const bookInfo = {
+  //   const readerConfig: IReaderConfig = {
   //     bookId,
+  //     paddingTop: 20,
+  //     paddingBottom: 0,
+  //     isIphone: true,
   //     bookTitle: "شلن واحد من أجل الشموع",
   //   };
   //   Promise.all([
@@ -23,15 +26,26 @@ export const hindawiReaders = (function () {
   //     fetch(`./books/${bookId}/toc.nav`).then((res) => res.text()),
   //   ]).then(([res1, res2]) => {
   //     controller.initWithChapters(
-  //       bookInfo,
+  //       `{
+  //         "bookId": "${readerConfig.bookId}",
+  //         "paddingTop": ${readerConfig.paddingTop},
+  //         "paddingBottom": ${readerConfig.paddingBottom},
+  //         "isIphone": ${readerConfig.isIphone},
+  //         "bookTitle": "${readerConfig.bookTitle}"
+  //       }`,
   //       res1,
-  //       `./books/${bookInfo.bookId}`,
+  //       `./books/${readerConfig.bookId}`,
   //       res2
   //     );
   //   });
   // });
+  // Demo [END]
   return {
     init: controller.initWithChapters.bind(controller),
+    nextPage: controller.goToNextPage.bind(controller),
+    prevPage: controller.goToPrevPage.bind(controller),
+    nextChapter: controller.goToNextChapter.bind(controller),
+    prevChapter: controller.goToPrevChapter.bind(controller),
   };
 })();
 
@@ -58,6 +72,24 @@ function _showDropdownMenu(dropdownContainer) {
   dropdownContainer.addClass("show");
 }
 
+// adding tabs
+let maxTabHeight = 0;
+$("[data-type='tab']").each(function () {
+  const el = $(this);
+  const tab = "#" + $(this).attr("data-target");
+
+  el.on("click", function () {
+    $(".tab-item").removeClass("active-tab");
+    el.addClass("active-tab");
+    $(".tab-content").removeClass("active");
+    $(tab).addClass("active");
+    maxTabHeight = Math.max(maxTabHeight, $(tab).height());
+    if ($(tab).closest(".dropdown-menu").length) {
+      $(tab).css("min-height", maxTabHeight);
+    }
+  });
+});
+
 $(document).on("keydown", function (e: any) {
   if (e.key === "Escape") {
     controller.hideToolbar();
@@ -82,14 +114,8 @@ if ($(".app-bar").length) {
       if (isHovering) {
         return;
       }
-      $(".app-bar").removeClass("show");
+      controller.hideToolbar();
     }, 4000);
-  });
-  $(".app-bar").on("mouseenter", function () {
-    isHovering = true;
-  });
-  $(".app-bar").on("mouseleave", function () {
-    isHovering = false;
   });
 }
 

@@ -1,0 +1,54 @@
+.tabs {
+  border-radius: 6px;
+  display: flex;
+  margin: 0 auto;
+  padding: 3px;
+  align-items: center;
+  justify-content: center;
+  margin: 1rem auto;
+  width: fit-content;
+  background-color: rgba(var(--textColor), 0.1);
+
+  .dark & {
+    background-color: rgba(var(--textColor), 0.1);
+  }
+  .dark .book-content & {
+    background-color: var(--lightGreyBgRgb);
+  }
+  .tab-item {
+    padding: 0 1.5rem;
+    color: var(--textColor);
+    cursor: pointer;
+    color: rgba(var(--textColor), 0.5);
+
+    &.active-tab {
+      border-radius: 6px;
+      box-shadow: 1px 2px 4px rgba($color: #000000, $alpha: 0.1);
+      color: var(--textColorRgb);
+      background: rgba(var(--bgColor), 1);
+      .dark & {
+        background-color: rgba(var(--textColor), 0.2);
+      }
+    }
+  }
+  .book-content & {
+    margin-bottom: 3rem;
+    margin-top: -3rem;
+    @media screen and (max-width: $mobilexLarge) {
+      margin-top: -0.5rem;
+    }
+  }
+}
+
+.tab-content {
+  display: none;
+  overflow: auto;
+
+  &.active {
+    display: block;
+  }
+
+  .book-content & {
+    flex: 1;
+  }
+}

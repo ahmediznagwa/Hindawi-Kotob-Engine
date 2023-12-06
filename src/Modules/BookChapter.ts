@@ -1,5 +1,5 @@
-import { IHighlightedWord } from "../Models/IHighlightedWord.model";
-import { Book } from "./Book";
+import { IHighlighted } from "../Models/IHighlighted.model";
+import { wrapHighlightedElements } from "../shared/utilities";
 import { UTILS } from "./Utils";
 
 export class BookChapter {
@@ -342,6 +342,7 @@ export class BookChapter {
     this.wrapWordsInAnchors();
     this.updateImagePaths();
     this.getHighlightedWords();
+    this.getBookmarkedWords();
     $("body").removeClass("loading");
     // this.insertFullPageImage(); insert fullpage image after specific index
   }
@@ -366,13 +367,39 @@ export class BookChapter {
     Get highlighted words for each chapter
   */
   getHighlightedWords() {
-    const storedhighlightedWords = JSON.parse(
+    const storedHighlightedWords = JSON.parse(
       localStorage.getItem(`${this.bookId}_highlights`)
     );
-    if (storedhighlightedWords) {
-      storedhighlightedWords[this.currentChapterIndex]?.highlights?.forEach(
-        (word: IHighlightedWord) => {
-          $(`span[n=${word.index}]`).addClass("highlighted");
+    if (storedHighlightedWords) {
+      let elementsArray: HTMLElement[] = [];
+      storedHighlightedWords[this.currentChapterIndex]?.notes?.forEach(
+        (note: IHighlighted) => {
+          for (let index = 0; index < note.numberOfWords; index++) {
+            elementsArray.push($(`span[n=${note.index + index}]`)[0]);
+          }
+          wrapHighlightedElements(elementsArray, "highlight");
+          elementsArray = [];
+        }
+      );
+    }
+  }
+
+  /**
+    Get highlighted words for each chapter
+  */
+  getBookmarkedWords() {
+    const storedBookmarkedWords = JSON.parse(
+      localStorage.getItem(`${this.bookId}_bookmarks`)
+    );
+    if (storedBookmarkedWords) {
+      let elementsArray: HTMLElement[] = [];
+      storedBookmarkedWords[this.currentChapterIndex]?.notes?.forEach(
+        (note: IHighlighted) => {
+          for (let index = 0; index < note.numberOfWords; index++) {
+            elementsArray.push($(`span[n=${note.index + index}]`)[0]);
+          }
+          wrapHighlightedElements(elementsArray, "bookmark");
+          elementsArray = [];
         }
       );
     }

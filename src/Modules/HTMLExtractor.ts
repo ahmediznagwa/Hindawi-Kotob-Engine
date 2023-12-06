@@ -1,12 +1,13 @@
-import { IBookInfo } from "../Models/IBookInfo.model";
+import { IReaderConfig } from "../Models/IReaderConfig.model";
+
 
 export class HTMLExtractor {
-  bookInfo: IBookInfo;
+  readerConfig: IReaderConfig;
   chapters: any[];
   rootFolder: string;
   tableOfContents: string[];
-  constructor(bookInfo: IBookInfo, rootFolder: string, tableOfContents: string[]) {
-    this.bookInfo = bookInfo;
+  constructor(readerConfig: IReaderConfig, rootFolder: string, tableOfContents: string[]) {
+    this.readerConfig = readerConfig;
     this.chapters = [];
     this.rootFolder = rootFolder;
     this.tableOfContents = tableOfContents

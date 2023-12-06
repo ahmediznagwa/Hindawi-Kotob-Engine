@@ -22,12 +22,6 @@
     font-feature-settings: "liga";
   }
 
-  &.brand {
-    &:before {
-      font-family: $fAwsomeBrands;
-      font-weight: 300 !important;
-    }
-  }
   &.light {
     &:before {
       font-weight: 300 !important;
