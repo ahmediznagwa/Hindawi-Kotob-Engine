@@ -26,7 +26,7 @@ export function getSentenceAfterWord(
 */
 export function extractWordsFromSelection(selected: Selection): HTMLElement[] {
   const anchorElementIndex = +$(selected.anchorNode.parentNode).attr("n");
-  let wordsNumber = selected.toString().split(" ").length;
+  let wordsNumber = selected.toString().trim().split(" ").length;
   const elementsArray: HTMLElement[] = [];
   let currentParent;
   let isSameParent = true;
@@ -43,7 +43,7 @@ export function extractWordsFromSelection(selected: Selection): HTMLElement[] {
   }
 
   if (isSameParent) {
-    const lastItem = elementsArray.pop();
+    elementsArray.pop();
   }
 
   return elementsArray;
@@ -59,6 +59,14 @@ export function wrapHighlightedElements(
   let highlightParent;
   let currentWordParent;
   let className = type === "highlight" ? "highlighted" : "bookmarked";
+
+  if (type === "highlight" && $(words[0]).parent(".highlighted").length) {
+    // window.getSelection()
+    return;
+  }
+  // if (type === "bookmark" && $(words[0]).parent(".bookmarked").length) {
+  //   return;
+  // }
   words.forEach((word, index) => {
     word.textContent = `${
       index === words.length - 1 ? word.textContent : `${word.textContent} `

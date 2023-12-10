@@ -102,7 +102,7 @@ h1.title {
   // box-shadow: 2px 4px 8px rgba($color: #000000, $alpha: 0.1);
   border-radius: 8px;
   left: 50%;
-  transform: translate(-50%, -140%);
+  transform: translate(-50%, -180%);
   position: fixed;
   z-index: 999999;
 
@@ -144,10 +144,6 @@ h1.title {
       border-radius: 8px;
     }
 
-    &.unhighlight {
-      display: none;
-    }
-
     & + li a {
       border-inline-start: 1px solid rgba(var(--bgColor), 0.2);
     }
@@ -161,15 +157,6 @@ h1.title {
     text-decoration: none;
     transition: background-color 0.3s;
     user-select: none;
-  }
-
-  &.has-highlight {
-    .highlight {
-      display: none;
-    }
-    .unhighlight {
-      display: block;
-    }
   }
 }
 
@@ -240,7 +227,7 @@ h1.title {
   display: none;
 }
 
-.book-content {
+.side-panel {
   position: absolute;
   top: 0;
   width: 100%;
@@ -252,15 +239,14 @@ h1.title {
   z-index: 9999;
   display: flex;
   flex-direction: column;
-  ul {
+
+  &__content {
     margin: 0;
-    padding: 0 2rem 2rem;
+    padding: 0 2rem 0;
     overflow: auto;
     flex: 1;
-  }
-
-  .tab-content ul {
-    overflow: initial;
+    display: flex;
+    flex-direction: column;
   }
 
   li {
@@ -311,7 +297,7 @@ h1.title {
       color: var(--textColorRgb);
     }
   }
-  &.book-content-list--show {
+  &.show {
     transform: translateX(0);
   }
 }

@@ -198,7 +198,7 @@ export class Book {
     */
   changeChapter(mode: "next" | "prev" | "first" | "last") {
     const oldChapterIndex = this.currentChapterIndex;
-
+    
     switch (mode) {
       case "next":
         if (!this.isLastChapter) {
@@ -229,6 +229,8 @@ export class Book {
     if (oldChapterIndex !== this.currentChapterIndex) {
       this.renderChapter(this.currentChapterIndex);
     }
+
+    console.log(this.currentChapterIndex, this.currentPage)
 
     // Binding click event on anchors to go to specific element
     this.handleClickOnAnchors();
@@ -558,9 +560,9 @@ export class Book {
       bottomBar[0],
       "padding-bottom"
     );
-    const bookContentBtn = $(".book-content .action-button");
-    const bookContentBtnTopPadding = UTILS.extractComputedStyleNumber(
-      bookContentBtn[0],
+    const sidePanelBtn = $(".side-panel .action-button");
+    const sidePanelBtnTopPadding = UTILS.extractComputedStyleNumber(
+      sidePanelBtn[0],
       "padding-top"
     );
     const bookContainer = UTILS.DOM_ELS.bookContainer;
@@ -584,8 +586,8 @@ export class Book {
       paddingBottom:
         paddingBottom > bookContainerBottomPadding && paddingBottom,
     });
-    bookContentBtn.css({
-      paddingTop: paddingTop > bookContentBtnTopPadding && paddingTop,
+    sidePanelBtn.css({
+      paddingTop: paddingTop > sidePanelBtnTopPadding && paddingTop,
     });
   }
 
@@ -618,7 +620,7 @@ export class Book {
   */
   generateBookTableOfContent() {
     if (!this.tableOfContents.length) {
-      $(UTILS.DOM_ELS.showTableOfContenBtn).remove();
+      $(['data-target="book-content"']).remove();
       return;
     }
 
@@ -640,9 +642,7 @@ export class Book {
       row.addEventListener("click", (e) => {
         e.stopPropagation();
         this.renderChapter(chapterIndex);
-        $(UTILS.DOM_ELS.tableOfContentWrapper).removeClass(
-          "book-content-list--show"
-        );
+        $(".side-panel").removeClass("show");
       });
     });
   }

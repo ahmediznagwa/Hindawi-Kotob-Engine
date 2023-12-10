@@ -72,7 +72,7 @@ function _showDropdownMenu(dropdownContainer) {
   dropdownContainer.addClass("show");
 }
 
-// adding tabs
+// tabs
 $("[data-type='tab']").each(function () {
   const el = $(this);
   const tab = "#" + $(this).attr("data-target");
@@ -83,6 +83,21 @@ $("[data-type='tab']").each(function () {
     $(".tab-content").removeClass("active");
     $(tab).addClass("active");
   });
+});
+
+// panels
+$("[data-type='panel']").each(function () {
+  const el = $(this);
+  const panel = "#" + $(this).attr("data-target");
+  el.on("click", function () {
+    $(".side-panel").removeClass("show");
+    $(panel).addClass("show");
+  });
+});
+
+$(".hide-side-panel").on("click", function (e) {
+  e.stopPropagation();
+  $(".side-panel").removeClass("show");
 });
 
 $(document).on("keydown", function (e: any) {

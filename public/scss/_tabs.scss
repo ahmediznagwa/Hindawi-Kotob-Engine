@@ -12,7 +12,7 @@
   .dark & {
     background-color: rgba(var(--textColor), 0.1);
   }
-  .dark .book-content & {
+  .dark .side-panel & {
     background-color: var(--lightGreyBgRgb);
   }
   .tab-item {
@@ -31,12 +31,8 @@
       }
     }
   }
-  .book-content & {
+  .side-panel & {
     margin-bottom: 3rem;
-    margin-top: -3rem;
-    @media screen and (max-width: $mobilexLarge) {
-      margin-top: -0.5rem;
-    }
   }
 }
 
@@ -48,7 +44,7 @@
     display: block;
   }
 
-  .book-content & {
+  .side-panel & {
     flex: 1;
   }
 }

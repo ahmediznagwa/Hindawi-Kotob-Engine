@@ -276,6 +276,13 @@ export class Controller {
       }
     });
 
+    $(".highlighted").on("click", (e) => {
+      const firstWord = $(e.target)
+        .closest(".highlighted")
+        .find("span[n]:first-child")[0];
+      this.wordsSelectionHandler(e, [firstWord]);
+    });
+
     UTILS.DOM_ELS.nextPageBtn?.addEventListener(
       "click",
       this.goToNextPage.bind(this)
@@ -322,17 +329,7 @@ export class Controller {
     UTILS.DOM_ELS.fontFamilyBtns?.forEach((btn) => {
       btn.addEventListener("click", this.fontFamilyEventHandler.bind(this));
     });
-    UTILS.DOM_ELS.showTableOfContenBtn?.addEventListener("click", () => {
-      this.hideToolbar();
-      $(UTILS.DOM_ELS.tableOfContentWrapper).addClass(
-        "book-content-list--show"
-      );
-    });
-    UTILS.DOM_ELS.hideTableOfContenBtn?.addEventListener("click", function () {
-      $(UTILS.DOM_ELS.tableOfContentWrapper).removeClass(
-        "book-content-list--show"
-      );
-    });
+
     this.wordPositionChangeHandler();
     document.fonts.onloadingdone = () => {
       this.resizeEventHandler();
@@ -352,14 +349,24 @@ export class Controller {
     const menu = document.createElement("div");
     menu.classList.add("actions-menu");
 
+    // if(anchorElement.closest('.highlighted'))
+
     let actionsMenu = `
-      <ul data-word-index="${anchorElement?.getAttribute("n")}">
+      <ul data-anchor-word-index="${anchorElement?.getAttribute("n")}">
         <li class="highlight"><a href="#">تلوين</a></li>
         <li class="bookmark"><a href="#">إضافة علامة متابعة القراءة</a></li>
       </ul>
   `;
 
-    // <li class="unhighlight"><a href="#">الغاء التلوين</a></li>
+    if ($(anchorElement).closest(".highlighted").length) {
+      actionsMenu = `
+          <ul data-anchor-word-index="${anchorElement?.getAttribute("n")}">
+            <li class="unhighlight"><a href="#">الغاء التلوين</a></li>
+            <li class="bookmark"><a href="#">إضافة علامة متابعة القراءة</a></li>
+          </ul>
+      `;
+    }
+
     // <li class="copy"><a href="#">نسخ</a></li>
 
     menu.innerHTML = actionsMenu;
@@ -382,6 +389,23 @@ export class Controller {
         e.preventDefault();
         e.stopPropagation();
         this.addNote(elements, "highlight");
+      });
+    }
+
+    const unHighlightBtn = menu.querySelector(".unhighlight");
+    if (unHighlightBtn) {
+      $(unHighlightBtn).on("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const anchorWordIndex = +$(unHighlightBtn)
+          .closest("ul")
+          .attr("data-anchor-word-index");
+        console.log(anchorWordIndex, this.book.currentChapterIndex);
+        this.removeNote(
+          anchorWordIndex,
+          this.book.currentChapterIndex,
+          "highlight"
+        );
       });
     }
 
@@ -600,9 +624,7 @@ export class Controller {
     Handles what happened after clicking on specific note in the list
   */
   goToNote(anchorWordIndex: number, chapterIndex: number) {
-    $(UTILS.DOM_ELS.tableOfContentWrapper).removeClass(
-      "book-content-list--show"
-    );
+    $(".side-panel").removeClass("show");
     this.book.renderChapter(chapterIndex);
     // Detect anchor word page index
     this.book.goToPage(
@@ -613,8 +635,8 @@ export class Controller {
     const targetEL = $(`span[n="${anchorWordIndex}"]`).closest(
       ".bookmarked"
     )[0];
-    this.book.highlightSelectedElement(targetEL);
 
+    this.book.highlightSelectedElement(targetEL);
     this.book?.checkPageIsBookmarked();
   }
 
@@ -788,17 +810,19 @@ export class Controller {
       (x) => x.index === anchorWordIndex
     );
 
-    if (type === "highlight") {
-      targetNote.wordsIndexes.forEach((wordIndex) => {
-        const noteParent = $(`span[n=${wordIndex}]`).closest(
-          "span.highlighted"
-        );
-        if (noteParent) {
-          const noteParentCn = noteParent.contents();
-          noteParent.replaceWith(noteParentCn);
-        }
-      });
-    }
+    const noteParents = [];
+    targetNote.wordsIndexes.forEach((wordIndex) => {
+      const noteParent =
+        type === "highlight"
+          ? $(`span[n=${wordIndex}]`).closest(".highlighted")
+          : $(`span[n=${wordIndex}]`).closest(".bookmarked");
+
+      noteParents.push(noteParent);
+    });
+    noteParents.forEach((parent) => {
+      const noteParentCn = parent?.contents();
+      parent?.replaceWith(noteParentCn);
+    });
 
     if (storedData[chapterIndex].notes.length > 1) {
       storedData[chapterIndex] = {
@@ -829,15 +853,17 @@ export class Controller {
     UTILS.DOM_ELS.bookmarksBtns?.forEach((listItem) => {
       const anchorWordIndex = +$(listItem).attr("data-anchor-word-index");
       const chapterIndex = +$(listItem).attr("data-chapter-index");
-      $(listItem).on("click", () =>
-        this.goToNote(anchorWordIndex, chapterIndex)
-      );
+      $(listItem).on("click", (e) => {
+        e.stopPropagation();
+        this.goToNote(anchorWordIndex, chapterIndex);
+      });
 
       $(listItem)
         .find(".btn")
-        .on("click", () =>
-          this.removeNote(anchorWordIndex, chapterIndex, "bookmark")
-        );
+        .on("click", (e) => {
+          e.stopPropagation();
+          this.removeNote(anchorWordIndex, chapterIndex, "bookmark");
+        });
     });
   }
 
@@ -883,15 +909,23 @@ export class Controller {
       const anchorWordIndex = +$(listItem).attr("data-anchor-word-index");
       const chapterIndex = +$(listItem).attr("data-chapter-index");
 
-      $(listItem).on("click", () =>
-        this.goToNote(anchorWordIndex, chapterIndex)
-      );
+      $(listItem).on("click", (e) => {
+        e.stopPropagation();
+        this.goToNote(anchorWordIndex, chapterIndex);
+      });
 
       $(listItem)
         .find(".btn")
-        .on("click", () =>
-          this.removeNote(anchorWordIndex, chapterIndex, "highlight")
-        );
+        .on("click", (e) => {
+          e.stopPropagation();
+          this.removeNote(anchorWordIndex, chapterIndex, "highlight");
+        });
+    });
+    UTILS.DOM_ELS.highlightedElements.forEach((el) => {
+      $(el).on("click", (e) => {
+        e.stopPropagation();
+        this.wordsSelectionHandler(e, [$(el).find("span[n]:first-child")[0]]);
+      });
     });
   }
 
