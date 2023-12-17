@@ -1,3 +1,4 @@
+import { format } from "date-fns";
 import { IHighlighted } from "../Models/IHighlighted.model";
 import { PageUpdatedMessage } from "../Models/IPostMessage.model";
 import { IUserPreferencesState } from "../Models/IUserPreferencesState.model";
@@ -272,6 +273,7 @@ export class Controller {
     $(document).on("touchend", (event) => {
       this.isSelecting = false;
       if (event.target.nodeName !== "A") {
+        console.log("Touched");
         this.disableIosSafariCallout();
       }
     });
@@ -879,10 +881,15 @@ export class Controller {
         (this.book.highlights[key].notes as IHighlighted[])?.forEach((word) => {
           $(list).append(
             `
-                <li class="highlight-item" data-chapter-index="${key}" data-anchor-word-index="${word.index}">
+                <li class="highlight-item" data-chapter-index="${key}" data-anchor-word-index="${
+              word.index
+            }">
                   <div>
                     <h4>${word.content}</h4>
-                    <p>${word.chapterTitle}</p>
+                    <p>${format(
+                      new Date(word.createdOn),
+                      "dd/MM/yyyy • hh:mm aaa"
+                    )}</p>
                   </div>
                   <button class="btn-icon btn">
                     <i class="f-icon trash-icon"></i>
@@ -966,7 +973,7 @@ export class Controller {
   }
 
   /**
-    Disables touch callout
+    Disables touch callout for iOS devices
   */
   disableIosSafariCallout() {
     const s = window.getSelection();

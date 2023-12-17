@@ -25,8 +25,9 @@ export function getSentenceAfterWord(
  Get elements array back from window selection
 */
 export function extractWordsFromSelection(selected: Selection): HTMLElement[] {
-  const anchorElementIndex = +$(selected.anchorNode.parentNode).attr("n");
   let wordsNumber = selected.toString().trim().split(" ").length;
+  const anchorElementIndex =
+    +$(selected.focusNode.parentNode).attr("n") - wordsNumber + 1; // Deducting the focus word itself;
   const elementsArray: HTMLElement[] = [];
   let currentParent;
   let isSameParent = true;

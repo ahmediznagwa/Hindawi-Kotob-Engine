@@ -322,6 +322,11 @@
   }
 }
 
+.book-content__list {
+  padding: 0;
+  margin: 0;
+}
+
 .bookmarks-list {
   list-style: none;
   padding: 0;
@@ -353,6 +358,8 @@
       margin: 0;
       line-height: 1.4;
       color: rgba(var(--textColor), 0.5);
+      font-family: Arial, Helvetica, sans-serif;
+      direction: ltr;
     }
 
     &:last-child {

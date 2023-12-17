@@ -198,7 +198,7 @@ export class Book {
     */
   changeChapter(mode: "next" | "prev" | "first" | "last") {
     const oldChapterIndex = this.currentChapterIndex;
-    
+
     switch (mode) {
       case "next":
         if (!this.isLastChapter) {
@@ -229,8 +229,6 @@ export class Book {
     if (oldChapterIndex !== this.currentChapterIndex) {
       this.renderChapter(this.currentChapterIndex);
     }
-
-    console.log(this.currentChapterIndex, this.currentPage)
 
     // Binding click event on anchors to go to specific element
     this.handleClickOnAnchors();

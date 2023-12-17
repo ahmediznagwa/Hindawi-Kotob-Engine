@@ -93,6 +93,12 @@ body {
   }
 }
 
+.figure, img {
+  .dark & {
+    filter: invert(1);
+  }
+}
+
 h1.title {
   font-family: inherit;
 }

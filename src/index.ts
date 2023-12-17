@@ -13,7 +13,8 @@ export const hindawiReaders = (function () {
   //   // const bookId = "40262648"; // hindawi;
   //   // const bookId = "16264295"; // hindawi;
   //   // const bookId = "69058261"; // publisher;
-  //   const bookId = "42581692"; // hindawi;
+  //   // const bookId = "42581692"; // hindawi;
+  //   const bookId = "74718574"; // hindawi;
   //   const readerConfig: IReaderConfig = {
   //     bookId,
   //     paddingTop: 20,
