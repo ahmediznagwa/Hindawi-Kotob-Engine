@@ -273,7 +273,6 @@ export class Controller {
     $(document).on("touchend", (event) => {
       this.isSelecting = false;
       if (event.target.nodeName !== "A") {
-        console.log("Touched");
         this.disableIosSafariCallout();
       }
     });
@@ -984,7 +983,7 @@ export class Controller {
         if (r.toString().trim() !== "") {
           s?.addRange(r!);
         }
-      }, 100);
+      }, 50);
     }
   }
 
