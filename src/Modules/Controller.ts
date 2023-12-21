@@ -13,8 +13,16 @@ import { Book } from "./Book";
 import { HTMLExtractor } from "./HTMLExtractor";
 import { UserPreferences } from "./UserPreferences";
 import { UTILS } from "./Utils";
+import { cssNumber } from "jquery";
 
 export class Controller {
+  touchMaxSwipeTime: number;
+  touchMinSwipeDistance: number;
+  touchMaxVerticalSwipeDistance: number;
+  touchMaxHorizontalSwipeDistance: number;
+  touchStartX: number;
+  touchStartY: number;
+  touchStartTime: number;
   htmlExtractor: HTMLExtractor;
   book: Book;
   userPreferences: UserPreferences;
@@ -25,7 +33,15 @@ export class Controller {
   midWordLeft: number;
   lastWordLeft: number;
   isSelecting: boolean;
-  constructor() {}
+  constructor() {
+    this.touchMaxSwipeTime = 400; //maximum time in ms for a gesture to be considered a swipe
+    this.touchMinSwipeDistance = 50; //minimum horizontal distance for a gesture to be considred swipe
+    this.touchMaxVerticalSwipeDistance = 300; //maximum vertical distance for a gesture to be considred swipe
+    this.touchMaxHorizontalSwipeDistance = 300; //maximum vertical distance for a gesture to be considred swipe
+    this.touchStartX = 0;
+    this.touchStartY = 0;
+    this.touchStartTime = 0;
+  }
 
   /**
     Initiates the app asynchronously by getting the chapters array
@@ -221,6 +237,18 @@ export class Controller {
    Sets up the event listeners needed for the app to run
    */
   setupEventListeners() {
+    window.addEventListener(
+      "touchstart",
+      this.touchStartEventHandler.bind(this)
+    );
+    window.addEventListener("touchend", (ev) => {
+      this.touchEndEventHandler(ev);
+      this.isSelecting = false;
+      if (ev.target["nodeName"] !== "A") {
+        this.disableIosSafariCallout();
+      }
+    });
+    window?.addEventListener("keydown", this.keyDownEventHandler.bind(this));
     window?.addEventListener("resize", () =>
       setTimeout(this.resizeEventHandler.bind(this), 0)
     );
@@ -229,31 +257,6 @@ export class Controller {
     ); //The only jQuery line
     document.onfullscreenchange = () =>
       setTimeout(this.resizeEventHandler.bind(this), 0);
-
-    //DOM Elements event listeners
-    document.addEventListener("keydown", (e) => {
-      if (e.key == "ArrowLeft") {
-        this.goToNextPage();
-      } else if (e.key == "ArrowUp") {
-        this.goToPrevChapter();
-      } else if (e.key == "ArrowRight") {
-        this.goToPrevPage();
-      } else if (e.key == "ArrowDown") {
-        this.goToNextChapter();
-      }
-    });
-
-    // Mobile Swipe Event Listeners
-    $(document).on("swiperight", () => {
-      if (!this.isSelecting) {
-        this.goToNextPage();
-      }
-    });
-    $(document).on("swipeleft", () => {
-      if (!this.isSelecting) {
-        this.goToPrevPage();
-      }
-    });
 
     // Diabling contextmenu
     document.addEventListener("contextmenu", (event) => {
@@ -270,13 +273,6 @@ export class Controller {
         this.wordsSelectionHandler(event, elements);
       }
     });
-    $(document).on("touchend", (event) => {
-      this.isSelecting = false;
-      if (event.target.nodeName !== "A") {
-        this.disableIosSafariCallout();
-      }
-    });
-
     $(".highlighted").on("click", (e) => {
       const firstWord = $(e.target)
         .closest(".highlighted")
@@ -611,6 +607,94 @@ export class Controller {
     this.book.fontSize = fontSize;
     this.book.changeFontSize();
     this.postFontResizeHandler();
+  }
+
+  /**
+   * Handles user's keyboard input
+   */
+  keyDownEventHandler(e: KeyboardEvent) {
+    switch (e.code) {
+      case "ArrowLeft":
+        this.goToNextPage();
+        break;
+      case "ArrowUp":
+        this.goToNextChapter();
+        break;
+      case "ArrowRight":
+        this.goToPrevPage();
+        break;
+      case "ArrowDown":
+        this.goToPrevChapter();
+        break;
+      case "Equal":
+      case "NumpadAdd":
+        if (e.ctrlKey || e.metaKey) {
+          e.preventDefault();
+          this.increaseFontSize();
+        }
+        break;
+      case "Minus":
+      case "NumpadSubtract":
+        if (e.ctrlKey || e.metaKey) {
+          e.preventDefault();
+          this.decreaseFontSize();
+        }
+        break;
+      case "Digit0":
+      case "Numpad0":
+        if (e.ctrlKey || e.metaKey) {
+          e.preventDefault();
+          this.resetFontSize();
+        }
+        break;
+      default:
+        break;
+    }
+  }
+
+  /**
+   * Handles the touch devices touch start event
+   */
+  touchStartEventHandler(e: TouchEvent) {
+    this.touchStartX = e.changedTouches[0].pageX;
+    this.touchStartY = e.changedTouches[0].pageY;
+    this.touchStartTime = new Date().getTime();
+  }
+
+  /**
+   * Handles the touch devices touch end event
+   */
+  touchEndEventHandler(e: TouchEvent) {
+    const distX = e.changedTouches[0].pageX - this.touchStartX;
+    const distY = e.changedTouches[0].pageY - this.touchStartY;
+    const time = new Date().getTime() - this.touchStartTime;
+
+    // Horizontal swiping
+    if (
+      time <= this.touchMaxSwipeTime &&
+      Math.abs(distX) >= this.touchMinSwipeDistance &&
+      Math.abs(distY) <= this.touchMaxVerticalSwipeDistance
+    ) {
+      console.log("run");
+      if (distX > 0) {
+        this.goToNextPage();
+      } else {
+        this.goToPrevPage();
+      }
+    }
+
+    // Vertical swiping
+    if (
+      time <= this.touchMaxSwipeTime &&
+      Math.abs(distY) >= this.touchMinSwipeDistance &&
+      Math.abs(distX) <= this.touchMaxHorizontalSwipeDistance
+    ) {
+      if (distY < 0) {
+        this.goToNextPage();
+      } else {
+        this.goToPrevPage();
+      }
+    }
   }
 
   /**

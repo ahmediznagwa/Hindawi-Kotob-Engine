@@ -74,6 +74,7 @@ export class Book {
     this.changeFontSize();
     this.changeColorMode(this.colorMode);
     this.changeFontFamily(this.fontFamily);
+    // Check if we can comment these functions as thy run in chapter already
     setTimeout(() => {
       this.currentChapter?.calcPagesContentRanges();
       this.currentPage = this.calcAnchorWordPage();
