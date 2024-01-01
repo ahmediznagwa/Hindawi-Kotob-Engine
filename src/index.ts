@@ -9,37 +9,37 @@ let controller = new Controller();
 export const hindawiReaders = (function () {
   controller = new Controller();
   // Demo [START]
-  // window.addEventListener("load", async () => {
-  //   // const bookId = "40262648"; // hindawi;
-  //   // const bookId = "16264295"; // hindawi;
-  //   // const bookId = "69058261"; // publisher;
-  //   // const bookId = "42581692"; // hindawi;
-  //   const bookId = "74718574"; // hindawi;
-  //   const readerConfig: IReaderConfig = {
-  //     bookId,
-  //     paddingTop: 20,
-  //     paddingBottom: 0,
-  //     isIphone: true,
-  //     bookTitle: "شلن واحد من أجل الشموع",
-  //   };
-  //   Promise.all([
-  //     fetch(`./books/${bookId}/Content.main`).then((res) => res.text()),
-  //     fetch(`./books/${bookId}/toc.nav`).then((res) => res.text()),
-  //   ]).then(([res1, res2]) => {
-  //     controller.initWithChapters(
-  //       `{
-  //         "bookId": "${readerConfig.bookId}",
-  //         "paddingTop": ${readerConfig.paddingTop},
-  //         "paddingBottom": ${readerConfig.paddingBottom},
-  //         "isIphone": ${readerConfig.isIphone},
-  //         "bookTitle": "${readerConfig.bookTitle}"
-  //       }`,
-  //       res1,
-  //       `./books/${readerConfig.bookId}`,
-  //       res2
-  //     );
-  //   });
-  // });
+  window.addEventListener("load", async () => {
+    // const bookId = "40262648"; // hindawi;
+    // const bookId = "16264295"; // hindawi;
+    // const bookId = "69058261"; // publisher;
+    // const bookId = "42581692"; // hindawi;
+    const bookId = "74718574"; // hindawi;
+    const readerConfig: IReaderConfig = {
+      bookId,
+      paddingTop: 20,
+      paddingBottom: 0,
+      isIphone: true,
+      bookTitle: "شلن واحد من أجل الشموع",
+    };
+    Promise.all([
+      fetch(`./books/${bookId}/Content.main`).then((res) => res.text()),
+      fetch(`./books/${bookId}/toc.nav`).then((res) => res.text()),
+    ]).then(([res1, res2]) => {
+      controller.initWithChapters(
+        `{
+          "bookId": "${readerConfig.bookId}",
+          "paddingTop": ${readerConfig.paddingTop},
+          "paddingBottom": ${readerConfig.paddingBottom},
+          "isIphone": ${readerConfig.isIphone},
+          "bookTitle": "${readerConfig.bookTitle}"
+        }`,
+        res1,
+        `./books/${readerConfig.bookId}`,
+        res2
+      );
+    });
+  });
   // Demo [END]
   return {
     init: controller.initWithChapters.bind(controller),
@@ -53,24 +53,17 @@ export const hindawiReaders = (function () {
 window.hindawiReaders = hindawiReaders;
 
 // Dropdown Menu
-initDropdowns();
-function initDropdowns() {
-  $(".dropdown-toggle").each(function () {
-    const dropdownToggle = $(this);
-    const dropdownContainer = dropdownToggle.closest(".dropdown");
-    dropdownToggle.on("click", function () {
-      _showDropdownMenu(dropdownContainer);
-    });
-  });
-}
 
-function _showDropdownMenu(dropdownContainer) {
-  if (dropdownContainer.hasClass("show")) {
-    dropdownContainer.removeClass("show");
+const dropdownToggle = document.querySelector(".dropdown-toggle");
+dropdownToggle.addEventListener("click", initDropdowns);
+function initDropdowns() {
+  let dropdownContainer = dropdownToggle.closest(".dropdown");
+  if (dropdownContainer.classList.contains("show")) {
+    dropdownContainer.classList.remove("show");
     return;
   }
-  $(".dropdown").removeClass("show");
-  dropdownContainer.addClass("show");
+  dropdownContainer.classList.remove("show");
+  dropdownContainer.classList.add("show");
 }
 
 // tabs
@@ -96,11 +89,19 @@ $("[data-type='panel']").each(function () {
   });
 });
 
-$(".hide-side-panel").on("click", function (e) {
-  e.stopPropagation();
-  $(".side-panel").removeClass("show");
-});
+// $(".hide-side-panel").on("click", function (e) {
+//   e.stopPropagation();
+//   $(".side-panel").removeClass("show");
+// });
 
+let hidePanel = document.getElementsByClassName("hide-side-panel");
+let panel = document.querySelector(".side-panel");
+for (var i = 0; i < hidePanel.length; i++) {
+  hidePanel[i].addEventListener("click", closePanel);
+}
+function closePanel() {
+  panel.classList.remove("show");
+}
 $(document).on("keydown", function (e: any) {
   if (e.key === "Escape") {
     controller.hideToolbar();
