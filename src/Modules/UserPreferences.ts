@@ -23,7 +23,7 @@ export class UserPreferences {
     this.highlights = null;
 
     this.localStorageKeys = {
-      fontSize: `${this.bookId}_fontSize`,
+      fontSize: `fontSize`,
       colorMode: "colorMode",
       fontFamily: "fontFamily",
       lastPosition: `${this.bookId}_lastPosition`, //its value in Localstorage will be a JSON containing chapter and page,
