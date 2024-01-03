@@ -54,17 +54,18 @@ window.hindawiReaders = hindawiReaders;
 
 // Dropdown Menu
 
-const dropdownToggle = document.querySelector(".dropdown-toggle");
-dropdownToggle.addEventListener("click", initDropdowns);
-function initDropdowns() {
-  let dropdownContainer = dropdownToggle.closest(".dropdown");
-  if (dropdownContainer.classList.contains("show")) {
+const dropdownToggle = document.querySelectorAll(".dropdown-toggle");
+dropdownToggle.forEach(function (dropdownToggle) {
+  dropdownToggle.addEventListener("click", function (e) {
+    let dropdownContainer = dropdownToggle.closest(".dropdown");
+    if (dropdownContainer.classList.contains("show")) {
+      dropdownContainer.classList.remove("show");
+      return;
+    }
     dropdownContainer.classList.remove("show");
-    return;
-  }
-  dropdownContainer.classList.remove("show");
-  dropdownContainer.classList.add("show");
-}
+    dropdownContainer.classList.add("show");
+  });
+});
 
 // tabs
 $("[data-type='tab']").each(function () {
@@ -80,34 +81,42 @@ $("[data-type='tab']").each(function () {
 });
 
 // panels
-$("[data-type='panel']").each(function () {
-  const el = $(this);
-  const panel = "#" + $(this).attr("data-target");
-  el.on("click", function () {
-    $(".side-panel").removeClass("show");
-    $(panel).addClass("show");
+// $("[data-type='panel']").each(function () {
+//   const el = $(this);
+//   const panel = "#" + $(this).attr("data-target");
+//   el.on("click", function () {
+//     $(".side-panel").removeClass("show");
+//     $(panel).addClass("show");
+//   });
+// });
+
+let openPanel = document.querySelectorAll("[data-type='panel']");
+let panel = document.querySelector(".side-panel");
+panel.getAttribute("data-target");
+openPanel.forEach(function (openPanel) {
+  openPanel.addEventListener("click", function (e) {
+    panel.classList.remove("show");
+    panel.classList.add("show");
   });
 });
 
-// $(".hide-side-panel").on("click", function (e) {
-//   e.stopPropagation();
-//   $(".side-panel").removeClass("show");
-// });
-
-let hidePanel = document.getElementsByClassName("hide-side-panel");
-let panel = document.querySelector(".side-panel");
-for (var i = 0; i < hidePanel.length; i++) {
-  hidePanel[i].addEventListener("click", closePanel);
-}
-function closePanel() {
+let hidePanel = document.querySelector(".hide-side-panel");
+hidePanel.addEventListener("click", function (e) {
+  e.stopPropagation();
   panel.classList.remove("show");
-}
+});
+
 $(document).on("keydown", function (e: any) {
   if (e.key === "Escape") {
     controller.hideToolbar();
     controller?.book?.currentChapter?.hideActionsMenu();
   }
 });
+
+// let body = document.getElementsByTagName("body");
+// hidePanel.addEventListener("click", function (e) {
+  
+// })
 $("body").on("click", function () {
   controller.toggleOverlay();
   controller?.book?.currentChapter?.hideActionsMenu();
