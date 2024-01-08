@@ -88,28 +88,28 @@ dropdownToggle.forEach(function (dropdownToggle) {
 });
 
 // tabs
-$("[data-type='tab']").each(function () {
-  const el = $(this);
-  const tab = "#" + $(this).attr("data-target");
+// $("[data-type='tab']").each(function () {
+//   const el = $(this);
+//   const tab = "#" + $(this).attr("data-target");
 
-  el.on("click", function () {
-    $(".tab-item").removeClass("active-tab");
-    el.addClass("active-tab");
-    $(".tab-content").removeClass("active");
-    $(tab).addClass("active");
-  });
-});
-
-// let allTabs = document.querySelectorAll("[data-type='tab']");
-// allTabs.forEach((tab) => {
-//   const targetTab = `#${tab.getAttribute("data-target")}`;
-//   tab.addEventListener("click", function (e) {
-//     allTabs.classList.remove("active-tabs")
-//     document.querySelector(".tab-content").classList.remove("active");
-//     document.querySelector(targetTab).classList.add("active");
+//   el.on("click", function () {
+//     $(".tab-item").removeClass("active-tab");
+//     el.addClass("active-tab");
+//     $(".tab-content").removeClass("active");
+//     $(tab).addClass("active");
 //   });
 // });
-
+let allTabsTriggers = document.querySelectorAll("[data-type='tab']");
+allTabsTriggers.forEach((tabTrigger) => {
+  const target = `#${tabTrigger.getAttribute("data-target")}`;
+  tabTrigger.addEventListener("click", function (e) {
+    let tabsButtons = document.querySelectorAll(".tab-item");
+    document.querySelector(".tab-content.active").classList.remove("active");
+    document.querySelector(target).classList.add("active");
+    document.querySelector(".tab-item.active-tab").classList.remove("active-tab");
+    // document.querySelector(tabsButtons).classList.add("active-tab");
+  });
+});
 // panels
 let allPanelsTriggers = document.querySelectorAll("[data-type='panel']");
 allPanelsTriggers.forEach((panelTrigger) => {
@@ -119,25 +119,20 @@ allPanelsTriggers.forEach((panelTrigger) => {
     document.querySelector(targetId).classList.add("show");
   });
 });
-// let panel = document.querySelector(".side-panel");
-// panel.getAttribute("data-target");
-// openPanel.forEach(function (openPanel) {
-//   openPanel.addEventListener("click", function (e) {
-//     panel.classList.remove("show");
-//     panel.classList.add("show");
-//     console.log(openPanel);
-//   });
-// });
 
 // $(".hide-side-panel").on("click", function (e) {
 //   e.stopPropagation();
 //   $(".side-panel").removeClass("show");
 // });
 
-const hidePanel = document.querySelector(".hide-side-panel");
-hidePanel.addEventListener("click", function (e) {
-  e.stopPropagation();
-  document.querySelector(".side-panel").classList.remove("show");
+const hidePanel = document.querySelectorAll(".hide-side-panel");
+const panel = document.getElementsByClassName("side-panel");
+hidePanel.forEach((button) => {
+  button.addEventListener("click", () => {
+    for (var i = 0; i < hidePanel.length; i++) {
+      panel[i].classList.remove("show");
+    }
+  });
 });
 
 // $(document).on("keydown", function (e: any) {
