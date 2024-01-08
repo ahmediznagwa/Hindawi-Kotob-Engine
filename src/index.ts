@@ -53,7 +53,27 @@ export const hindawiReaders = (function () {
 window.hindawiReaders = hindawiReaders;
 
 // Dropdown Menu
+// initDropdowns();
+// function initDropdowns() {
+//   $(".dropdown-toggle").each(function () {
+//     const dropdownToggle = $(this);
+//     const dropdownContainer = dropdownToggle.closest(".dropdown");
+//     dropdownToggle.on("click", function () {
+//       _showDropdownMenu(dropdownContainer);
+//     });
+//   });
+// }
 
+// function _showDropdownMenu(dropdownContainer) {
+//   if (dropdownContainer.hasClass("show")) {
+//     dropdownContainer.removeClass("show");
+//     return;
+//   }
+//   $(".dropdown").removeClass("show");
+//   dropdownContainer.addClass("show");
+// }
+
+// Dropdown Menu
 const dropdownToggle = document.querySelectorAll(".dropdown-toggle");
 dropdownToggle.forEach(function (dropdownToggle) {
   dropdownToggle.addEventListener("click", function (e) {
@@ -80,31 +100,45 @@ $("[data-type='tab']").each(function () {
   });
 });
 
+// let allTabs = document.querySelectorAll("[data-type='tab']");
+// allTabs.forEach((tab) => {
+//   const targetTab = `#${tab.getAttribute("data-target")}`;
+//   tab.addEventListener("click", function (e) {
+//     allTabs.classList.remove("active-tabs")
+//     document.querySelector(".tab-content").classList.remove("active");
+//     document.querySelector(targetTab).classList.add("active");
+//   });
+// });
+
 // panels
-$("[data-type='panel']").each(function () {
-  const el = $(this);
-  const panel = "#" + $(this).attr("data-target");
-  el.on("click", function () {
-    $(".side-panel").removeClass("show");
-    $(panel).addClass("show");
+let allPanelsTriggers = document.querySelectorAll("[data-type='panel']");
+allPanelsTriggers.forEach((panelTrigger) => {
+  const targetId = `#${panelTrigger.getAttribute("data-target")}`;
+  panelTrigger.addEventListener("click", function (e) {
+    document.querySelector(".side-panel").classList.remove("show");
+    document.querySelector(targetId).classList.add("show");
   });
 });
-
-// let openPanel = document.querySelectorAll("[data-type='panel']");
 // let panel = document.querySelector(".side-panel");
 // panel.getAttribute("data-target");
 // openPanel.forEach(function (openPanel) {
 //   openPanel.addEventListener("click", function (e) {
 //     panel.classList.remove("show");
 //     panel.classList.add("show");
+//     console.log(openPanel);
 //   });
 // });
 
-// let hidePanel = document.querySelector(".hide-side-panel");
-// hidePanel.addEventListener("click", function (e) {
+// $(".hide-side-panel").on("click", function (e) {
 //   e.stopPropagation();
-//   panel.classList.remove("show");
+//   $(".side-panel").removeClass("show");
 // });
+
+const hidePanel = document.querySelector(".hide-side-panel");
+hidePanel.addEventListener("click", function (e) {
+  e.stopPropagation();
+  document.querySelector(".side-panel").classList.remove("show");
+});
 
 // $(document).on("keydown", function (e: any) {
 //   if (e.key === "Escape") {
@@ -122,12 +156,6 @@ function keyDownTextField(e) {
   }
 }
 
-// document.body.addEventListener("click", function () {
-//   console.log("clicked");
-//   controller.toggleOverlay();
-//   controller?.book?.currentChapter?.hideActionsMenu();
-// });
-
 $("body").on("click", function () {
   controller.toggleOverlay();
   controller?.book?.currentChapter?.hideActionsMenu();
@@ -136,6 +164,21 @@ $("body").on("click", function () {
 $(".app-bar, .actions-menu").on("click", function (e) {
   e.stopPropagation();
 });
+
+// if ($(".app-bar").length) {
+//   let isHovering = false;
+//   let timer;
+
+//   $("body").on("mousemove", function () {
+//     clearTimeout(timer);
+//     timer = setTimeout(() => {
+//       if (isHovering) {
+//         return;
+//       }
+//       controller.hideToolbar();
+//     }, 4000);
+//   });
+// }
 
 function appBars() {
   let isHovering = false;
