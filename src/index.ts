@@ -81,55 +81,67 @@ $("[data-type='tab']").each(function () {
 });
 
 // panels
-// $("[data-type='panel']").each(function () {
-//   const el = $(this);
-//   const panel = "#" + $(this).attr("data-target");
-//   el.on("click", function () {
-//     $(".side-panel").removeClass("show");
-//     $(panel).addClass("show");
-//   });
-// });
-
-let openPanel = document.querySelectorAll("[data-type='panel']");
-let panel = document.querySelector(".side-panel");
-panel.getAttribute("data-target");
-openPanel.forEach(function (openPanel) {
-  openPanel.addEventListener("click", function (e) {
-    panel.classList.remove("show");
-    panel.classList.add("show");
+$("[data-type='panel']").each(function () {
+  const el = $(this);
+  const panel = "#" + $(this).attr("data-target");
+  el.on("click", function () {
+    $(".side-panel").removeClass("show");
+    $(panel).addClass("show");
   });
 });
 
-let hidePanel = document.querySelector(".hide-side-panel");
-hidePanel.addEventListener("click", function (e) {
-  e.stopPropagation();
-  panel.classList.remove("show");
-});
+// let openPanel = document.querySelectorAll("[data-type='panel']");
+// let panel = document.querySelector(".side-panel");
+// panel.getAttribute("data-target");
+// openPanel.forEach(function (openPanel) {
+//   openPanel.addEventListener("click", function (e) {
+//     panel.classList.remove("show");
+//     panel.classList.add("show");
+//   });
+// });
 
-$(document).on("keydown", function (e: any) {
-  if (e.key === "Escape") {
+// let hidePanel = document.querySelector(".hide-side-panel");
+// hidePanel.addEventListener("click", function (e) {
+//   e.stopPropagation();
+//   panel.classList.remove("show");
+// });
+
+// $(document).on("keydown", function (e: any) {
+//   if (e.key === "Escape") {
+//     controller.hideToolbar();
+//     controller?.book?.currentChapter?.hideActionsMenu();
+//   }
+// });
+
+document.addEventListener("keydown", keyDownTextField, false);
+function keyDownTextField(e) {
+  var keyCode = e.keyCode;
+  if (keyCode == 27) {
     controller.hideToolbar();
     controller?.book?.currentChapter?.hideActionsMenu();
   }
-});
+}
 
-// let body = document.getElementsByTagName("body");
-// hidePanel.addEventListener("click", function (e) {
-  
-// })
+// document.body.addEventListener("click", function () {
+//   console.log("clicked");
+//   controller.toggleOverlay();
+//   controller?.book?.currentChapter?.hideActionsMenu();
+// });
+
 $("body").on("click", function () {
   controller.toggleOverlay();
   controller?.book?.currentChapter?.hideActionsMenu();
 });
+
 $(".app-bar, .actions-menu").on("click", function (e) {
   e.stopPropagation();
 });
 
-if ($(".app-bar").length) {
+function appBars() {
   let isHovering = false;
   let timer;
-
-  $("body").on("mousemove", function () {
+  let wholeContainer = document.getElementsByTagName("body")[0];
+  wholeContainer.addEventListener("mousemove", (e) => {
     clearTimeout(timer);
     timer = setTimeout(() => {
       if (isHovering) {
@@ -139,7 +151,14 @@ if ($(".app-bar").length) {
     }, 4000);
   });
 }
+appBars();
 
-$(window).on("resize", () => {
+// $(window).on("resize", () => {
+//   controller?.book?.currentChapter?.hideActionsMenu();
+//   console.log("resizing")
+// });
+
+function windowSize() {
   controller?.book?.currentChapter?.hideActionsMenu();
-});
+}
+window.onresize = windowSize;
