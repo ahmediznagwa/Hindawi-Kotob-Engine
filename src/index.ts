@@ -106,7 +106,9 @@ allTabsTriggers.forEach((tabTrigger) => {
     let tabsButtons = document.querySelectorAll(".tab-item");
     document.querySelector(".tab-content.active").classList.remove("active");
     document.querySelector(target).classList.add("active");
-    document.querySelector(".tab-item.active-tab").classList.remove("active-tab");
+    document
+      .querySelector(".tab-item.active-tab")
+      .classList.remove("active-tab");
     // document.querySelector(tabsButtons).classList.add("active-tab");
   });
 });
@@ -142,23 +144,31 @@ hidePanel.forEach((button) => {
 //   }
 // });
 
-document.addEventListener("keydown", keyDownTextField, false);
-function keyDownTextField(e) {
-  var keyCode = e.keyCode;
-  if (keyCode == 27) {
-    controller.hideToolbar();
-    controller?.book?.currentChapter?.hideActionsMenu();
-  }
-}
+// document.addEventListener("keydown", keyDownTextField, false);
+// function keyDownTextField(e) {
+//   var keyCode = e.keyCode;
+//   if (keyCode == 27) {
+//     controller.hideToolbar();
+//     controller?.book?.currentChapter?.hideActionsMenu();
+//   }
+// }
 
 $("body").on("click", function () {
   controller.toggleOverlay();
   controller?.book?.currentChapter?.hideActionsMenu();
+  console.log("jo")
 });
 
-$(".app-bar, .actions-menu").on("click", function (e) {
-  e.stopPropagation();
-});
+// $(".app-bar, .actions-menu").on("click", function (e) {
+//   e.stopPropagation();
+// });
+
+// let tempelement = document.querySelectorAll(".app-bar, .actions-menu");
+// tempelement.forEach((element) => {
+//   element.addEventListener("click", function (e) {
+//     e.stopPropagation();
+//   });
+// });
 
 // if ($(".app-bar").length) {
 //   let isHovering = false;
@@ -175,28 +185,28 @@ $(".app-bar, .actions-menu").on("click", function (e) {
 //   });
 // }
 
-function appBars() {
-  let isHovering = false;
-  let timer;
-  let wholeContainer = document.getElementsByTagName("body")[0];
-  wholeContainer.addEventListener("mousemove", (e) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      if (isHovering) {
-        return;
-      }
-      controller.hideToolbar();
-    }, 4000);
-  });
-}
-appBars();
+// function appBars() {
+//   let isHovering = false;
+//   let timer;
+//   let wholeContainer = document.getElementsByTagName("body")[0];
+//   wholeContainer.addEventListener("mousemove", (e) => {
+//     clearTimeout(timer);
+//     timer = setTimeout(() => {
+//       if (isHovering) {
+//         return;
+//       }
+//       controller.hideToolbar();
+//     }, 4000);
+//   });
+// }
+// appBars();
 
 // $(window).on("resize", () => {
 //   controller?.book?.currentChapter?.hideActionsMenu();
 //   console.log("resizing")
 // });
 
-function windowSize() {
-  controller?.book?.currentChapter?.hideActionsMenu();
-}
-window.onresize = windowSize;
+// function windowSize() {
+//   controller?.book?.currentChapter?.hideActionsMenu();
+// }
+// window.onresize = windowSize;
