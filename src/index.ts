@@ -100,15 +100,16 @@ dropdownToggle.forEach(function (dropdownToggle) {
 //   });
 // });
 let allTabsTriggers = document.querySelectorAll("[data-type='tab']");
+// let btnTab = document.querySelectorAll("tab-item");
 allTabsTriggers.forEach((tabTrigger) => {
   const target = `#${tabTrigger.getAttribute("data-target")}`;
   tabTrigger.addEventListener("click", function (e) {
     document.querySelector(".tab-content.active").classList.remove("active");
     document.querySelector(target).classList.add("active");
-    allTabsTriggers.forEach((e) => {
-      e.classList.remove("active-tab");
-      e.classList.add("active-tab");
-    });
+    document
+    .querySelector(".tab-item.active-tab")
+    .classList.remove("active-tab");
+    this.classList.add("active-tab");
   });
 });
 
