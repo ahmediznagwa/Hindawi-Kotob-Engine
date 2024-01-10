@@ -144,7 +144,8 @@ export class Controller {
       this.setupEventListeners();
 
       // Triggering click on body to show navigation bar at initial
-      $("body").trigger("click");
+      // $("body").trigger("click");
+      document.querySelector("body").dispatchEvent(new Event("click"));
     } catch (error) {
       alert(error);
     }
@@ -273,12 +274,12 @@ export class Controller {
         this.wordsSelectionHandler(event, elements);
       }
     });
-    $(".highlighted").on("click", (e) => {
-      const firstWord = $(e.target)
-        .closest(".highlighted")
-        .find("span[n]:first-child")[0];
-      this.wordsSelectionHandler(e, [firstWord]);
-    });
+    // $(".highlighted").on("click", (e) => {
+    //   const firstWord = $(e.target)
+    //     .closest(".highlighted")
+    //     .find("span[n]:first-child")[0];
+    //   this.wordsSelectionHandler(e, [firstWord]);
+    // });
 
     UTILS.DOM_ELS.nextPageBtn?.addEventListener(
       "click",
@@ -1014,6 +1015,7 @@ export class Controller {
     UTILS.DOM_ELS.highlightedElements.forEach((el) => {
       $(el).on("click", (e) => {
         e.stopPropagation();
+        console.log("highlighted clicked from forloop")
         this.wordsSelectionHandler(e, [$(el).find("span[n]:first-child")[0]]);
       });
     });
@@ -1037,6 +1039,7 @@ export class Controller {
 
   showFontFamilies() {
     $(".view-config").slideUp(300);
+
     $(".fonts").slideDown(300);
   }
   hideFontFamilies() {
@@ -1083,15 +1086,24 @@ export class Controller {
   }
 
   hideToolbar() {
-    $(".app-bar").removeClass("show");
-    $(".dropdown").removeClass("show");
-    $(".hide-fonts").trigger("click");
+    // $(".app-bar").removeClass("show");
+    document
+      .querySelectorAll(".app-bar")
+      .forEach((bar) => bar.classList.toggle("show"));
+    // $(".dropdown").removeClass("show");
+    document.querySelector(".dropdown").classList.remove("show");
+    // $(".hide-fonts").trigger("click");
+    document.querySelector(".hide-fonts").dispatchEvent(new Event("click"));
   }
-
   toggleOverlay() {
-    $(".app-bar").toggleClass("show");
-    $(".dropdown").removeClass("show");
-    // we changed it to triggerHandler because
-    $(".hide-fonts").trigger("click");
+    // $(".app-bar").toggleClass("show");
+    document
+      .querySelectorAll(".app-bar")
+      .forEach((bar) => bar.classList.toggle("show"));
+    // $(".dropdown").removeClass("show");
+    document.querySelector(".dropdown").classList.remove("show");
+    // $(".hide-fonts").trigger("click");
+
+    document.querySelector(".hide-fonts").dispatchEvent(new Event("click"));
   }
 }
