@@ -100,38 +100,17 @@ dropdownToggle.forEach(function (dropdownToggle) {
 //   });
 // });
 let allTabsTriggers = document.querySelectorAll("[data-type='tab']");
-// let btnTab = document.querySelectorAll("tab-item");
 allTabsTriggers.forEach((tabTrigger) => {
   const target = `#${tabTrigger.getAttribute("data-target")}`;
   tabTrigger.addEventListener("click", function (e) {
     document.querySelector(".tab-content.active").classList.remove("active");
     document.querySelector(target).classList.add("active");
     document
-    .querySelector(".tab-item.active-tab")
-    .classList.remove("active-tab");
+      .querySelector(".tab-item.active-tab")
+      .classList.remove("active-tab");
     this.classList.add("active-tab");
   });
 });
-
-// let allBtns = document.querySelectorAll("button");
-
-// // For each button, register an event listener
-// allBtns.forEach(function (elem) {
-//   elem.addEventListener("click", function (e) {
-//     // On click, remove the MyClass on ALL buttons
-//     allBtns.forEach(function (el) {
-//       el.classList.remove("MyClass");
-//     });
-
-//     // Add the class on clicked one
-//     e.target.classList.add("MyClass");
-
-//     // Now pass the data-href to your iframe
-//     let theHREFtoOpen = e.target.getAttribute("data-href");
-//     console.log(theHREFtoOpen);
-//     //document.querySelector("#your-iframe").src = theHREFtoOpen
-//   });
-// });
 
 // panels
 let allPanelsTriggers = document.querySelectorAll("[data-type='panel']");
@@ -141,22 +120,18 @@ allPanelsTriggers.forEach((panelTrigger) => {
     document.querySelector(".side-panel").classList.remove("show");
     document.querySelector(targetId).classList.add("show");
   });
+  const hidePanel = document.querySelectorAll(".hide-side-panel");
+  hidePanel.forEach((hidePanel) => {
+    hidePanel.addEventListener("click", function (e) {
+      document.querySelector(targetId).classList.remove("show");
+    });
+  });
 });
 
 // $(".hide-side-panel").on("click", function (e) {
 //   e.stopPropagation();
 //   $(".side-panel").removeClass("show");
 // });
-
-const hidePanel = document.querySelectorAll(".hide-side-panel");
-const panel = document.getElementsByClassName("side-panel");
-hidePanel.forEach((button) => {
-  button.addEventListener("click", () => {
-    for (var i = 0; i < hidePanel.length; i++) {
-      panel[i].classList.remove("show");
-    }
-  });
-});
 
 // $(document).on("keydown", function (e: any) {
 //   if (e.key === "Escape") {
@@ -173,8 +148,11 @@ function keyDownTextField(e) {
     controller?.book?.currentChapter?.hideActionsMenu();
   }
 }
-
-$("body").on("click", function () {
+// $("body").on("click", function () {
+//   controller.toggleOverlay();
+//   controller?.book?.currentChapter?.hideActionsMenu();
+// });
+document.body.addEventListener("click", function () {
   controller.toggleOverlay();
   controller?.book?.currentChapter?.hideActionsMenu();
 });
@@ -183,8 +161,8 @@ $("body").on("click", function () {
 //   e.stopPropagation();
 // });
 
-let tempelement = document.querySelectorAll(".app-bar, .actions-menu");
-tempelement.forEach((element) => {
+let stopPropagation = document.querySelectorAll(".app-bar, .actions-menu");
+stopPropagation.forEach((element) => {
   element.addEventListener("click", function (e) {
     e.stopPropagation();
   });

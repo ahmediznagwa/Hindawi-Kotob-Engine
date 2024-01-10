@@ -1085,13 +1085,13 @@ export class Controller {
   hideToolbar() {
     $(".app-bar").removeClass("show");
     $(".dropdown").removeClass("show");
-    $(".hide-fonts").triggerHandler("click");
+    $(".hide-fonts").trigger("click");
   }
 
   toggleOverlay() {
     $(".app-bar").toggleClass("show");
     $(".dropdown").removeClass("show");
     // we changed it to triggerHandler because
-    $(".hide-fonts").triggerHandler("click");
+    $(".hide-fonts").trigger("click");
   }
 }
