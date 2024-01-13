@@ -383,6 +383,11 @@ export class Controller {
     const highlightBtn = menu.querySelector(".highlight");
 
     if (highlightBtn) {
+      // highlightBtn.addEventListener("click", function (e) {
+      //   e.preventDefault();
+      //   e.stopPropagation();
+      //   this.addNote(elements, "highlight");
+      // });
       $(highlightBtn).on("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -1015,7 +1020,7 @@ export class Controller {
     UTILS.DOM_ELS.highlightedElements.forEach((el) => {
       $(el).on("click", (e) => {
         e.stopPropagation();
-        console.log("highlighted clicked from forloop")
+        console.log("highlighted clicked from forloop");
         this.wordsSelectionHandler(e, [$(el).find("span[n]:first-child")[0]]);
       });
     });

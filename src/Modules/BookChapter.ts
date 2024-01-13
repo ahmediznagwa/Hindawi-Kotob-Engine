@@ -321,7 +321,9 @@ export class BookChapter {
     Render selected chapter
   */
   renderChapter() {
-    $("body").addClass("loading");
+    // $("body").addClass("loading");
+    document.body.classList.add("loading");
+
     const section = document.createElement("section");
     section.classList.add("book-chapter");
 
@@ -343,7 +345,9 @@ export class BookChapter {
     this.updateImagePaths();
     this.getHighlightedWords();
     this.getBookmarkedWords();
-    $("body").removeClass("loading");
+    // $("body").removeClass("loading");
+    document.body.classList.remove("loading");
+
     // this.insertFullPageImage(); insert fullpage image after specific index
   }
 

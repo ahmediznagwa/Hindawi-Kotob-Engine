@@ -641,7 +641,10 @@ export class Book {
       row.addEventListener("click", (e) => {
         e.stopPropagation();
         this.renderChapter(chapterIndex);
-        $(".side-panel").removeClass("show");
+        // $(".side-panel").removeClass("show");
+        document
+          .querySelectorAll(".side-panel")
+          .forEach((panel) => panel.classList.remove("show"));
       });
     });
   }
@@ -675,7 +678,8 @@ export class Book {
       }
     }
     if (!hasBookmark) {
-      $(document.body).removeClass("bookmark-added");
+      // $(document.body).removeClass("bookmark-added");
+      document.body.classList.remove("bookmark-added")
       $(UTILS.DOM_ELS.addBookmarkBtn).removeAttr("data-chapter-index");
       $(UTILS.DOM_ELS.addBookmarkBtn).removeAttr("data-anchor-word-index");
     }

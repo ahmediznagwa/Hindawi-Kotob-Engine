@@ -9,6 +9,21 @@
     />
     <title>Hindawi Reader</title>
     <link rel="stylesheet" href="styles.css" />
+    <style>
+      #wrapper {
+        transition: height 1s ease-out;
+        height: 0;
+        overflow: hidden;
+      }
+      .slideMeDown {
+        font-size: 24px;
+        background: #4679bd;
+        color: white;
+        width: 50%;
+        height: 200px;
+        padding: 20px;
+      }
+    </style>
   </head>
   <body>
     <div class="app-bar app-bar--top">
@@ -102,7 +117,6 @@
               </div>
             </div>
           </div>
-          
         </div>
 
         <div class="bar-right">
@@ -178,7 +192,7 @@
         </div>
       </div>
     </div>
-    <div class="side-panel" id="book-content" >
+    <div class="side-panel" id="book-content">
       <div class="action-button">
         <div class="btn hide-side-panel">
           <i class="f-icon close-icon"> </i>
