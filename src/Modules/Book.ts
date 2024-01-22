@@ -61,6 +61,7 @@ export class Book {
       this.chapters.length - 1
     );
     this.renderChapter(this.currentChapterIndex);
+    document.body.classList.add(`chapter-${this.currentChapterIndex}`);
     this.calculateBookWordsCount();
     this.anchorWordIndex = Math.min(anchorWordIndex || 0, this.bookWordsCount);
     this.currentProgressPercent = 0;
@@ -333,10 +334,13 @@ export class Book {
     Render specific chapter with chapter index
   */
   renderChapter(chapterIndex: number): void {
+    const body = document.body;
     this.currentChapterIndex = Math.min(
       chapterIndex || 0,
       this.chapters.length - 1
     );
+
+    body.className = body.className.replace(/chapter-\w+/g, `chapter-${this.currentChapterIndex}`);
 
     this.currentChapter = new BookChapter(
       this.chapters[this.currentChapterIndex],
