@@ -93,10 +93,15 @@ body {
   }
 }
 
-.figure, img {
+.figure,
+img {
   .dark & {
     filter: invert(1);
   }
+}
+
+.chapter-0 img {
+  filter: inherit;
 }
 
 h1.title {

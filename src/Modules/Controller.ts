@@ -821,7 +821,10 @@ export class Controller {
             <li class="bookmark-item" data-chapter-index="${key}" data-anchor-word-index="${word.index}">
               <div>
                 <h4>${word.content}</h4>
-                <p>${word.chapterTitle}</p>
+                <p>${format(
+                  new Date(word.createdOn),
+                  "dd/MM/yyyy • hh:mm aaa"
+                )}</p>
               </div>
               <button class="btn-icon btn">
                 <i class="f-icon trash-icon"></i>
