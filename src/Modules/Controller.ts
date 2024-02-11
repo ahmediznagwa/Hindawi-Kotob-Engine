@@ -253,9 +253,15 @@ export class Controller {
     window?.addEventListener("resize", () =>
       setTimeout(this.resizeEventHandler.bind(this), 0)
     );
-    $(window).on("orientationchange", () =>
-      setTimeout(this.resizeEventHandler.bind(this), 0)
-    ); //The only jQuery line
+    // $(window).on("orientationchange", () =>
+    //   setTimeout(this.resizeEventHandler.bind(this), 0)
+    // );
+
+    window.addEventListener("orientationchange", () => {
+      setTimeout(this.resizeEventHandler.bind(this), 0);
+    });
+
+    //The only jQuery line
     document.onfullscreenchange = () =>
       setTimeout(this.resizeEventHandler.bind(this), 0);
 
@@ -265,7 +271,7 @@ export class Controller {
     });
 
     // Handling window selection
-    $(document).on("selectionchange", (event) => {
+    document.addEventListener("selectionchange", (event) => {
       event.preventDefault();
       // console.log(window.getSelection().toString())
       if (window.getSelection().toString().length) {
@@ -274,6 +280,15 @@ export class Controller {
         this.wordsSelectionHandler(event, elements);
       }
     });
+    // $(document).on("selectionchange", (event) => {
+    //   event.preventDefault();
+    //   // console.log(window.getSelection().toString())
+    //   if (window.getSelection().toString().length) {
+    //     this.isSelecting = true;
+    //     const elements = extractWordsFromSelection(window.getSelection());
+    //     this.wordsSelectionHandler(event, elements);
+    //   }
+    // });
     // $(".highlighted").on("click", (e) => {
     //   const firstWord = $(e.target)
     //     .closest(".highlighted")
@@ -383,21 +398,21 @@ export class Controller {
     const highlightBtn = menu.querySelector(".highlight");
 
     if (highlightBtn) {
-      // highlightBtn.addEventListener("click", function (e) {
-      //   e.preventDefault();
-      //   e.stopPropagation();
-      //   this.addNote(elements, "highlight");
-      // });
-      $(highlightBtn).on("click", (e) => {
+      highlightBtn.addEventListener("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
         this.addNote(elements, "highlight");
       });
+      // $(highlightBtn).on("click", (e) => {
+      //   e.preventDefault();
+      //   e.stopPropagation();
+      //   this.addNote(elements, "highlight");
+      // });
     }
 
     const unHighlightBtn = menu.querySelector(".unhighlight");
     if (unHighlightBtn) {
-      $(unHighlightBtn).on("click", (e) => {
+      unHighlightBtn.addEventListener("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
         const anchorWordIndex = +$(unHighlightBtn)
@@ -411,15 +426,36 @@ export class Controller {
         );
       });
     }
-
+    // if (unHighlightBtn) {
+    //   $(unHighlightBtn).on("click", (e) => {
+    //     e.preventDefault();
+    //     e.stopPropagation();
+    //     const anchorWordIndex = +$(unHighlightBtn)
+    //       .closest("ul")
+    //       .attr("data-anchor-word-index");
+    //     console.log(anchorWordIndex, this.book.currentChapterIndex);
+    //     this.removeNote(
+    //       anchorWordIndex,
+    //       this.book.currentChapterIndex,
+    //       "highlight"
+    //     );
+    //   });
+    // }
     const bookmarkBtn = menu.querySelector(".bookmark");
     if (bookmarkBtn) {
-      $(bookmarkBtn).on("click", (e) => {
+      bookmarkBtn.addEventListener("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
         this.addNote(elements, "bookmark");
       });
     }
+    // if (bookmarkBtn) {
+    //   $(bookmarkBtn).on("click", (e) => {
+    //     e.preventDefault();
+    //     e.stopPropagation();
+    //     this.addNote(elements, "bookmark");
+    //   });
+    // }
     // menu
     //   .querySelector(".copy")
     //   .addEventListener("click", this.copyText.bind(this, element));
@@ -715,7 +751,10 @@ export class Controller {
     Handles what happened after clicking on specific note in the list
   */
   goToNote(anchorWordIndex: number, chapterIndex: number) {
-    $(".side-panel").removeClass("show");
+    // $(".side-panel").removeClass("show");
+    document
+      .querySelectorAll(".side-panel")
+      .forEach((panel) => panel.classList.remove("show"));
     this.book.renderChapter(chapterIndex);
     // Detect anchor word page index
     this.book.goToPage(
@@ -818,7 +857,9 @@ export class Controller {
           // <p>${new Date(word.createdOn).toUTCString()}</p>
           $(list).append(
             `
-            <li class="bookmark-item" data-chapter-index="${key}" data-anchor-word-index="${word.index}">
+            <li class="bookmark-item" data-chapter-index="${key}" data-anchor-word-index="${
+              word.index
+            }">
               <div>
                 <h4>${word.content}</h4>
                 <p>${format(
@@ -1021,11 +1062,16 @@ export class Controller {
         });
     });
     UTILS.DOM_ELS.highlightedElements.forEach((el) => {
-      $(el).on("click", (e) => {
+      el.addEventListener("click", (e) => {
         e.stopPropagation();
         console.log("highlighted clicked from forloop");
         this.wordsSelectionHandler(e, [$(el).find("span[n]:first-child")[0]]);
       });
+      // $(el).on("click", (e) => {
+      //   e.stopPropagation();
+      //   console.log("highlighted clicked from forloop");
+      //   this.wordsSelectionHandler(e, [$(el).find("span[n]:first-child")[0]]);
+      // });
     });
   }
 
