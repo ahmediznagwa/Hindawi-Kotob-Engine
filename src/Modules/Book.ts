@@ -278,7 +278,6 @@ export class Book {
     }
 
     // Looping in other chapters (mainly used in figures)
-    $(UTILS.DOM_ELS.book).addClass("loading");
     this.chapters.forEach((chapter: HTMLElement, index: number) => {
       targetEl = $(chapter).find(elementSelector);
       if (targetEl.length) {
@@ -297,18 +296,24 @@ export class Book {
         this.highlightSelectedElement($(elementSelector)[0]);
       }
     });
-    $(UTILS.DOM_ELS.book).removeClass("loading");
   }
 
   /**
     Get element by id
   */
   highlightSelectedElement(el: HTMLElement): void {
-    $(el).addClass("highlight-element");
+    el.classList.add("highlight-element");
     setTimeout(() => {
-      $(el).removeClass("highlight-element");
+      el.classList.remove("highlight-element");
     }, 1000);
   }
+
+  // highlightSelectedElement(el: HTMLElement): void {
+  //   $(el).addClass("highlight-element");
+  //   setTimeout(() => {
+  //     $(el).removeClass("highlight-element");
+  //   }, 1000);
+  // }
 
   /**
     Get element by id
@@ -340,7 +345,10 @@ export class Book {
       this.chapters.length - 1
     );
 
-    body.className = body.className.replace(/chapter-\w+/g, `chapter-${this.currentChapterIndex}`);
+    body.className = body.className.replace(
+      /chapter-\w+/g,
+      `chapter-${this.currentChapterIndex}`
+    );
 
     this.currentChapter = new BookChapter(
       this.chapters[this.currentChapterIndex],
@@ -683,7 +691,7 @@ export class Book {
     }
     if (!hasBookmark) {
       // $(document.body).removeClass("bookmark-added");
-      document.body.classList.remove("bookmark-added")
+      document.body.classList.remove("bookmark-added");
       $(UTILS.DOM_ELS.addBookmarkBtn).removeAttr("data-chapter-index");
       $(UTILS.DOM_ELS.addBookmarkBtn).removeAttr("data-anchor-word-index");
     }
