@@ -13,7 +13,7 @@ import { Book } from "./Book";
 import { HTMLExtractor } from "./HTMLExtractor";
 import { UserPreferences } from "./UserPreferences";
 import { UTILS } from "./Utils";
-import { cssNumber } from "jquery";
+import { contains, cssNumber } from "jquery";
 
 export class Controller {
   touchMaxSwipeTime: number;
@@ -289,13 +289,21 @@ export class Controller {
     //     this.wordsSelectionHandler(event, elements);
     //   }
     // });
-    // $(".highlighted").on("click", (e) => {
-    //   const firstWord = $(e.target)
-    //     .closest(".highlighted")
-    //     .find("span[n]:first-child")[0];
-    //   this.wordsSelectionHandler(e, [firstWord]);
-    // });
-
+    $(".highlighted").on("click", (e) => {
+      const firstWord = $(e.target)
+        .closest(".highlighted")
+        .find("span[n]:first-child")[0];
+      this.wordsSelectionHandler(e, [firstWord]);
+    });
+    // document
+    //   .querySelector("highlighted")
+    //   .addEventListener("click", function (e) {
+    //     const firstWord = $(e.target)
+    //       .closest(".highlighted")
+    //       .find("span[n]:first-child")[0];
+    //     this.wordsSelectionHandler(e, [firstWord]);
+    //     console.log("hi")
+    //   });
     UTILS.DOM_ELS.nextPageBtn?.addEventListener(
       "click",
       this.goToNextPage.bind(this)
