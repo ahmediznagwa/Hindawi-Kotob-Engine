@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfTOCItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TOCItem>
+    <Title>مقدمة المؤلِّف</Title>
+    <ChapterIndex>4</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>عكازة رامبو</Title>
+    <ChapterIndex>7</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>إضاءة لا بد منها</Title>
+    <ChapterIndex>8</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>خزعل الماجدي في «عكازة رامبو»</Title>
+    <ChapterIndex>9</ChapterIndex>
+  </TOCItem>
+</ArrayOfTOCItem>

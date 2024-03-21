@@ -325,3 +325,15 @@ h1.title {
     background-color: transparent;
   }
 }
+
+// Fix word breaking in Tables
+table {
+  span {
+    word-break: keep-all;
+  }
+}
+
+// Fixing some overlapping in نجيب محفوظ
+b + span {
+  display: inline-block;
+}
