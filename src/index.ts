@@ -9,40 +9,40 @@ let controller = new Controller();
 export const hindawiReaders = (function () {
   controller = new Controller();
   // Demo [START]
-  window.addEventListener("load", async () => {
-    // const bookId = "40262648"; // hindawi;
-    // const bookId = "16264295"; // hindawi;
-    // const bookId = "69058261"; // publisher;
-    // const bookId = "42581692"; // hindawi;
-    // const bookId = "74718574"; // hindawi;
-    // const bookId = "نجيب_محفوظ_في_عيون_العالم"; // hindawi;
-    // const bookId = "عكازة_رامبو"; // hindawi;
-    const bookId = "إصلاح_الفكر_الإسلامي"; // hindawi;
-    const readerConfig: IReaderConfig = {
-      bookId,
-      paddingTop: 20,
-      paddingBottom: 0,
-      isIphone: true,
-      bookTitle: "شلن واحد من أجل الشموع",
-    };
-    Promise.all([
-      fetch(`./books/${bookId}/Content.main`).then((res) => res.text()),
-      fetch(`./books/${bookId}/toc.nav`).then((res) => res.text()),
-    ]).then(([res1, res2]) => {
-      controller.initWithChapters(
-        `{
-          "bookId": "${readerConfig.bookId}",
-          "paddingTop": ${readerConfig.paddingTop},
-          "paddingBottom": ${readerConfig.paddingBottom},
-          "isIphone": ${readerConfig.isIphone},
-          "bookTitle": "${readerConfig.bookTitle}"
-        }`,
-        res1,
-        `./books/${readerConfig.bookId}`,
-        res2
-      );
-    });
-  });
+  // window.addEventListener("load", async () => {
+  //   // const bookId = "40262648"; // hindawi;
+  //   // const bookId = "16264295"; // hindawi;
+  //   // const bookId = "69058261"; // publisher;
+  //   // const bookId = "42581692"; // hindawi;
+  //   // const bookId = "74718574"; // hindawi;
+  //   // const bookId = "نجيب_محفوظ_في_عيون_العالم"; // hindawi;
+  //   // const bookId = "عكازة_رامبو"; // hindawi;
+  //   const bookId = "إصلاح_الفكر_الإسلامي"; // hindawi;
+  //   const readerConfig: IReaderConfig = {
+  //     bookId,
+  //     paddingTop: 20,
+  //     paddingBottom: 0,
+  //     isIphone: true,
+  //     bookTitle: "شلن واحد من أجل الشموع",
+  //   };
+  //   Promise.all([
+  //     fetch(`./books/${bookId}/Content.main`).then((res) => res.text()),
+  //     fetch(`./books/${bookId}/toc.nav`).then((res) => res.text()),
+  //   ]).then(([res1, res2]) => {
+  //     controller.initWithChapters(
+  //       `{
+  //         "bookId": "${readerConfig.bookId}",
+  //         "paddingTop": ${readerConfig.paddingTop},
+  //         "paddingBottom": ${readerConfig.paddingBottom},
+  //         "isIphone": ${readerConfig.isIphone},
+  //         "bookTitle": "${readerConfig.bookTitle}"
+  //       }`,
+  //       res1,
+  //       `./books/${readerConfig.bookId}`,
+  //       res2
+  //     );
+  //   });
+  // });
   // Demo [END]
   return {
     init: controller.initWithChapters.bind(controller),
