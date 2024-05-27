@@ -202,37 +202,55 @@ export class Controller {
    * Posts a message for the pageUpdated message handler
    */
   postPageUpdatedMessage() {
-    const messageObj: PageUpdatedMessage = {
-      isFirstPage: this.book.isFirstPage,
-      isLastPage: this.book.isLastPage,
-      colorMode: this.book.colorMode,
-      chapterMaxPages: UTILS.calcPageCount(),
-      maxChapters: this.book.chapters.length - 1,
-      percentage: Math.round(this.book.currentProgressPercent),
-      currentPage: this.book.currentPage,
-      currentChapter: this.book.currentChapterIndex,
-      isFirstChapter: this.book.isFirstChapter,
-      isLastChapter: this.book.isLastChapter,
-      fontSize: this.book.fontSize,
-      canIncreaseFont: this.book.canIncreaseFont,
-      canDecreaseFont: this.book.canDecreaseFont,
-      anchorWordIndex: this.book.anchorWordIndex,
+    // const messageObj: PageUpdatedMessage = {
+    //   isFirstPage: this.book.isFirstPage,
+    //   isLastPage: this.book.isLastPage,
+    //   colorMode: this.book.colorMode,
+    //   chapterMaxPages: UTILS.calcPageCount(),
+    //   maxChapters: this.book.chapters.length - 1,
+    //   percentage: Math.round(this.book.currentProgressPercent),
+    //   currentPage: this.book.currentPage,
+    //   currentChapter: this.book.currentChapterIndex,
+    //   isFirstChapter: this.book.isFirstChapter,
+    //   isLastChapter: this.book.isLastChapter,
+    //   fontSize: this.book.fontSize,
+    //   canIncreaseFont: this.book.canIncreaseFont,
+    //   canDecreaseFont: this.book.canDecreaseFont,
+    //   anchorWordIndex: this.book.anchorWordIndex,
+    // };
+    // this.postMessage("pageUpdated", messageObj);
+
+    const messageObj = {
+      "pageUpdated": true
     };
-    this.postMessage("pageUpdated", messageObj);
+
+    setTimeout(() => {
+      this.postMessage("pageUpdated", messageObj);
+    }, 100);
+
     console.log("POSTED PAGE UPDATED MESSAGE");
   }
 
   /**
     Posts a message object as JSON object to mobile environments
   */
+  // postMessage(messageHandlerName: string, message: object) {
+  //   const json = JSON.stringify(message);
+  //   const win = window as any;
+  //   if (win.webkit?.messageHandlers[messageHandlerName])
+  //     win.webkit.messageHandlers[messageHandlerName].postMessage(json);
+  //   if (win[messageHandlerName]) win[messageHandlerName].postMessage(json);
+  // }
+
   postMessage(messageHandlerName: string, message: object) {
     const json = JSON.stringify(message);
     const win = window as any;
-    if (win.webkit?.messageHandlers[messageHandlerName])
+    if (win?.flutter_inappwebview?.callHandler) {
+      win.flutter_inappwebview.callHandler(messageHandlerName, json);
+    } else if (win.webkit?.messageHandlers[messageHandlerName])
       win.webkit.messageHandlers[messageHandlerName].postMessage(json);
-    if (win[messageHandlerName]) win[messageHandlerName].postMessage(json);
+    else if (win[messageHandlerName]) win[messageHandlerName].postMessage(json);
   }
-
   /**
    Sets up the event listeners needed for the app to run
    */
@@ -812,7 +830,9 @@ export class Controller {
           // <p>${new Date(word.createdOn).toUTCString()}</p>
           $(list).append(
             `
-            <li class="bookmark-item" data-chapter-index="${key}" data-anchor-word-index="${word.index}">
+            <li class="bookmark-item" data-chapter-index="${key}" data-anchor-word-index="${
+              word.index
+            }">
               <div>
                 <h4>${word.content}</h4>
                 <p>${format(
