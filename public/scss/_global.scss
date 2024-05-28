@@ -93,12 +93,12 @@ body {
   }
 }
 
-.figure,
-img {
-  .dark & {
-    filter: invert(1);
-  }
-}
+// .figure,
+// img {
+//   .dark & {
+//     filter: invert(1);
+//   }
+// }
 
 .chapter-0 img {
   filter: inherit;
