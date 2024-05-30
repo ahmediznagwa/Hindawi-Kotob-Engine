@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfTOCItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TOCItem>
+    <Title>مقدمة الطبعة الإلكترونية</Title>
+    <ChapterIndex>5</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>مقدمة</Title>
+    <ChapterIndex>6</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>تمهيد – تكوين اليابان ما قبل النهضة</Title>
+    <ChapterIndex>7</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>دعائم النهضة</Title>
+    <ChapterIndex>8</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>بناء الاقتصاد الوطني</Title>
+    <ChapterIndex>9</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>بناء إمبراطورية آسيوية</Title>
+    <ChapterIndex>10</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>الحركة السياسية</Title>
+    <ChapterIndex>11</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>التطور الفكري</Title>
+    <ChapterIndex>12</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>خاتمة</Title>
+    <ChapterIndex>13</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>المراجع</Title>
+    <ChapterIndex>14</ChapterIndex>
+  </TOCItem>
+</ArrayOfTOCItem>

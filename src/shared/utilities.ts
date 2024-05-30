@@ -26,8 +26,13 @@ export function getSentenceAfterWord(
 */
 export function extractWordsFromSelection(selected: Selection): HTMLElement[] {
   let wordsNumber = selected.toString().trim().split(" ").length;
-  const anchorElementIndex =
-    +$(selected.focusNode.parentNode).attr("n") - wordsNumber + 1; // Deducting the focus word itself;
+
+  let selectedFocusNodeIndex =
+    +$(selected.focusNode.parentNode).attr("n") ||
+    +$(selected.focusNode.previousSibling).attr("n");
+
+  const anchorElementIndex = selectedFocusNodeIndex - wordsNumber + 1; // Deducting the focus word itself;
+
   const elementsArray: HTMLElement[] = [];
   let currentParent;
   let isSameParent = true;

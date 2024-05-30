@@ -284,7 +284,6 @@ export class Controller {
     // Handling window selection
     $(document).on("selectionchange", (event) => {
       event.preventDefault();
-      // console.log(window.getSelection().toString())
       if (window.getSelection().toString().length) {
         this.isSelecting = true;
         const elements = extractWordsFromSelection(window.getSelection());
@@ -415,7 +414,6 @@ export class Controller {
         const anchorWordIndex = +$(unHighlightBtn)
           .closest("ul")
           .attr("data-anchor-word-index");
-        console.log(anchorWordIndex, this.book.currentChapterIndex);
         this.removeNote(
           anchorWordIndex,
           this.book.currentChapterIndex,
@@ -1036,7 +1034,7 @@ export class Controller {
     });
     UTILS.DOM_ELS.highlightedElements.forEach((el) => {
       $(el).on("click", (e) => {
-        e.stopPropagation();
+        e.stopPropagation();        
         this.wordsSelectionHandler(e, [$(el).find("span[n]:first-child")[0]]);
       });
     });

@@ -16,7 +16,8 @@ export const hindawiReaders = (function () {
   //   // const bookId = "42581692"; // hindawi;
   //   // const bookId = "74718574"; // hindawi;
   //   // const bookId = "نجيب_محفوظ_في_عيون_العالم"; // hindawi;
-  //   const bookId = "عكازة_رامبو"; // hindawi;
+  //   // const bookId = "عكازة_رامبو"; // hindawi;
+  //   const bookId = "النهضة_اليابانية_الحديثة"; // hindawi;
   //   // const bookId = "إصلاح_الفكر_الإسلامي"; // hindawi;
   //   const readerConfig: IReaderConfig = {
   //     bookId,
