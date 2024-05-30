@@ -75,6 +75,9 @@ body {
       * {
         color: var(--textColorRgb);
       }
+      img {
+        background-color: var(--textColorRgb);
+      }
     }
   }
   &.warm {
