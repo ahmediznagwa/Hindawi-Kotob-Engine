@@ -15,6 +15,7 @@ import { UserPreferences } from "./UserPreferences";
 import { UTILS } from "./Utils";
 import { cssNumber } from "jquery";
 
+const popupsMinTop: number = 170;
 export class Controller {
   touchMaxSwipeTime: number;
   touchMinSwipeDistance: number;
@@ -221,7 +222,7 @@ export class Controller {
     // this.postMessage("pageUpdated", messageObj);
 
     const messageObj = {
-      "pageUpdated": true
+      pageUpdated: true,
     };
 
     setTimeout(() => {
@@ -359,7 +360,8 @@ export class Controller {
     e.stopPropagation();
     const anchorElement = elements[0];
     this.book?.currentChapter?.hideActionsMenu();
-    const top = $(anchorElement)?.offset()?.top;
+    const isDownOfNotch = $(anchorElement)?.offset()?.top > popupsMinTop;
+    const top = isDownOfNotch ? $(anchorElement)?.offset()?.top : "33%";
     const menu = document.createElement("div");
     menu.classList.add("actions-menu");
 
@@ -387,6 +389,7 @@ export class Controller {
     document.body.appendChild(menu);
 
     // Positioning the appended menu according to word
+    console.log("top = ", top);
     $(menu).css({
       top,
     });
@@ -1034,7 +1037,7 @@ export class Controller {
     });
     UTILS.DOM_ELS.highlightedElements.forEach((el) => {
       $(el).on("click", (e) => {
-        e.stopPropagation();        
+        e.stopPropagation();
         this.wordsSelectionHandler(e, [$(el).find("span[n]:first-child")[0]]);
       });
     });
