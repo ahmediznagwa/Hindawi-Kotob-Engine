@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfTOCItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TOCItem>
+    <Title>مدينة العالم</Title>
+    <ChapterIndex>4</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>استبداد اللاهوت وتخييل الإلحاد</Title>
+    <ChapterIndex>5</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>مكائد العقائد</Title>
+    <ChapterIndex>6</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>المانوية</Title>
+    <ChapterIndex>7</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>اعتزال الاعتزال</Title>
+    <ChapterIndex>8</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>مناظرة</Title>
+    <ChapterIndex>9</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>أثر الورَّاق</Title>
+    <ChapterIndex>10</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>جينالوجيا التخريب</Title>
+    <ChapterIndex>11</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>حرب الروايات</Title>
+    <ChapterIndex>12</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>الإلحاد: أبولوجيا</Title>
+    <ChapterIndex>13</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>كتاب الشذرات</Title>
+    <ChapterIndex>14</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>المصادر والمراجع</Title>
+    <ChapterIndex>15</ChapterIndex>
+  </TOCItem>
+</ArrayOfTOCItem>

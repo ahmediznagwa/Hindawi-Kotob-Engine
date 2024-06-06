@@ -50,3 +50,10 @@ h1,
     height: calc(100dvh - 8rem);
   }
 }
+ul.list {
+  li {
+    b {
+      display: block;
+    }
+  }
+}

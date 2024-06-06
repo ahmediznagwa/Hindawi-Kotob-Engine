@@ -229,7 +229,7 @@ export class Controller {
       this.postMessage("pageUpdated", messageObj);
     }, 100);
 
-    console.log("POSTED PAGE UPDATED MESSAGE");
+    // console.log("POSTED PAGE UPDATED MESSAGE");
   }
 
   /**
@@ -282,15 +282,37 @@ export class Controller {
       event.preventDefault();
     });
 
+    const maxSelectedWords: number = 100;
     // Handling window selection
     $(document).on("selectionchange", (event) => {
       event.preventDefault();
       if (window.getSelection().toString().length) {
         this.isSelecting = true;
         const elements = extractWordsFromSelection(window.getSelection());
-        this.wordsSelectionHandler(event, elements);
+        if (elements) {
+          if (elements.length > maxSelectedWords) {
+            removeSelection();
+            this.book?.currentChapter?.hideActionsMenu();
+            return alert(
+              `لقد تجاوزت الحد الأقصى للكلمات المحددة! (${maxSelectedWords} من ${maxSelectedWords})`
+            );
+          }
+
+          this.wordsSelectionHandler(event, elements);
+        }
       }
     });
+
+    function removeSelection() {
+      if (window.getSelection().empty) {
+        // Chrome
+        window.getSelection().empty();
+      } else if (window.getSelection().removeAllRanges) {
+        // Firefox
+        window.getSelection().removeAllRanges();
+      }
+    }
+
     $(".highlighted").on("click", (e) => {
       const firstWord = $(e.target)
         .closest(".highlighted")
@@ -359,12 +381,15 @@ export class Controller {
   wordsSelectionHandler(e, elements: HTMLElement[]) {
     e.stopPropagation();
     const anchorElement = elements[0];
+    const anchorLastElement = elements[elements.length - 1];
     this.book?.currentChapter?.hideActionsMenu();
     const isDownOfNotch = $(anchorElement)?.offset()?.top > popupsMinTop;
-    const top = isDownOfNotch ? $(anchorElement)?.offset()?.top : "33%";
+    const bottomOfSelectedElement = $(anchorLastElement)?.offset()?.top + popupsMinTop; // 100 is an extra space.
+    const top = isDownOfNotch
+      ? $(anchorElement)?.offset()?.top
+      : bottomOfSelectedElement;
     const menu = document.createElement("div");
     menu.classList.add("actions-menu");
-
     // if(anchorElement.closest('.highlighted'))
 
     let actionsMenu = `
@@ -389,7 +414,6 @@ export class Controller {
     document.body.appendChild(menu);
 
     // Positioning the appended menu according to word
-    console.log("top = ", top);
     $(menu).css({
       top,
     });
@@ -692,7 +716,8 @@ export class Controller {
     if (
       time <= this.touchMaxSwipeTime &&
       Math.abs(distX) >= this.touchMinSwipeDistance &&
-      Math.abs(distY) <= this.touchMaxVerticalSwipeDistance
+      Math.abs(distX) > Math.abs(distY)
+      // Math.abs(distY) <= this.touchMaxVerticalSwipeDistance
     ) {
       console.log("run");
       if (distX > 0) {
@@ -706,7 +731,8 @@ export class Controller {
     if (
       time <= this.touchMaxSwipeTime &&
       Math.abs(distY) >= this.touchMinSwipeDistance &&
-      Math.abs(distX) <= this.touchMaxHorizontalSwipeDistance
+      Math.abs(distY) > Math.abs(distX)
+      // Math.abs(distX) <= this.touchMaxHorizontalSwipeDistance
     ) {
       if (distY < 0) {
         this.goToNextPage();
