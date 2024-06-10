@@ -282,7 +282,6 @@ export class Controller {
       event.preventDefault();
     });
 
-    const maxSelectedWords: number = 100;
     // Handling window selection
     $(document).on("selectionchange", (event) => {
       event.preventDefault();
@@ -290,34 +289,37 @@ export class Controller {
         this.isSelecting = true;
         const elements = extractWordsFromSelection(window.getSelection());
         if (elements) {
-          if (elements.length > maxSelectedWords) {
-            removeSelection();
-            this.book?.currentChapter?.hideActionsMenu();
-            return alert(
-              `لقد تجاوزت الحد الأقصى للكلمات المحددة! (${maxSelectedWords} من ${maxSelectedWords})`
-            );
-          }
+          /* Limit selected words:
+          ---------------------------
+          */
+          // const maxSelectedWords: number = 100;
+          // if (elements.length > maxSelectedWords) {
+          //   this.removeSelection();
+          //   this.book?.currentChapter?.hideActionsMenu();
+          //   return alert(
+          //     `لقد تجاوزت الحد الأقصى للكلمات المحددة! (${maxSelectedWords} من ${maxSelectedWords})`
+          //   );
+          // }
 
           this.wordsSelectionHandler(event, elements);
         }
       }
     });
 
-    function removeSelection() {
-      if (window.getSelection().empty) {
-        // Chrome
-        window.getSelection().empty();
-      } else if (window.getSelection().removeAllRanges) {
-        // Firefox
-        window.getSelection().removeAllRanges();
-      }
-    }
-
     $(".highlighted").on("click", (e) => {
-      const firstWord = $(e.target)
+      // const firstWord = $(e.target)
+      //   .closest(".highlighted")
+      //   .find("span[n]:first-child")[0];
+      //   console.log(firstWord);
+      const firstSelectedWordIndex = $(e.target)
         .closest(".highlighted")
-        .find("span[n]:first-child")[0];
-      this.wordsSelectionHandler(e, [firstWord]);
+        .attr("data-selected-word-index");
+
+      const firstSelectedWord = $(UTILS.DOM_ELS.bookChapter).find(
+        `span[n="${firstSelectedWordIndex}"]`
+      )[0];
+
+      this.wordsSelectionHandler(e, [firstSelectedWord]);
     });
 
     UTILS.DOM_ELS.nextPageBtn?.addEventListener(
@@ -376,6 +378,19 @@ export class Controller {
   }
 
   /**
+    Handling remove word selection
+  */
+  removeSelection() {
+    if (window.getSelection().empty) {
+      // Chrome
+      window.getSelection().empty();
+    } else if (window.getSelection().removeAllRanges) {
+      // Firefox
+      window.getSelection().removeAllRanges();
+    }
+  }
+
+  /**
     Handling dropdown that show on word click
   */
   wordsSelectionHandler(e, elements: HTMLElement[]) {
@@ -384,7 +399,8 @@ export class Controller {
     const anchorLastElement = elements[elements.length - 1];
     this.book?.currentChapter?.hideActionsMenu();
     const isDownOfNotch = $(anchorElement)?.offset()?.top > popupsMinTop;
-    const bottomOfSelectedElement = $(anchorLastElement)?.offset()?.top + popupsMinTop; // 100 is an extra space.
+    const bottomOfSelectedElement =
+      $(anchorLastElement)?.offset()?.top + popupsMinTop; // 100 is an extra space.
     const top = isDownOfNotch
       ? $(anchorElement)?.offset()?.top
       : bottomOfSelectedElement;
@@ -540,6 +556,8 @@ export class Controller {
     Handles what happens after any navigation
   */
   postNavigationHandler() {
+    this.removeSelection();
+    this.book?.currentChapter?.hideActionsMenu();
     this.storeUserPreferences();
     this.book?.checkPageIsBookmarked();
     // document.body.scrollTop = 0;
@@ -886,45 +904,51 @@ export class Controller {
   */
   addNote(words: HTMLElement[], type: "highlight" | "bookmark") {
     this.book?.currentChapter?.hideActionsMenu();
+    try {
+      wrapHighlightedElements(words, type);
+      const newNote: IHighlighted = {
+        index: +words[0].getAttribute("n"),
+        numberOfWords: words.length,
+        wordsIndexes: [...words.map((x) => +x.getAttribute("n"))],
+        content: getSentenceAfterWord(
+          +words[0].getAttribute("n"),
+          words.length
+        ),
+        createdOn: Date.now(),
+        chapterTitle:
+          this.book.tableOfContents[this.book.currentChapterIndex].chapterTitle,
+      };
+      const storedData =
+        type === "highlight"
+          ? this.book.highlights || {}
+          : this.book.bookmarks || {};
 
-    wrapHighlightedElements(words, type);
+      storedData[this.book.currentChapterIndex] = storedData[
+        this.book.currentChapterIndex
+      ]
+        ? {
+            notes: [
+              ...storedData[this.book.currentChapterIndex].notes.filter(
+                (x) => x.index !== newNote.index
+              ),
+              newNote,
+            ],
+          }
+        : {
+            notes: [newNote],
+          };
 
-    const newNote: IHighlighted = {
-      index: +words[0].getAttribute("n"),
-      numberOfWords: words.length,
-      wordsIndexes: [...words.map((x) => +x.getAttribute("n"))],
-      content: getSentenceAfterWord(+words[0].getAttribute("n"), words.length),
-      createdOn: Date.now(),
-      chapterTitle:
-        this.book.tableOfContents[this.book.currentChapterIndex].chapterTitle,
-    };
-    const storedData =
-      type === "highlight"
-        ? this.book.highlights || {}
-        : this.book.bookmarks || {};
-
-    storedData[this.book.currentChapterIndex] = storedData[
-      this.book.currentChapterIndex
-    ]
-      ? {
-          notes: [
-            ...storedData[this.book.currentChapterIndex].notes.filter(
-              (x) => x.index !== newNote.index
-            ),
-            newNote,
-          ],
-        }
-      : {
-          notes: [newNote],
-        };
-
-    if (type === "highlight") {
-      this.book.highlights = storedData;
-      this.renderHighlights();
-      return;
+      if (type === "highlight") {
+        this.book.highlights = storedData;
+        this.renderHighlights();
+        return;
+      }
+      this.book.bookmarks = storedData;
+      this.renderBookmarks();
+    } catch (e) {
+      this.removeSelection();
+      console.log((e as Error).message);
     }
-    this.book.bookmarks = storedData;
-    this.renderBookmarks();
   }
 
   /**
@@ -1064,7 +1088,16 @@ export class Controller {
     UTILS.DOM_ELS.highlightedElements.forEach((el) => {
       $(el).on("click", (e) => {
         e.stopPropagation();
-        this.wordsSelectionHandler(e, [$(el).find("span[n]:first-child")[0]]);
+        const firstSelectedWordIndex = $(el)
+          .closest(".highlighted")
+          .attr("data-selected-word-index");
+
+        const firstSelectedWord = $(UTILS.DOM_ELS.bookChapter).find(
+          `span[n="${firstSelectedWordIndex}"]`
+        )[0];
+
+        // this.wordsSelectionHandler(e, [$(el).find("span[n]:first-child")[0]]);
+        this.wordsSelectionHandler(e, [firstSelectedWord]);
       });
     });
   }

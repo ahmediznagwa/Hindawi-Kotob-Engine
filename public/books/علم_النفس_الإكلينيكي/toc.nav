@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfTOCItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TOCItem>
+    <Title>شكر وتقدیر</Title>
+    <ChapterIndex>4</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>تمهيد</Title>
+    <ChapterIndex>5</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>عمل الاختصاصيين النفسيِّين الإكلينيكيِّين</Title>
+    <ChapterIndex>6</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>من المهد إلى اللحد</Title>
+    <ChapterIndex>7</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>أدوات المهنة</Title>
+    <ChapterIndex>8</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>الأُطُر النظرية التي يستخدمها الاختصاصيون النفسيون الإكلينيكيون</Title>
+    <ChapterIndex>9</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>بناؤنا لشخصية العالِم الممارس المتفكِّر</Title>
+    <ChapterIndex>10</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>مواطن الاتفاق والاختلاف في الوقت الحالي</Title>
+    <ChapterIndex>11</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>توسيع نطاق علم النفس الإكلينيكي</Title>
+    <ChapterIndex>12</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>مراجع وقراءات إضافية</Title>
+    <ChapterIndex>13</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>قائمة الصور</Title>
+    <ChapterIndex>14</ChapterIndex>
+  </TOCItem>
+</ArrayOfTOCItem>

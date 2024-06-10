@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfTOCItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TOCItem>
+    <Title>مقدمة</Title>
+    <ChapterIndex>4</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>نظرة جديدة للقرآن</Title>
+    <ChapterIndex>5</ChapterIndex>
+  </TOCItem>
+  <TOCItem>
+    <Title>خاتمة</Title>
+    <ChapterIndex>6</ChapterIndex>
+  </TOCItem>
+</ArrayOfTOCItem>

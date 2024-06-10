@@ -70,6 +70,7 @@ export function wrapHighlightedElements(
   let highlightParent;
   let currentWordParent;
   let className = type === "highlight" ? "highlighted" : "bookmarked";
+  let firstWordIndex =  $(words[0]).attr("n");
 
   if (type === "highlight" && $(words[0]).parent(".highlighted").length) {
     // window.getSelection()
@@ -78,6 +79,7 @@ export function wrapHighlightedElements(
   // if (type === "bookmark" && $(words[0]).parent(".bookmarked").length) {
   //   return;
   // }
+
   words.forEach((word, index) => {
     word.textContent = `${
       index === words.length - 1 ? word.textContent : `${word.textContent} `
@@ -86,6 +88,7 @@ export function wrapHighlightedElements(
       currentWordParent = word.parentNode;
       highlightParent = document.createElement("span");
       highlightParent.classList.add(className);
+      $(highlightParent).attr('data-selected-word-index', firstWordIndex);
       $(highlightParent).insertBefore($(words[index]));
       $(highlightParent).append(word);
     } else {
