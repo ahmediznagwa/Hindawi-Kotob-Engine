@@ -548,7 +548,7 @@ export class Book {
   addBookStyles() {
     const style = document.createElement("link");
     style.rel = "stylesheet";
-    style.href = `${this.rootFolder}/TempBook.css`;
+    style.href = `${this.rootFolder}/Book.css`;
     document.head.prepend(style);
 
     // Adding padding according to mobile safe area if it is bigger than the ones in CSS
