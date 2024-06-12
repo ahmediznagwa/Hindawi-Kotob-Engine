@@ -18,15 +18,15 @@ export const hindawiReaders = (function () {
   //   // const bookId = "نجيب_محفوظ_في_عيون_العالم"; // hindawi;
   //   // const bookId = "عكازة_رامبو"; // hindawi;
   //   // const bookId = "علم_النفس_الإكلينيكي"; // hindawi;
-  //   const bookId = "فتنة_الورَّاق"; // hindawi;
+  //   // const bookId = "فتنة_الورَّاق"; // hindawi;
   //   // const bookId = "النهضة_اليابانية_الحديثة"; // hindawi;
-  //   // const bookId = "إصلاح_الفكر_الإسلامي"; // hindawi;
+  //   const bookId = "إصلاح_الفكر_الإسلامي"; // hindawi;
   //   const readerConfig: IReaderConfig = {
   //     bookId,
   //     paddingTop: 20,
   //     paddingBottom: 0,
   //     isIphone: true,
-  //     bookTitle: "فتنة الورَّاق",
+  //     bookTitle: "إصلاح الفكرالإسلامي",
   //   };
   //   Promise.all([
   //     fetch(`./books/${bookId}/Content.main`).then((res) => res.text()),
